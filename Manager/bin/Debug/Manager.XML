@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Manager</name>
+    </assembly>
+    <members>
+        <member name="T:Manager.FormModes">
+            <summary>Режимы запуска формы: 
+            Default = 0 - по умолчанию (ни один из других вариантов); 
+            GetResult = 1 - форма вернет результат (форма-список для выбора); 
+            NewRecEdit = 2 - форма-редактор для новой записи; 
+            Modal = 4 - модальная форма; 
+            Single = 8 - форма может быть запущена 1 раз (для всех форм из меню, заполненного по настройкам); 
+            ViewOnlyEdit = 16 - форма-редактор только для просмотра данных; 
+            </summary>
+        </member>
+        <member name="T:Manager.Context">
+            <summary>Контекст приложения.
+            Объект контекста (свойство Self) создается при старте приложения.
+            При создании инициализирует главную форму, создает и проверяет подключение, начитывает данные настроек для меню, форм и команд.
+            Содержит методы для вызова форм, методов сборок и выполнения запросов.
+            </summary>
+        </member>
+        <member name="P:Manager.Context.Self">
+            <summary>Объект контекста приложения</summary>
+        </member>
+        <member name="P:Manager.Context.Conn">
+            <summary>Объект подключения приложения</summary>
+        </member>
+        <member name="P:Manager.Context.LastActiveForm">
+            <summary>Последняя активная форма приложения</summary>
+        </member>
+        <member name="P:Manager.Context.MainForm">
+            <summary>Главная форма приложения</summary>
+        </member>
+        <member name="P:Manager.Context.TransferObject">
+            <summary>Объект для передачи данных, например возврат результата из формы</summary>
+        </member>
+        <member name="P:Manager.Context.ImgAsmName">
+            <summary>Сборка с иконками в ресурсах</summary>
+        </member>
+        <member name="P:Manager.Context.CommonObjects">
+            <summary>Набор общих данных</summary>
+        </member>
+        <member name="M:Manager.Context.Run(System.Windows.Forms.Form,System.String)">
+            <summary>Создать объект контекста и запустить приложение</summary>
+             <param name="mainForm">Главная форма приложения</param>
+             <param name="configPath">[Путь]Файл конфигурации. По умолчанию - имя_приложения.xml</param>
+        </member>
+        <member name="M:Manager.Context.FillMenu(System.Windows.Forms.ToolStrip)">
+            <summary>Заполнить указанный ToolStrip по настройкам меню</summary>
+        </member>
+        <member name="M:Manager.Context.GetImage(System.String,System.String)">
+            <summary>Получить картинку из ресурсов</summary>
+        </member>
+        <member name="M:Manager.Context.GetMethod(System.String,System.String,System.String)">
+            <summary>Получить метод из сборки</summary>
+            <param name="assemblyPath">[путь]файл сборки</param>
+            <param name="className">namespace.class</param>
+            <param name="methodName">метод</param>
+            <returns></returns>
+        </member>
+        <member name="M:Manager.Context.ExecMethod(System.String)">
+            <summary>Вызов метода по команде из настроек</summary>
+            <param name="command">Команда из настроек - строка формата: "[path]assembly;namespace.class;method"</param>
+        </member>
+        <member name="M:Manager.Context.GetForm(System.String)">
+            <summary>Создать форму по коду из настроек</summary>
+            <param name="formCode">Код, для которого в настройках определена команда: [path]assembly;namespace.form</param>
+        </member>
+        <member name="M:Manager.Context.GetForm(System.String,System.String)">
+            <summary>Создать форму из сборки</summary>
+            <param name="assemblyPath">[путь]файл сборки</param>
+            <param name="className">namespace.form</param>
+        </member>
+        <member name="M:Manager.Context.ExecForm(System.Windows.Forms.Form,System.Windows.Forms.Form,Manager.FormModes,System.Collections.Generic.Dictionary{System.String,System.Object},System.Object)">
+            <summary>Вызов формы</summary>
+            <param name="form">Форма</param>
+            <param name="parent">Родительская форма</param>
+            <param name="formModes">Режимы запуска</param>
+            <param name="extParams">Параметры для запросов</param>
+            <param name="key">Ключ записи (например чтобы встать на нужной строке в главном гриде формы списка)</param>
+            <returns>True только в случае положительного результата (OK) для модальной формы</returns>
+        </member>
+        <member name="M:Manager.Context.LoadFormOptions(System.Windows.Forms.Form,Manager.FormOptionsSetType)">
+            <summary>Загрузить параметры отображения формы</summary>
+        </member>
+        <member name="M:Manager.Context.SaveFormOptions(System.Windows.Forms.Form)">
+            <summary>Сохранить параметры отображения формы</summary>
+        </member>
+        <member name="M:Manager.Context.ShowMain(System.Windows.Forms.Form)">
+            <summary>Показать главную форму приложения</summary>
+            <param name="form">Текущая форма</param>
+        </member>
+        <member name="M:Manager.Context.FormDefaultPos(System.Windows.Forms.Form,System.Boolean)">
+            <summary>Разместить форму с учетом главной формы приложения</summary>
+            <param name="form">Форма</param>
+            <param name="max">Развернуть на весь экран под главной формой</param>
+        </member>
+        <member name="M:Manager.Context.SelectForm(System.Windows.Forms.Form)">
+            <summary>Выбор из списка активных форм</summary>
+        </member>
+        <member name="M:Manager.Context.ManageForm(System.Windows.Forms.Form,System.Windows.Forms.Keys)">
+            <summary>Обработка событий по управлению формой (в зависимости от сочетания клавиш - вызов главной формы, выбор формы, позиционирование, возврат настроек</summary>
+            <param name="form">Форма</param>
+            <param name="keys">Сочетание служебных клавиш</param>
+        </member>
+        <member name="M:Manager.Context.CheckConnection(System.Data.SqlClient.SqlConnection)">
+            <summary>Проверка подключения</summary>
+        </member>
+        <member name="M:Manager.Context.GetTable(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>Выполнить запрос, вернуть таблицу</summary>
+            <param name="sql">Текст запроса</param>
+            <param name="cmdCode">Код команды из настроек, содержащий текст запроса (используется, если не задан текст запроса)</param>
+            <param name="pars">Параметры запроса</param>
+            <returns>Таблица (пустая если нет resultset) или null, если ошибка</returns>
+        </member>
+        <member name="M:Manager.Context.GetTableList(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>Выполнить запрос, вернуть список строк</summary>
+            <param name="sql">Текст запроса</param>
+            <param name="cmdCode">Код команды из настроек, содержащий текст запроса (используется, если не задан текст запроса)</param>
+            <param name="pars">Параметры запроса</param>
+            <returns>Список DataRow (пустой если нет resultset) или null, если ошибка</returns>
+        </member>
+        <member name="M:Manager.Context.ExecCommand(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>Выполнить запрос, вернуть кол-во обработанных строк</summary>
+            <param name="sql">Текст запроса</param>
+            <param name="cmdCode">Код команды из настроек, содержащий текст запроса (используется, если не задан текст запроса)</param>
+            <param name="pars">Параметры запроса</param>
+            <returns>Количество обработанных строк, -1 если ошибка</returns>
+        </member>
+        <member name="M:Manager.Context.GetCommandText(System.String)">
+            <summary>Вернуть текст команды по коду из настроек</summary>
+        </member>
+        <member name="M:Manager.Context.Trassa(System.String,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String)">
+            <summary>Вывод трассировки выполняемого запроса</summary>
+            <param name="sql">текст запроса</param>
+            <param name="pars">параметры</param>
+            <param name="header">заголовок окна трассировки</param>
+        </member>
+        <member name="M:Manager.Context.GcCollect">
+            <summary>Принудительная прочистка мозгов</summary>
+        </member>
+        <member name="F:Manager.FOpenedForms.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Manager.FOpenedForms.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Manager.FOpenedForms.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Manager.FormsConfig">
+            <summary>Контейнер параметров форм
+            </summary>
+        </member>
+        <member name="M:Manager.FormsConfig.CreateFromFile(System.String)">
+            <summary>Заполняет контейнер параметров форм из файла. Если файла нет - создает новый.
+            </summary>
+            <param name="fileName">имя файла, по умолчанию: Forms + имя приложения.xml</param>
+            <returns>контейнер параметров форм</returns>
+        </member>
+        <member name="M:Manager.FormsConfig.Save">
+            <summary>Запись контейнера в файл
+            </summary>
+        </member>
+        <member name="T:Manager.FormOptions">
+            <summary>Параметры отображения формы
+            </summary>
+        </member>
+        <member name="M:Manager.FormOptions.LoadFromFile(System.Windows.Forms.Form,System.String,Manager.FormOptionsSetType)">
+            <summary>Загрузить параметры отображения из файла и присвоить форме
+            </summary>
+        </member>
+        <member name="M:Manager.FormOptions.LoadFromXML(System.Windows.Forms.Form,System.String,Manager.FormOptionsSetType)">
+            <summary>Загрузить параметры отображения из XML и присвоить форме
+            </summary>
+        </member>
+        <member name="M:Manager.FormOptions.SaveToFile(System.Windows.Forms.Form,System.String)">
+            <summary>Сохранить параметры отображения формы в файле (изменить существующие)
+            </summary>
+        </member>
+        <member name="M:Manager.FormOptions.GetInXML(System.Windows.Forms.Form,System.String)">
+            <summary>Изменить/добавить параметры отображения формы в строке настроек форм (xml)
+            </summary>
+        </member>
+        <member name="T:Manager.GridOptions">
+            <summary>Параметры отображения грида
+            </summary>
+        </member>
+        <member name="M:Manager.GridOptions.#ctor(System.Windows.Forms.DataGridView)">
+            <summary>Взять параметры отображения из указанного грида
+            </summary>
+            <param name="grid">грид</param>
+        </member>
+        <member name="T:Manager.ColumnOptions">
+            <summary>Параметры отображения столбца грида
+            </summary>
+        </member>
+        <member name="T:Manager.SplitOptions">
+            <summary>Параметры отображения сплиттера
+            </summary>
+        </member>
+        <member name="T:Manager.ControlValue">
+            <summary>Для сохранения необходимого свойства необходимого контрола (например используемого в параметрах)</summary>
+        </member>
+        <member name="F:Manager.FWait.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Manager.FWait.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Manager.FWait.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Manager.IDataForm">
+            <summary>Интерфейс для взаимодействия контекста с библиотечными формами</summary>
+        </member>
+        <member name="M:Manager.IDataForm.Init(Manager.Context,Manager.FormModes,System.Collections.Generic.Dictionary{System.String,System.Object},System.Object)">
+            <summary>Инициализация формы</summary>
+            <param name="ctx">Контекст приложения</param>
+            <param name="formModes">Режимы запуска</param>
+            <param name="extParams">Параметры для запросов</param>
+            <param name="key">Ключ записи (например чтобы встать на нужной строке в главном гриде формы списка)</param>
+        </member>
+        <member name="M:Manager.IDataForm.PrepareUiParamsProperties(System.Collections.Generic.List{Manager.ControlValue})">
+            <summary>Подготовка значений полей параметров для сохранения</summary>
+        </member>
+        <member name="M:Manager.IDataForm.SetUiParamsProperties(System.Collections.Generic.List{Manager.ControlValue})">
+            <summary>Установка загруженных значений полей параметров</summary>
+        </member>
+    </members>
+</doc>

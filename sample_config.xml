@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<AppConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Prop Name="ConnectionString" Value="Data Source=PUMPET\SQLEXPRESS;Initial Catalog=testdb;Integrated Security=True" />
+    <Prop Name="AppName" Value="Robin Data Manager" /> <!-- для презентации - напр.заголовок главного окна -->
+    <Prop Name="AppCode" Value="Robin" /> <!-- для указания в таблицах настройки (tForm, tCommand, tMenu, tFormOptions) -->
+    <Prop Name="AppMode" Value="Test" /> <!-- для целей отладки и др.логики -->
+    <Prop Name="ImgAsm" Value="Common.dll" /> <!-- сборка с иконками в ресурсах (по умолчанию - само приложение) -->
+    <Prop Name="UserOptionsInDB" /> <!--  или  <Prop Name="UserOptionsInFile" - где хранить настройки форм - в табл. tFormOptions для пользователя или в файле FormsИмяПриложения.xml/> -->
+    <Prop Name="RestoreFormPos" /> <!-- восстанавливать позицию форм -->
+    <Prop Name="CommandTimeout" Value="30" /> <!-- макс время ожидания (сек) начала выполнения команды, если не задан - по умолчанию для mssql - 30 сек -->
+</AppConfig>

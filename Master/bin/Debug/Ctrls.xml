@@ -1,0 +1,726 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ctrls</name>
+    </assembly>
+    <members>
+        <member name="T:Ctrls.CheckedComboBox.Dropdown">
+            <summary>
+            Internal class to represent the dropdown list of the CheckedComboBox
+            </summary>
+        </member>
+        <member name="T:Ctrls.CheckedComboBox.Dropdown.CCBoxEventArgs">
+            <summary>
+            Custom EventArgs encapsulating value as to whether the combo box value(s) should be assignd to or not.
+            </summary>
+        </member>
+        <member name="T:Ctrls.CheckedComboBox.Dropdown.CustomCheckedListBox">
+            <summary>
+            A custom CheckedListBox being shown within the dropdown form representing the dropdown list of the CheckedComboBox.
+            </summary>
+        </member>
+        <member name="M:Ctrls.CheckedComboBox.Dropdown.CustomCheckedListBox.OnKeyDown(System.Windows.Forms.KeyEventArgs)">
+            <summary>
+            Intercepts the keyboard input, [Enter] confirms a selection and [Esc] cancels it.
+            </summary>
+            <param name="e">The Key event arguments</param>
+        </member>
+        <member name="M:Ctrls.CheckedComboBox.Dropdown.CloseDropdown(System.Boolean)">
+            <summary>
+            Closes the dropdown portion and enacts any changes according to the specified boolean parameter.
+            NOTE: even though the caller might ask for changes to be enacted, this doesn't necessarily mean
+                  that any changes have occurred as such. Caller should check the ValueChanged property of the
+                  CheckedComboBox (after the dropdown has closed) to determine any actual value changes.
+            </summary>
+            <param name="enactChanges"></param>
+        </member>
+        <member name="F:Ctrls.CheckedComboBox.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.CheckedComboBox.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="T:Ctrls.ParamsCheckEventArgs">
+            <summary>Аргументы для события проверки-изменения параметров перед их передачей в sql</summary>
+        </member>
+        <member name="P:Ctrls.ParamsCheckEventArgs.Pars">
+            <summary>Параметры для последующей передачи в sql</summary>
+        </member>
+        <member name="P:Ctrls.ParamsCheckEventArgs.CheckResult">
+            <summary>Результат проверки (код-сообщение), для вывода предупреждений для полей редактора - "имя поля или контрола - сообщение"</summary>
+        </member>
+        <member name="T:Ctrls.ProcessDataEventArgs">
+            <summary>Аргументы для события обработки данных (например выполнения sql)</summary>
+        </member>
+        <member name="P:Ctrls.ProcessDataEventArgs.Pars">
+            <summary>Параметры запроса</summary>
+        </member>
+        <member name="P:Ctrls.ProcessDataEventArgs.Result">
+            <summary>Результат обработки (например объект-набор данных - таблица, коллекция)</summary>
+        </member>
+        <member name="P:Ctrls.ProcessDataEventArgs.Handled">
+            <summary>Признак завершения обработки - для запрета выполнения следующих обработчиков события</summary>
+        </member>
+        <member name="T:Ctrls.CtrlsProc">
+            <summary>Общие процедуры библиотеки</summary>
+        </member>
+        <member name="M:Ctrls.CtrlsProc.PrepareParams(System.Object,System.Collections.Generic.Dictionary{System.String,System.Object},System.String,System.Boolean,System.Func{System.Object,System.Collections.Generic.Dictionary{System.String,System.Object}},System.Boolean)">
+            <summary>
+            Формирование словаря параметров ключ-объект
+            </summary>
+            <param name="newParamsObject">Объект, из которого получаем параметры с учетом map (словарь ключ-объект, или коллекция контролов, или строка таблицы, или произвольный объект)</param>
+            <param name="existingParams">Существующие параметры - переносятся без учета map</param>
+            <param name="map">Строка соответствий ключей параметров: "формируемый1=полученный1;формируемый2=полученный2..." Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>
+            <param name="rewrite">Перезаписывать существующий параметр новым (с тем же именем, с учетом map)</param>
+            <param name="fConvert">Функция преобразования newParamsObject в словарь имя-значение - если не устраивает стандартная обработка</param>
+            <param name="addNulls">Если true и нет полученного ключа - будет сформирован параметр со значением null</param>
+            <returns>Новый словарь параметров (пустой, если параметров нет)</returns>
+        </member>
+        <member name="M:Ctrls.CtrlsProc.GetParamsForMap(System.Collections.Generic.Dictionary{System.String,System.Object},System.String,System.String,System.Boolean)">
+            <summary>Формирование словаря с указанными ключами</summary>
+            <param name="pars">Исходный словарь ключ-объект</param>
+            <param name="map">Строка соответствий ключей "формируемый=исходный" через разделитель.</param>
+            <param name="dlm">Разделитель. По умолчанию ";"</param>
+            <param name="addNulls">Если true и нет исходного ключа - будет сформирован ключ со значением null</param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Ctrls.CtrlsProc.SetValues(System.Object,System.Collections.Generic.Dictionary{System.String,System.Object})" -->
+        <member name="M:Ctrls.CtrlsProc.GetControlValue(System.Windows.Forms.Control)">
+            <summary>Значение контрола для дальнейшего использования (например в параметрах)</summary>
+        </member>
+        <member name="M:Ctrls.CtrlsProc.SetControlValue(System.Windows.Forms.Control,System.String,System.Boolean)">
+            <summary>Установить строку в значение контрола в зависимости от его типа </summary>
+            <param name="c">Контрол</param>
+            <param name="value">Значение (строка)</param>
+            <param name="clear">Сбросить значение контрола</param>
+        </member>
+        <member name="P:Ctrls.DataList.QueryParamsSet">
+            <summary>подготовка параметров запроса</summary>
+        </member>
+        <member name="M:Ctrls.DataList.RowsHighlight(System.Int32)">
+            <summary>Подсветить строку (по умолчанию - текущую) и другие с выделенными ячейками </summary>
+        </member>
+        <member name="M:Ctrls.DataList.SelectColumns">
+            <summary>Вызов формы выбора столбцов</summary>
+        </member>
+        <member name="M:Ctrls.DataList.ExecExcel">
+            <summary>Выдача в эксель</summary>
+        </member>
+        <member name="M:Ctrls.DataList.LoadData(System.Object,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>Загрузка данных в грид и установка фокуса на указанной/текущей строке</summary>
+        </member>
+        <member name="M:Ctrls.DataList.OnGetData">
+            <summary>Получить данные</summary>
+        </member>
+        <member name="M:Ctrls.DataList.OnWhatsUp(System.String)">
+            <summary>Реакция на изменение содержимого, позиции, порядка и т.д.</summary>
+        </member>
+        <member name="M:Ctrls.DataList.Clear(System.Boolean)">
+            <summary>Сбросить источники и событие получения данных</summary>
+        </member>
+        <member name="M:Ctrls.DataList.GetKey(System.Int32,System.String)">
+            <summary>Получить ключ из строки</summary>
+        </member>
+        <member name="M:Ctrls.DataList.GetRowObject(System.Int32)">
+            <summary>Получить объект указанной строки или текущий</summary>
+        </member>
+        <member name="M:Ctrls.DataList.GetCheckedRowsIdx">
+            <summary>Индексы отмеченных строк</summary>
+        </member>
+        <member name="M:Ctrls.DataList.GetCheckedRowsKeys">
+            <summary>Ключи отмеченных строк</summary>
+        </member>
+        <member name="M:Ctrls.DataList.SetCheckedRows(System.Collections.Generic.List{System.Object})">
+            <summary>Отметить строки, соответствующие ключам</summary>
+        </member>
+        <member name="M:Ctrls.DataList.Search">
+            <summary>Вызов формы поиска</summary>
+        </member>
+        <member name="M:Ctrls.DataList.Filter">
+            <summary>Вызов формы фильтра</summary>
+        </member>
+        <member name="F:Ctrls.DataList.components">
+            <summary> 
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.DataList.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.DataList.InitializeComponent">
+            <summary> 
+            Required method for Designer support - do not modify 
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Ctrls.DateTimeStyle">
+            <summary>Варианты отображения даты-времени</summary>
+        </member>
+        <member name="T:Ctrls.DateTimeSqlType">
+            <summary>Стандартные диапазоны дат для Sql</summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.DateFormat">
+            <summary>Строка формата в зависимости от варианта отображения</summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.DefaultText">
+            <summary>Дата по умолчанию в текстовом представлении</summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.DefaultDate">
+            <summary>Дата по умолчанию</summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.MinDate">
+            <summary>Минимально допустимая дата. 
+            Определяет DefaultDate, если она не задана и не Nullable.
+            Если задан SqlType - определяется в соответствии с ним.
+            </summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.MaxDate">
+            <summary>Максимально допустимая дата. 
+            Если задан SqlType - определяется в соответствии с ним.
+            </summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.NowOnDefault">
+            <summary>Определяет что DefaultDate всегда будет текущей</summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.Nullable">
+            <summary>Допускает пустое значение при редактировании</summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.ValidateOnLeave">
+            <summary>Проверять в событиях Leave и Validating</summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.Style">
+            <summary>Вариант отображения</summary>
+        </member>
+        <member name="P:Ctrls.DateTimeBox.SqlType">
+            <summary>Стандартный диапазон дат для Sql, если None - используется MinDate и MaxDate</summary>
+        </member>
+        <member name="M:Ctrls.DateTimeBox.CheckText">
+            <summary>Проверка значения
+            </summary>
+            <returns>true - значение допустимо</returns>
+        </member>
+        <member name="M:Ctrls.DateTimeBox.GetDateTime">
+            <summary>Значение в формате даты-времени. Обертка над DateTime.TryParseExact
+            </summary>
+            <returns>Если значение - не дата-время, вернет MinValue</returns>
+        </member>
+        <member name="F:Ctrls.DateTimeBox.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.DateTimeBox.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.DateTimeBox.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Ctrls.FilterMode">
+            <summary>Настройки фильтра (флаги)
+            1:точное совпадение (равно) 2:учет регистра 4:больше 8:меньше 16:не равно 32:фильтр по пустому значению 64:за период
+            </summary>
+        </member>
+        <member name="T:Ctrls.FilterType">
+            <summary>Тип данных фильтра: строка, дата, число 
+            </summary>
+        </member>
+        <member name="T:Ctrls.Filter">
+            <summary>Фильтр для столбца DataGridView 
+            </summary>
+        </member>
+        <member name="P:Ctrls.Filter.ColName">
+            <summary>имя столбца</summary>
+        </member>
+        <member name="P:Ctrls.Filter.Mode">
+            <summary>настройки фильтра (флаги)</summary>
+        </member>
+        <member name="P:Ctrls.Filter.DataType">
+            <summary>тип данных фильтра</summary>
+        </member>
+        <member name="P:Ctrls.Filter.FilterName">
+            <summary>описание фильтра</summary>
+        </member>
+        <member name="M:Ctrls.Filter.Create(System.Windows.Forms.DataGridView,System.String,System.Object,Ctrls.FilterMode)">
+            <summary>Создание фильтра для столбца грида DataGridView с указанным условием и настройками.
+            Определение типа данных, проверка на допустимость условий, приведение условий, формирование описания.
+            </summary>
+            <param name="list">грид</param>
+            <param name="colName">имя столбца</param>
+            <param name="value">условие</param>
+            <param name="mode">настройки фильтра (флаги)</param>
+            <returns>объект фильтра или null если создать не удалось</returns>
+        </member>
+        <member name="M:Ctrls.Filter.GetFilterType(System.Type)">
+            <summary>Тип данных фильтра исходя из типа dotnet
+            </summary>
+            <param name="t">тип</param>
+            <returns>тип данных фильтра</returns>
+        </member>
+        <member name="M:Ctrls.Filter.Check(System.Object)">
+            <summary>Проверка значения по условиям фильтра
+            </summary>
+            <param name="value">значение</param>
+            <returns>true если проходит через фильтр</returns>
+        </member>
+        <member name="T:Ctrls.FormBase">
+            <summary>
+            Базовая форма для списка и редактора.
+            Реализует IDataForm, который позволяет взаимодействовать с классом контекста приложения (Manager.Context) и сохранять текущие значения полей-параметров запросов.
+            </summary>
+        </member>
+        <member name="T:Ctrls.FormBase.CtrlEventType">
+            <summary>тип события контрола - выход, вход, изменение состояния</summary>
+        </member>
+        <member name="T:Ctrls.FormBase.ControlTriggerEventArgs">
+            <summary>Аргументы общего события для событий контролов формы</summary>
+        </member>
+        <member name="P:Ctrls.FormBase.Ctx">
+            <summary>Контекст приложения</summary>
+        </member>
+        <member name="M:Ctrls.FormBase.Init(Manager.Context,Manager.FormModes,System.Collections.Generic.Dictionary{System.String,System.Object},System.Object)">
+            <summary>Инициализация формы</summary>
+            <param name="ctx">Контекст приложения</param>
+            <param name="formModes">Режимы запуска</param>
+            <param name="extParams">Параметры для запросов</param>
+            <param name="key">Ключ записи (например чтобы встать на нужной строке в главном гриде формы списка)</param>
+        </member>
+        <member name="M:Ctrls.FormBase.PrepareUiParamsProperties(System.Collections.Generic.List{Manager.ControlValue})">
+            <summary>Подготовка значений полей параметров для сохранения</summary>
+        </member>
+        <member name="M:Ctrls.FormBase.SetUiParamsProperties(System.Collections.Generic.List{Manager.ControlValue})">
+            <summary>Установка загруженных значений полей параметров</summary>
+        </member>
+        <member name="M:Ctrls.FormBase.DataList_GetData(System.Object,Ctrls.ProcessDataEventArgs)">
+            <summary>Обработка события грида по получению данных - приходит из LoadData() -> OnGetData() объекта DataList</summary>
+        </member>
+        <member name="M:Ctrls.FormBase.ValidParamControlType(System.Type)">
+            <summary>Проверка, подходит ли контрол в качестве поля параметра</summary>
+             <param name="type">Тип контрола</param>
+        </member>
+        <member name="M:Ctrls.FormBase.SubscribeControlTrigger(System.Windows.Forms.Control)">
+            <summary>Подписка общего события ControlTrigger на событие контрола</summary>
+            <param name="ctrl">Подписываемый контрол</param>
+        </member>
+        <member name="M:Ctrls.FormBase.ExecFormEdit(System.Windows.Forms.Form,System.String,Manager.FormModes,Ctrls.DataList,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.String,Manager.FormModes)">
+            <summary>Запуск формы редактора</summary>
+            <param name="form">Форма</param>
+            <param name="formCode">Код формы из настроек</param> 
+            <param name="viewMode">Режим формы для обработки данных: NewRec для новой записи, ReadOnly только для просмотра, Default для редактирования записи</param>
+            <param name="grid">Грид, из которого запускаем. Если задан - поля источника текущей строки берутся в качестве параметров</param>
+            <param name="mapForParams">Строка соответствия имен: "формируемый1=полученный1;...", где формируемый - параметр для запроса данных на форму, полученный - параметр из грида и customParams. Если нет полученного, параметр будет сформирован со значением null. Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>
+            <param name="customParams">Параметры ключ-значение. Если заданы - считаются приоритетнее, чем одноименные поля из грида</param>
+            <param name="mapForResult">Строка соответствия имен: "формируемый1=полученный1;...", где полученный - поле результата выполнения скрипта вставки/обновления, формируемый - параметр поиска текущей записи после обновления данных в гриде</param>
+            <param name="formModes">Другие необходимые режимы в дополнение к viewMode, по умолчанию - Modal</param>
+            <returns>True только в случае положительного результата (OK) для модальной формы</returns>
+        </member>
+        <member name="M:Ctrls.FormBase.ExecFormSelect(System.Windows.Forms.Form,System.String,System.Object,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Action{System.Object})">
+            <summary>Запуск формы выбора из списка</summary>
+            <param name="form">Форма</param>
+            <param name="formCode">Код формы из настроек</param>
+            <param name="sourceObject">Объект-источник параметров вызова формы (ключей и фильтра)</param>
+            <param name="keyMap">Строка соответствия имен полей входящих в передаваемый ключ: "формируемый1=полученный1;...". Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>
+            <param name="filterMap">Строка соответствия имен полей входящих в передаваемый фильтр: "формируемый1=полученный1;...". Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>        
+            <param name="customParams">Параметры ключ-значение. Если заданы - считаются приоритетнее, чем одноименные поля из объекта-источника</param>
+            <param name="resultAction">Метод разбора результата</param>        
+            <returns>True только в случае положительного результата (OK) для модальной формы</returns>
+        </member>
+        <member name="M:Ctrls.FormBase.ExecCommand(System.String,System.String,Ctrls.DataList,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.String,System.Boolean)">
+            <summary>Выполнение команды sql</summary>
+            <param name="sql">Текст команды</param>
+            <param name="cmdCode">Код команды из настроек, содержащий текст команды. Используется, если не задан текст команды (sql)</param>
+            <param name="grid">Грид, из которого запускаем. Если задан - поля источника обрабатываемой строки берутся в качестве параметров</param>
+            <param name="mapForParams">Строка соответствий ключей: "формируемый1=полученный1;...", где формируемый - параметр для команды, полученный - параметр из грида и customParams. Если нет полученного, параметр будет сформирован со значением null. Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>
+            <param name="customParams">Параметры ключ-значение. Если заданы - считаются приоритетнее, чем одноименные поля из грида</param>
+            <param name="warning">Строка предупреждения перед выполнением команды. В этом случае будет окно сообщения с возможностью отказаться</param>
+            <param name="forSelectedRows">True если хотим выполнить для каждой выделенной строки грида, False - только для текущей</param>
+            <returns>Таблица (пустая, если команда не возвращает resultset) или null</returns>
+        </member>
+        <member name="F:Ctrls.FormBase.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.FormBase.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.FormBase.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Ctrls.FormEdit.Init(Manager.Context,Manager.FormModes,System.Collections.Generic.Dictionary{System.String,System.Object},System.Object)">
+            <summary>Инициализация формы</summary>
+            <param name="ctx">Контекст приложения</param>
+            <param name="formModes">Режимы запуска</param>
+            <param name="extParams">Параметры для запроса</param>
+            <param name="key">Ключ записи (не используется)</param>
+        </member>
+        <member name="M:Ctrls.FormEdit.LoadData">
+            <summary>Процесс загрузки данных в редактор</summary>
+        </member>
+        <member name="M:Ctrls.FormEdit.SaveData">
+            <summary>Процесс сохранения данных из редактора</summary>
+        </member>
+        <member name="F:Ctrls.FormEdit.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.FormEdit.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.FormEdit.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Ctrls.FormFilter">
+            <summary>Форма фильтра
+            </summary>
+        </member>
+        <member name="M:Ctrls.FormFilter.#ctor(System.Windows.Forms.DataGridViewColumn,System.Object,System.Func{Ctrls.Filter,System.Int32})">
+            <summary>Создать форму фильтра
+            </summary>
+            <param name="column">столбец грида</param>
+            <param name="cellValue">значение текущей ячейки</param>
+            <param name="func">функция установки фильтра</param>
+        </member>
+        <member name="F:Ctrls.FormFilter.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.FormFilter.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.FormFilter.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Ctrls.FormList.UiParamsEventArgs">
+            <summary>Аргументы событий для полей параметров</summary>
+        </member>
+        <member name="P:Ctrls.FormList.UiParamsEventArgs.UiParams">
+            <summary>Список полей параметров для гридов</summary>
+        </member>
+        <member name="T:Ctrls.FormList.UiParamsPropsEventArgs">
+            <summary>Аргументы событий загрузки/сохранения значений полей параметров</summary>
+        </member>
+        <member name="P:Ctrls.FormList.UiParamsPropsEventArgs.Props">
+            <summary>Список объектов ControlValue со строковыми значениями полей параметров</summary>
+        </member>
+        <member name="T:Ctrls.FormList.SelectFromListEventArgs">
+            <summary>Аргументы событий выбора из списка</summary>
+        </member>
+        <member name="P:Ctrls.FormList.SelectFromListEventArgs.SelectedObject">
+            <summary>Возвращаемый объект</summary>
+        </member>
+        <member name="T:Ctrls.FormList.RefreshListEventArgs">
+            <summary>Аргументы событий обновления списка</summary>
+        </member>
+        <member name="P:Ctrls.FormList.ActiveCtrl">
+            <summary>Активный контрол (без учета контейнеров)</summary>
+        </member>
+        <member name="P:Ctrls.FormList.ActiveGrid">
+            <summary>Активный грид (с учетом полей параметров). По умолчанию - главный</summary>
+        </member>
+        <member name="P:Ctrls.FormList.NeedRefresh">
+            <summary>Грид нуждается в обновлении (признак и смена цвета кнопки)</summary>
+        </member>
+        <member name="M:Ctrls.FormList.Init(Manager.Context,Manager.FormModes,System.Collections.Generic.Dictionary{System.String,System.Object},System.Object)">
+            <summary>Инициализация формы</summary>
+            <param name="ctx">Контекст приложения</param>
+            <param name="formModes">Режимы запуска</param>
+            <param name="extParams">Параметры для запросов</param>
+            <param name="key">Ключ записи (например чтобы встать на нужной строке в главном гриде формы списка)</param>
+        </member>
+        <member name="M:Ctrls.FormList.LoadGrid(Ctrls.DataList,System.Object)">
+            <summary>Загрузка данных в грид</summary>
+        </member>
+        <member name="M:Ctrls.FormList.OnSelectFromList(System.EventArgs)">
+            <summary>Выбор строки</summary>
+        </member>
+        <member name="M:Ctrls.FormList.GridQueryParamsSet(Ctrls.DataList,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>делегат для грида на установку параметров - вызывается в grid.LoadData() -> OnGetData()</summary>
+        </member>
+        <member name="M:Ctrls.FormList.PrepareUiParamsProperties(System.Collections.Generic.List{Manager.ControlValue})">
+            <summary>Подготовка значений полей параметров для сохранения</summary>
+        </member>
+        <member name="M:Ctrls.FormList.SetUiParamsProperties(System.Collections.Generic.List{Manager.ControlValue})">
+            <summary>Установка загруженных значений полей параметров</summary>
+        </member>
+        <member name="M:Ctrls.FormList.SetUiParamsFromDictionary(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>Установка значений полей параметров из словаря</summary>
+        </member>
+        <member name="F:Ctrls.FormList.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.FormList.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.FormList.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Ctrls.FormSearch">
+            <summary>Форма поиска
+            </summary>
+        </member>
+        <member name="M:Ctrls.FormSearch.#ctor(System.Func{Ctrls.Search,Ctrls.SearchMode,System.Boolean})">
+            <summary>Создание формы поиска
+            </summary>
+            <param name="func">функция запуска поиска</param>
+        </member>
+        <member name="F:Ctrls.FormSearch.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.FormSearch.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.FormSearch.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Ctrls.FormSelectCols.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.FormSelectCols.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.FormSelectCols.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="P:Ctrls.NumberBox.DefaultText">
+            <summary>Текст по умолчанию</summary>
+        </member>
+        <member name="P:Ctrls.NumberBox.Nullable">
+            <summary>Допускает пустое значение при редактировании</summary>
+        </member>
+        <member name="M:Ctrls.NumberBox.GetDecimalOrNull">
+            <summary>Значение в decimal или null - обертка нат TryParse</summary>
+        </member>
+        <member name="F:Ctrls.NumberBox.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.NumberBox.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.NumberBox.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Ctrls.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.excel">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.filter">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.find">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.play">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.play_down">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.refresh">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.refresh_red">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.save">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.selcol">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.select">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.undo">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.windows">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="T:Ctrls.SearchMode">
+            <summary>Направление поиска: 
+            Left/Right - по строкам, с переходом на следующую/предыдущую, Up/Down - вверх/вниз в пределах столбца
+            </summary>
+        </member>
+        <member name="T:Ctrls.Search">
+            <summary>Поиск DataGridView 
+            </summary>
+        </member>
+        <member name="M:Ctrls.Search.#ctor(System.String,System.Boolean,System.Boolean)">
+            <summary>Создать объект поиска
+            </summary>
+            <param name="str">строка поиска</param>
+            <param name="cs">чувствителен к регистру</param>
+            <param name="eq">точное соответствие</param>
+        </member>
+        <member name="M:Ctrls.Search.Check(System.Object)">
+            <summary>Проверка значения по условиям поиска
+            </summary>
+            <param name="val">значение</param>
+            <returns>true если значение удовлетворяет условиям</returns>
+        </member>
+        <member name="T:Ctrls.ExecSelectionFormEventArgs">
+            <summary>Аргументы для события запуска формы для выбора</summary>
+        </member>
+        <member name="P:Ctrls.ExecSelectionFormEventArgs.ExtPars">
+            <summary>Параметры вызова формы (в дополнение к полям SourceObject)</summary>
+        </member>
+        <member name="P:Ctrls.ExecSelectionFormEventArgs.Form">
+            <summary>Форма (по умолчанию определена по коду формы, заданному SelectionForm)</summary>
+        </member>
+        <member name="P:Ctrls.ExecSelectionFormEventArgs.Handled">
+            <summary>Признак завершения обработки - для запрета выполнения стандартного вызова формы</summary>
+        </member>
+        <member name="T:Ctrls.SetResultEventArgs">
+            <summary>Аргументы для события обработки результата выбора</summary>
+        </member>
+        <member name="P:Ctrls.SetResultEventArgs.ResultPars">
+            <summary>Поля результата (из SelectedObject, с учетом ResultMap)</summary>
+        </member>
+        <member name="P:Ctrls.SetResultEventArgs.Handled">
+            <summary>Признак завершения обработки - для запрета выполнения стандартной обработки результата (занесению в TargetObject из ResultPars)</summary>
+        </member>
+        <member name="P:Ctrls.SelectBox.Ctx">
+            <summary>Контекст приложения</summary>
+        </member>
+        <member name="P:Ctrls.SelectBox.SourceObject">
+            <summary>Объект-источник параметров для вызова формы (строка или словарь или произвольный объект)</summary>
+        </member>
+        <member name="P:Ctrls.SelectBox.SelectedObject">
+            <summary>Выбранный объект - возвращается из формы (строка или словарь или произвольный объект)</summary>
+        </member>
+        <member name="P:Ctrls.SelectBox.SelectedValues">
+            <summary>Полученные значения (из выбранного объекта с учетом ResultMap)</summary>
+        </member>
+        <member name="P:Ctrls.SelectBox.TargetObject">
+            <summary>Целевой объект - строка (DataRow) или объект с данными (напр. BindingSource) или контейнер (Panel) или словарь (string-object)</summary>
+        </member>
+        <member name="E:Ctrls.SelectBox.ExecSelectionForm">
+            <summary>Вызов формы для выбора</summary>
+        </member>
+        <member name="E:Ctrls.SelectBox.SetResult">
+            <summary>Обработка выбранного объекта</summary>
+        </member>
+        <member name="F:Ctrls.SelectBox.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Ctrls.SelectBox.Dispose(System.Boolean)">
+            <summary> 
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Ctrls.SelectBox.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+    </members>
+</doc>

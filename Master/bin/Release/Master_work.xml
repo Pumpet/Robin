@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<AppConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Prop Name="ConnectionString" Value="Data Source=PUMPET\SQLEXPRESS;Initial Catalog=testdb;Integrated Security=True" />
+  <Prop Name="ConnectionString3" Value="Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=RobinTest;Integrated Security=True" />
+  <Prop Name="ConnectionString1" Value="Data Source=KOPSQL02;Initial Catalog=DEPO1;Integrated Security=True" />
+  <Prop Name="ConnectionString2" Value="Data Source=KOPSQL02;Initial Catalog=VTB_DEPO;Integrated Security=True" />
+  <Prop Name="AppName" Value="Master" />
+  <Prop Name="AppCode" Value="Master" />
+  <Prop Name="UserOptionsInDB" />
+  <Prop Name="RestoreFormPos" />
+  <Prop Name="Path" Value="C:\__Work\cs\Robin\Master\bin\Debug\scripts" />
+</AppConfig>
