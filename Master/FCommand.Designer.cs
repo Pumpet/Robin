@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -41,6 +42,8 @@
             this.rbForm = new System.Windows.Forms.RadioButton();
             this.rbMet = new System.Windows.Forms.RadioButton();
             this.appcode = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.marker = new Ctrls.SelectBox(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,17 +54,19 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.marker, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 7);
-            this.tableLayoutPanel1.Controls.Add(this.lbmet, 0, 8);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 6);
+            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 8);
+            this.tableLayoutPanel1.Controls.Add(this.lbmet, 0, 9);
             this.tableLayoutPanel1.Controls.Add(this.label8, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.code, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.nmodul, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.nspace, 1, 6);
-            this.tableLayoutPanel1.Controls.Add(this.nclass, 1, 7);
-            this.tableLayoutPanel1.Controls.Add(this.nmet, 1, 8);
+            this.tableLayoutPanel1.Controls.Add(this.nmodul, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.nspace, 1, 7);
+            this.tableLayoutPanel1.Controls.Add(this.nclass, 1, 8);
+            this.tableLayoutPanel1.Controls.Add(this.nmet, 1, 9);
             this.tableLayoutPanel1.Controls.Add(this.comment, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
@@ -71,7 +76,8 @@
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 25);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 10;
+            this.tableLayoutPanel1.RowCount = 11;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
@@ -82,7 +88,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(314, 239);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(314, 264);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // label3
@@ -101,7 +107,7 @@
             this.label4.AutoSize = true;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label4.Location = new System.Drawing.Point(3, 116);
+            this.label4.Location = new System.Drawing.Point(3, 143);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(94, 27);
             this.label4.TabIndex = 3;
@@ -113,7 +119,7 @@
             this.label5.AutoSize = true;
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label5.Location = new System.Drawing.Point(3, 143);
+            this.label5.Location = new System.Drawing.Point(3, 170);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(94, 27);
             this.label5.TabIndex = 4;
@@ -125,7 +131,7 @@
             this.label6.AutoSize = true;
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label6.Location = new System.Drawing.Point(3, 170);
+            this.label6.Location = new System.Drawing.Point(3, 197);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(94, 27);
             this.label6.TabIndex = 5;
@@ -137,7 +143,7 @@
             this.lbmet.AutoSize = true;
             this.lbmet.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbmet.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lbmet.Location = new System.Drawing.Point(3, 197);
+            this.lbmet.Location = new System.Drawing.Point(3, 224);
             this.lbmet.Name = "lbmet";
             this.lbmet.Size = new System.Drawing.Size(94, 27);
             this.lbmet.TabIndex = 6;
@@ -168,7 +174,7 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.nmodul, 2);
             this.nmodul.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.nmodul.Location = new System.Drawing.Point(103, 119);
+            this.nmodul.Location = new System.Drawing.Point(103, 146);
             this.nmodul.Name = "nmodul";
             this.nmodul.Size = new System.Drawing.Size(194, 23);
             this.nmodul.TabIndex = 2;
@@ -177,7 +183,7 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.nspace, 2);
             this.nspace.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.nspace.Location = new System.Drawing.Point(103, 146);
+            this.nspace.Location = new System.Drawing.Point(103, 173);
             this.nspace.Name = "nspace";
             this.nspace.Size = new System.Drawing.Size(194, 23);
             this.nspace.TabIndex = 3;
@@ -186,7 +192,7 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.nclass, 2);
             this.nclass.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.nclass.Location = new System.Drawing.Point(103, 173);
+            this.nclass.Location = new System.Drawing.Point(103, 200);
             this.nclass.Name = "nclass";
             this.nclass.Size = new System.Drawing.Size(194, 23);
             this.nclass.TabIndex = 4;
@@ -195,7 +201,7 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.nmet, 2);
             this.nmet.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.nmet.Location = new System.Drawing.Point(103, 200);
+            this.nmet.Location = new System.Drawing.Point(103, 227);
             this.nmet.Name = "nmet";
             this.nmet.Size = new System.Drawing.Size(194, 23);
             this.nmet.TabIndex = 5;
@@ -234,11 +240,11 @@
             // rbForm
             // 
             this.rbForm.AutoSize = true;
-            this.rbForm.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rbForm.Dock = System.Windows.Forms.DockStyle.Left;
             this.rbForm.Location = new System.Drawing.Point(103, 30);
             this.rbForm.Name = "rbForm";
             this.rbForm.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-            this.rbForm.Size = new System.Drawing.Size(94, 21);
+            this.rbForm.Size = new System.Drawing.Size(68, 21);
             this.rbForm.TabIndex = 10;
             this.rbForm.TabStop = true;
             this.rbForm.Text = "Форма";
@@ -247,11 +253,11 @@
             // rbMet
             // 
             this.rbMet.AutoSize = true;
-            this.rbMet.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rbMet.Dock = System.Windows.Forms.DockStyle.Left;
             this.rbMet.Location = new System.Drawing.Point(203, 30);
             this.rbMet.Name = "rbMet";
             this.rbMet.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
-            this.rbMet.Size = new System.Drawing.Size(94, 21);
+            this.rbMet.Size = new System.Drawing.Size(65, 21);
             this.rbMet.TabIndex = 11;
             this.rbMet.TabStop = true;
             this.rbMet.Text = "Метод";
@@ -261,20 +267,57 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.appcode, 2);
             this.appcode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.appcode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.appcode.FormattingEnabled = true;
             this.appcode.Location = new System.Drawing.Point(103, 3);
             this.appcode.Name = "appcode";
             this.appcode.Size = new System.Drawing.Size(194, 23);
             this.appcode.TabIndex = 12;
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label7.Location = new System.Drawing.Point(3, 108);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(94, 27);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "Маркер";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // marker
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.marker, 2);
+            this.marker.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.marker.DropDownHeight = 1;
+            this.marker.DropDownWidth = 1;
+            this.marker.FormattingEnabled = true;
+            this.marker.IntegralHeight = false;
+            this.marker.KeyMap = "code=marker";
+            this.marker.Location = new System.Drawing.Point(103, 111);
+            this.marker.Name = "marker";
+            this.marker.Nullable = true;
+            this.marker.ResultMap = "marker=code";
+            this.marker.SelectedObject = null;
+            this.marker.SelectedValues = null;
+            this.marker.SelectionForm = null;
+            this.marker.Size = new System.Drawing.Size(194, 23);
+            this.marker.SourceObject = null;
+            this.marker.TabIndex = 14;
+            this.marker.TargetObject = null;
+            this.marker.ExecSelectionForm += new System.EventHandler<Ctrls.ExecSelectionFormEventArgs>(this.marker_ExecSelectionForm);
+            // 
             // FCommand
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 264);
+            this.CheckChanges = true;
+            this.ClientSize = new System.Drawing.Size(314, 289);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FocusedControlName = "code";
-            this.MinimumSize = new System.Drawing.Size(330, 302);
+            this.KeepOpenAfterSave = true;
+            this.MinimumSize = new System.Drawing.Size(330, 328);
             this.Name = "FCommand";
             this.ShowIcon = false;
             this.Text = "Настройка вызова";
@@ -311,5 +354,7 @@
         private System.Windows.Forms.RadioButton rbForm;
         private System.Windows.Forms.RadioButton rbMet;
         private System.Windows.Forms.ComboBox appcode;
+        private System.Windows.Forms.Label label7;
+        private Ctrls.SelectBox marker;
     }
 }

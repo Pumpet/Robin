@@ -12,6 +12,7 @@
             Modal = 4 - модальная форма; 
             Single = 8 - форма может быть запущена 1 раз (для всех форм из меню, заполненного по настройкам); 
             ViewOnlyEdit = 16 - форма-редактор только для просмотра данных; 
+            GetMultiResult = 32 - уточнение для GetResult - это форма-список для выбора нескольких записей.
             </summary>
         </member>
         <member name="T:Manager.Context">
@@ -27,6 +28,9 @@
         <member name="P:Manager.Context.Conn">
             <summary>Объект подключения приложения</summary>
         </member>
+        <member name="P:Manager.Context.LivingForms">
+            <summary>Формы запущенные в данный момент</summary>
+        </member>
         <member name="P:Manager.Context.LastActiveForm">
             <summary>Последняя активная форма приложения</summary>
         </member>
@@ -37,7 +41,7 @@
             <summary>Объект для передачи данных, например возврат результата из формы</summary>
         </member>
         <member name="P:Manager.Context.ImgAsmName">
-            <summary>Сборка с иконками в ресурсах</summary>
+            <summary>Сборка с картинками в ресурсах</summary>
         </member>
         <member name="P:Manager.Context.CommonObjects">
             <summary>Набор общих данных</summary>
@@ -46,6 +50,9 @@
             <summary>Создать объект контекста и запустить приложение</summary>
              <param name="mainForm">Главная форма приложения</param>
              <param name="configPath">[Путь]Файл конфигурации. По умолчанию - имя_приложения.xml</param>
+        </member>
+        <member name="M:Manager.Context.GetAppCaption(System.Boolean)">
+            <summary>Текст для заголовка приложения</summary>
         </member>
         <member name="M:Manager.Context.FillMenu(System.Windows.Forms.ToolStrip)">
             <summary>Заполнить указанный ToolStrip по настройкам меню</summary>
@@ -101,12 +108,17 @@
             <summary>Выбор из списка активных форм</summary>
         </member>
         <member name="M:Manager.Context.ManageForm(System.Windows.Forms.Form,System.Windows.Forms.Keys)">
-            <summary>Обработка событий по управлению формой (в зависимости от сочетания клавиш - вызов главной формы, выбор формы, позиционирование, возврат настроек</summary>
+            <summary>Обработка событий по управлению формой (в зависимости от сочетания клавиш - вызов главной формы, выбор формы, позиционирование, возврат настроек)</summary>
             <param name="form">Форма</param>
             <param name="keys">Сочетание служебных клавиш</param>
         </member>
         <member name="M:Manager.Context.CheckConnection(System.Data.SqlClient.SqlConnection)">
             <summary>Проверка подключения</summary>
+        </member>
+        <member name="M:Manager.Context.SaveLog(System.String,System.String)">
+            <summary>Записать в лог (для dm.tApp.lotgAll = 1)</summary>
+            <param name="messType">Тип сообщения</param>
+            <param name="mess">Сообщение</param>
         </member>
         <member name="M:Manager.Context.GetTable(System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>Выполнить запрос, вернуть таблицу</summary>

@@ -24,6 +24,7 @@ using Manager;
 namespace Master {
     public partial class FSaveScript : Form {
         Context ctx;
+        string firstPath;
         public string ResPath { get; private set; }
         public FSaveScript() {
             InitializeComponent();
@@ -31,9 +32,10 @@ namespace Master {
 
         private void FSaveScript_Shown(object sender, EventArgs e) {
             ctx = Context.Self;
-            app.DataSource = ctx.GetTable("select distinct appcode from dm.tCommand order by 1", null);
+            app.DataSource = ctx.GetTable("select appcode = code from dm.tApp order by 1", null);
             app.DisplayMember = "appcode";
-            folder.Text = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppConfig.Prop("Path"));
+            folder.Text = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppConfig.GetPropValue("Path") ?? "");
+            firstPath = folder.Text;
         }
 
         private void bFolder_Click(object sender, EventArgs e) {
@@ -47,31 +49,41 @@ namespace Master {
                 Loger.SendMess($"Не существует папка {folder.Text}", true);
                 return;
             }
-            if (string.IsNullOrWhiteSpace(app.Text)) {
+
+            var appcode = app.Text;
+            if (string.IsNullOrWhiteSpace(appcode)) {
                 Loger.SendMess($"Не указано приложение", true);
                 return;
             }
-            AppConfig.config.Props[AppConfig.config.Props.FindIndex(x => x.Name == "Path")].Value = folder.Text;
-            AppConfig.Save();
 
-            var rows = ctx.GetTableList("select * from dm.tCommand c where c.appcode = @app order by c.cmdType desc, c.code", null, new Dictionary<string, object>() { ["app"] = app.Text });
+            if (!folder.Text.Equals(firstPath)) {
+                if (!AppConfig.HasProp("Path"))
+                    AppConfig.config.Props.Add(new Prop() { Name = "Path" });
+                AppConfig.GetProp("Path").Value = folder.Text;
+                AppConfig.Save();
+            }
+
+            var rows = ctx.GetTableList("select * from dm.tCommand c where c.appcode = @app order by c.cmdType desc, c.code", null, new Dictionary<string, object>() { ["app"] = appcode });
             var cmds = rows.Select(x => new Command() {
                 Code = (string)x["code"],
                 Appcode = (string)x["appcode"],
                 CmdType = (int)x["cmdType"],
                 Cmd = (string)x["cmd"],
                 CmdTestHead = !x["cmdTestHead"].Equals(DBNull.Value) ? (string)x["cmdTestHead"] : null,
-                Comment = !x["comment"].Equals(DBNull.Value) ? (string)x["comment"] : null
+                Comment = !x["comment"].Equals(DBNull.Value) ? (string)x["comment"] : null,
+                Marker = !x["marker"].Equals(DBNull.Value) ? (string)x["marker"] : null
             }).AsEnumerable();
 
+            var menus = ctx.GetTableList("select m.*, p.code as parent from dm.tMenu m left join dm.tMenu p on p.id = m.parentId where m.appcode = @app order by m.id", null, new Dictionary<string, object>() { ["app"] = appcode });
+
             var comment = $"{ctx.Conn.DataSource}.{ctx.Conn.Database} {this.comment.Text}";
-            var file = $"{app.Text} {DateTime.Now.ToString("yyyyMMdd_HHmmss")} {comment}".Trim();
+            var file = $"{appcode} {DateTime.Now.ToString("yyyyMMdd_HHmmss")} {comment}".Trim();
             file = Regex.Replace(file, @"\s+", "_"); ;
             Path.GetInvalidFileNameChars().ToList().ForEach(x => file = file.Replace(x, '_'));
 
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folder.Text, $"{file}.sql");
 
-            if (Command.SaveScript(cmds, path, comment)) {
+            if (Command.SaveScript(appcode, cmds, menus, path, comment)) {
                 ResPath = path;
                 DialogResult = DialogResult.OK;
             }

@@ -22,16 +22,15 @@ namespace Common {
     /// </summary>
     public class Loger {
 
+        public static Action<string, string> Writer { get; set; } 
+
         /// <summary>Сформировать сообщение об ошибке
         /// </summary>
         /// <param name="e">исключение</param>
         /// <param name="mess">сообщение, предваряющее сообщение об исключении</param>
-        public static void SendMess(Exception e, string mess = "") {
-            // вариант со стандартным окном
-            //mess = (!string.IsNullOrEmpty(mess) ? mess + "\n" : "") + (Debugger.IsAttached ? e.ToString() : e.Message);
-            //SendMess(mess, true);
-
+        public static void SendMess(Exception e, string mess = "", bool saveLog = true) {
             mess = (!string.IsNullOrWhiteSpace(mess) ? mess + "\n" : "") + ExceptionMessage(e).Trim();
+            if (saveLog) SaveMess("ERROR", mess);
             FError f = new FError(mess, e.ToString());
             f.ShowDialog();
         }
@@ -40,7 +39,8 @@ namespace Common {
         /// </summary>
         /// <param name="mess">сообщение</param>
         /// <param name="err">признак ошибки</param>
-        public static void SendMess(string mess, bool err = false) {
+        public static void SendMess(string mess, bool err = false, bool saveLog = false) {
+            if (saveLog) SaveMess(err ? "ERROR" : "INFO", mess);
             MessageBox.Show(mess, "", MessageBoxButtons.OK, err ? MessageBoxIcon.Error : MessageBoxIcon.Information);
         }
 
@@ -73,6 +73,20 @@ namespace Common {
             } else
                 mess = e.Message;
             return mess;
+        }
+
+        public static void SaveMess(string messType, string mess, Action<string, string> messWriter = null) {
+            if (messWriter != null)
+                messWriter.Invoke(messType, mess);
+            else if (Writer != null)
+                Writer.Invoke(messType, mess);
+            else
+                defaultWriter(messType, mess);
+        }
+
+        private static void defaultWriter(string messType, string mess) {
+            SendMess("Не задан метод записи в журнал!", true);
+            return;
         }
     }
 }

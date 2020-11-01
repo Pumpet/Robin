@@ -86,19 +86,19 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(304, 61);
+            this.ClientSize = new System.Drawing.Size(304, 60);
             this.Controls.Add(this.chCs);
             this.Controls.Add(this.bExec);
             this.Controls.Add(this.chEq);
             this.Controls.Add(this.tbStr);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(800, 95);
+            this.MaximumSize = new System.Drawing.Size(800, 98);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(320, 95);
+            this.MinimumSize = new System.Drawing.Size(320, 98);
             this.Name = "FormSearch";
+            this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Найти";

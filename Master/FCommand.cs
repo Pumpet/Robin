@@ -14,6 +14,7 @@
 using Ctrls;
 using Manager;
 using System;
+using System.Windows.Forms;
 
 namespace Master {
     public partial class FCommand : FormEdit {
@@ -26,10 +27,8 @@ namespace Master {
             SelectSql = Command.SelectSql;
             InsertSql = Command.InsertSql;
             UpdateSql = Command.UpdateSql;
-            appcode.DataSource = Ctx.GetTable("select distinct appcode from dm.tCommand union select appcode = '' order by 1", null);
-            appcode.DisplayMember = "appcode";
+            GetDataToCombo(appcode, "appcode", "select appcode = code from dm.tApp union select appcode = '' order by 1", null);
         }
-
 
         private void FCommand_AfterBinding(object sender, EventArgs e) {
             rbForm.Checked = (int)SourceRow["cmdType"] == 1;
@@ -60,7 +59,16 @@ namespace Master {
 
             if (!formModes.HasFlag(FormModes.NewRecEdit)) { 
                 appcode.Enabled = false;
-                code.ReadOnly = true;
+                //code.ReadOnly = true;
+            }
+
+            if (CheckChanges) {
+                ((RadioButton)rbMet).CheckedChanged += (o, ea) => Changed = true;
+                ((RadioButton)rbForm).CheckedChanged += (o, ea) => Changed = true;
+                nmodul.TextChanged += (o, ea) => Changed = true;
+                nmet.TextChanged += (o, ea) => Changed = true;
+                nclass.TextChanged += (o, ea) => Changed = true;
+                nspace.TextChanged += (o, ea) => Changed = true;
             }
         }
 
@@ -82,6 +90,10 @@ namespace Master {
         private void FCommand_SetData(object sender, ProcessDataEventArgs e) {
             e.Pars["cmdType"] = rbForm.Checked ? 1 : 2;
             e.Pars["cmd"] = $"{nmodul.Text.Trim()};{nspace.Text.Trim()}.{nclass.Text.Trim()}{(rbMet.Checked ? $";{nmet.Text.Trim()}" : "")}";
+        }
+
+        private void marker_ExecSelectionForm(object sender, ExecSelectionFormEventArgs e) {
+            e.Form = new FMarkerList();
         }
     }
 }

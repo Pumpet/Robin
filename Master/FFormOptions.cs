@@ -30,6 +30,14 @@ namespace Master {
         private void DoCommands(string cmd) {
             if (cmd == "del")
                 ExecCommand("delete from dm.tFormOptions where appcode = @appcode and code = @code", null, dataList1, null, null, "Удалить отмеченные записи ?", true);
+
+            // пример работы через временную таблицу
+
+            //if (cmd == "del" && ExecCommand("delete pTemp where spid = @@spid; select @@spid", null, warning: "Удалить отмеченные записи ?") != null) {
+            //    ExecCommand("insert pTemp (spid, appcode, code) values(@@spid, @appcode, @code); select @@spid", null, dataList1, forSelectedRows: true, refreshGrid: false);
+            //    ExecCommand("delete t from dm.tFormOptions t join pTemp p on p.spid = @@spid and t.appcode = p.appcode and t.code = p.code; select @@spid", null, dataList1);
+            //}
+
         }
 
         private void dataList1_WhatsUp(object sender, WhatsUpEventArgs e) {

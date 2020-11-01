@@ -16,9 +16,11 @@
 
 using Common;
 using Ctrls;
+using FastColoredTextBoxNS;
 using Manager;
 using System;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -55,8 +57,7 @@ namespace Master {
             SelectSql = Command.SelectSql;
             InsertSql = Command.InsertSql;
             UpdateSql = Command.UpdateSql;
-            appcode.DataSource = Ctx.GetTable("select distinct appcode from dm.tCommand union select appcode = '' order by 1", null);
-            appcode.DisplayMember = "appcode";
+            GetDataToCombo(appcode, "appcode", "select appcode = code from dm.tApp union select appcode = '' order by 1", null);
 
             pnlTools.Items[
                 pnlTools.Items.Add(new ToolStripButton() { Image = Ctx.GetImage(Ctx.ImgAsmName, "email"), ToolTipText = "Добавить declare @параметр" })
@@ -71,12 +72,6 @@ namespace Master {
                 if (ea.KeyCode == Keys.E && ModifierKeys == Keys.Control) { ExecCmdAsync("exec"); ea.Handled = true; }
                 if (ea.KeyCode == Keys.B && ModifierKeys == Keys.Control) { ExecCmdAsync("stop"); ea.Handled = true; }
             };
-
-            cmd.TextChanged += (o, ea) => Changed = true;
-            cmdTestHead.TextChanged += (o, ea) => Changed = true;
-            code.TextChanged += (o, ea) => Changed = true;
-            appcode.TextChanged += (o, ea) => Changed = true;
-            comment.TextChanged += (o, ea) => Changed = true;
         }
 
 
@@ -100,7 +95,7 @@ namespace Master {
         private void FCommandSql_AfterBinding(object sender, EventArgs e) {
             if (!formModes.HasFlag(FormModes.NewRecEdit)) {
                 appcode.Enabled = false;
-                code.ReadOnly = true;
+                //code.ReadOnly = true;
             }
             FillDefault();
         }
@@ -116,15 +111,14 @@ namespace Master {
         }
 
         private void FCommandSql_ControlTrigger(object sender, ControlTriggerEventArgs e) {
-            if (e.EventType == CtrlEventType.Leave && (e.Ctrl == cmdTestHead || e.Ctrl == cmd))
-                FillDefault();
-
+            //if (e.EventType == CtrlEventType.Leave && (e.Ctrl == cmdTestHead || e.Ctrl == cmd))
+            //    FillDefault();
         }
 
         void FillDefault() {
-            if (string.IsNullOrWhiteSpace(cmdTestHead.Text))
+            if (IsNewRec && string.IsNullOrWhiteSpace(cmdTestHead.Text))
                 cmdTestHead.Text = "-- Объявления параметров - только для тестирования команды";
-            if (string.IsNullOrWhiteSpace(cmd.Text))
+            if (IsNewRec && string.IsNullOrWhiteSpace(cmd.Text))
                 cmd.Text = "-- Текст команды для вызова из приложения";
         }
 
@@ -133,7 +127,7 @@ namespace Master {
         private void ExecCmdAsync(string cm) {
             if (cm == "exec") {
                 dataList1.Clear(true);
-                Ctx.GcCollect();
+                Context.GcCollect();
 
                 pnlTools.Items["exec"].Enabled = false;
                 pnlTools.Items["stop"].Enabled = true;
@@ -208,8 +202,32 @@ namespace Master {
             info3.Text = "";
         }
 
+
         #endregion
 
+        private void FCommandSql_NewRecInit(object sender, EventArgs e) {
+            DataLists.Add(dataList1);
+            dataList1.GetData += DataList_GetData;
+            dataList1.Visible = dataList1.Enabled = true;
+        }
 
+        // обработчики нужны, т.к. FastColoredTextBox почему то не поддерживает Ctrl+Tab | Ctrl+Shift+Tab
+        void cmdTestHead_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Tab && e.Modifiers == Keys.Control)
+                cmd.Focus();
+            if (e.KeyCode == Keys.Tab && e.Modifiers == (Keys.Control | Keys.Shift))
+                comment.Focus();
+        }
+
+        void cmd_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Tab && e.Modifiers == Keys.Control)
+                dataList1.Focus();
+            if (e.KeyCode == Keys.Tab && e.Modifiers == (Keys.Control | Keys.Shift))
+                cmdTestHead.Focus();
+        }
+
+        private void marker_ExecSelectionForm(object sender, ExecSelectionFormEventArgs e) {
+            e.Form = new FMarkerList();
+        }
     }
 }

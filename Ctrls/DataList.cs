@@ -48,6 +48,7 @@ namespace Ctrls {
     SelectedCellFocusedBackColor - цвет текущей строки (с фокусом)
     SelectedCellNotFocusedBackColor - цвет текущей строки (без фокуса)
     ParentGrid - родительский грид
+    ParamPanel - панель с полями параметров
     ExtParamsMap - соответствие имени параметра запроса и имени параметра снаружи (например имени поля строки родительского грида): "имя_параметра_запроса=имя_внешнего_параметра;..."
         если пусто - используются все внешние параметры
     AutoColumns - управляет установками скрытого поля DataGridView - AutoGenerateColumns
@@ -59,23 +60,43 @@ namespace Ctrls {
 
     События:
     QueryParamsCheck - момент после установки параметров (QueryParamsSet) и до выполнения запроса (GetData)
-    GetData - момент запроса данных из источника - в обработчике делаем запрос, которому передаем словарь параметров e.queryParams
-        результат запроса должен быть присвоен e.result
-        для запрета стандартной обработки в FormList необходимо установить e.handled = true
-    SendInfo - момент изменения статусных данных грида - выдает: e.rows - кол-во строк, e.selected - кол-во выделенных строк, e.info - какая-то информация (пока не используется)
+    GetData - момент запроса данных из источника - в обработчике делаем запрос, которому передаем словарь параметров e.Pars
+        результат запроса должен быть присвоен e.Result
+        для запрета стандартной обработки в FormList необходимо установить e.Handled = true
+    SendInfo - изменения статусных данных грида - получает: кол-во строк, кол-во выделенных и отмеченных строк, прочая информация
         может быть использовано для выдачи данных например в StatusBar
-        для запрета стандартной обработки в FormList необходимо установить e.handled = true
+        для запрета стандартной обработки в FormList необходимо установить e.Handled = true
+    WhatsUp - изменения в гриде - получает: ключи отмеченных строк, ключ текущей строки, объект текущей строки и имя источника события (имя метода)
+        может быть например для какой-то логики в зависимости данных от текущей строки (например доступность действий)
 
-    Методы:
-    LoadData - Загрузка данных в грид и установка фокуса на указанной/текущей строке (F5)
-    GetKey - Получить ключ из текущей строки (объект - словарь <имя поля, значение (object)>)
-    Search - Вызов формы поиска (Ctrl+F и далее комбинации с F3 для перемещения по результатам поиска)
-    Filter - Вызов формы фильтра (Shift+F)
-    SelectColumns - Вызов формы выбора столбцов (F11)
-    ExecExcel - Выдача в эксель (F12)
-    .... - см.по тексту
-
-    Другие горячие клавиши:
+    Важные методы:
+    LoadData	        - Загрузка данных в список
+                            Заполняет параметры из внешних параметров (если переданы)
+                            Вызывает OnGetData для установки параметров и получения нового набора данных
+                            Форматирует полученные данные
+                            Восстанавливает сортировку, фильтры, позицию
+                            Загружает данные в дочерние списки
+                            Вызывает OnWhatsUp
+    Clear	            - Сбрасывает источники данных - Обнуляет/уничтожает BindingSource, обнуляет DataSource
+    OnGetData	        - Установка параметров и получение нового набора данных -	Запуск событий QueryParamsSet, QueryParamsCheck, GetData
+    OnWhatsUp	        - Запуск событий WhatsUp и SendInfo
+    GetKey	            - Получить ключ из указанной или текущей строки - Вернет словарь строка-объект как object
+    GetRowObject	    - Получить объект из указанной или текущий строки - Вернет object = DataRow или DataBoundItem, если это не DataRow
+    GetCheckedRowsIdx	- Получить список индексов отмеченных строк
+    GetCheckedRowsKeys	- Получить список ключей отмеченных строк
+    SetCheckedRows	    - Отметить строки, соответствующие ключам
+    SelectColumns	    - Вызов формы выбора столбцов
+    ExecExcel	        - Выдача содержимого грида в эксель
+    Search	            - Вызов формы поиска
+    Filter	            - Вызов формы фильтра
+    ClearFilter	        - Сбросить все фильтры
+    
+    Горячие клавиши:
+    F5 - загрузка данных (c Shift - сброс фильтров)
+    Ctrl+F - поиск и далее комбинации с F3 для перемещения по результатам поиска
+    Shift+F - фильтр
+    F11 - выбор столбцов
+    F12 - выдача в Excel
     Alt+S - сортировка столбца
     Ctrl+K - получить имя/значение ключевых полей в буфер
     */
@@ -105,7 +126,7 @@ namespace Ctrls {
         List<Filter> filters = new List<Filter>(); // установленные фильтры
         List<Filter> filters_copy = new List<Filter>(); // копия фильтров перед обновлением
 
-        string checkColumnName = "#check"; // имя столбца с checkBox
+        readonly string checkColumnName = "#check"; // имя контрольного столбца с checkBox
         List<object> prevCheckedKeys = null; // ключи отмеченных строк, чтобы проставить после сортировки
         int checkedRowsCount = 0;
 
@@ -126,7 +147,6 @@ namespace Ctrls {
 
         [Category("Robin options"), DefaultValue(false), Description("показывать столбец с checkbox - возможность отмечать строки")]
         public bool ShowCheckBoxes { get; set; }
-
         [Category("Robin options"), DefaultValue(""), Description("имена ключевых полей через ;")]
         public string KeyNames { get; set; }
         [Category("Robin options"), DefaultValue(""), Description("текст запроса"),
@@ -354,14 +374,7 @@ namespace Ctrls {
         protected override void OnCreateControl() {
             base.OnCreateControl();
             if (!DesignMode && ShowCheckBoxes) {
-                var col = new DataGridViewCheckBoxColumn(false);
-                col.ReadOnly = true;
-                col.Width = 20;
-                col.Resizable = DataGridViewTriState.False;
-                col.Name = checkColumnName;
-                col.HeaderText = "";
-                col.ToolTipText = "Пробел - отметить/снять отметку для текущей строки\r\nCtrl+Пробел - отметить/снять отметку для выделенных строк";
-                Columns.Insert(0, col);
+                AddCheckColumn();
             }
         }
 
@@ -370,6 +383,18 @@ namespace Ctrls {
         //____________ Custom _________________________________________________________________________________________________________________________________________________________
 
         #region Custom
+
+        /// <summary>Добавить столбик с галками</summary>
+        public void AddCheckColumn(int pos = 0, string name = null) {
+            var col = new DataGridViewCheckBoxColumn(false);
+            col.ReadOnly = true;
+            col.Width = 20;
+            col.Resizable = DataGridViewTriState.False;
+            col.Name = name ?? checkColumnName;
+            col.HeaderText = "";
+            col.ToolTipText = name ?? "Пробел - отметить/снять отметку для текущей строки\r\nCtrl+Пробел - отметить/снять отметку для выделенных строк";
+            Columns.Insert(pos, col);
+        }
 
         /// <summary>Подсветить строку (по умолчанию - текущую) и другие с выделенными ячейками </summary>
         public virtual void RowsHighlight(int row = -1) {
@@ -453,6 +478,10 @@ namespace Ctrls {
             ClearFilter();
 
             ClearSelectedRowsHighlight();
+            SetCheckedRows(GetCheckedRowsKeys(), false);
+
+            if (ParentGrid == null) // для сброса дочерних перед обновлением главного, чтобы в них не "висели" прошлые записи 
+                LoadChildren(null, new Dictionary<string, object>());
 
             OnGetData();
             FormatColumns();
@@ -460,8 +489,8 @@ namespace Ctrls {
             foreach (var item in filters_copy)
                 SetFilter(item);
 
-            if (sortedColumn != null)
-                Sort(sortedColumn, sortDirection);
+            if (sortedColumn != null && Columns.Contains(sortedColumn.Name))
+                Sort(Columns[sortedColumn.Name], sortDirection);
 
             if (Rows.Count > 0) {
                 OnResize(null);
@@ -521,7 +550,7 @@ namespace Ctrls {
             });
         }
 
-        /// <summary>Сбросить источники и событие получения данных</summary>
+        /// <summary>Сбросить источники</summary>
         public void Clear(bool full = false) {
             if (bs != null && full) {
                 bs.DataSource = null;
@@ -644,7 +673,7 @@ namespace Ctrls {
         }
 
         // строка по ключу
-        int GetKeyRow(object key) {
+        public int GetKeyRow(object key) {
             int row = -1;
             object li = null;
             if (key is Dictionary<string, object>) {
@@ -698,13 +727,13 @@ namespace Ctrls {
         }
 
         /// <summary>Отметить строки, соответствующие ключам</summary>
-        public void SetCheckedRows(List<object> keys) {
+        public void SetCheckedRows(List<object> keys, bool check = true) {
             if (!ShowCheckBoxes || !Columns.Contains(checkColumnName) || keys == null)
                 return;
             foreach (var key in keys) {
                 var row = GetKeyRow(key);
                 if (row >= 0)
-                    this[checkColumnName, row].Value = true;
+                    this[checkColumnName, row].Value = check;
             }
             checkedRowsCount = Rows.OfType<DataGridViewRow>().Where(x => (x.Cells[checkColumnName].Value ?? false).Equals(true)).Count();
         }
@@ -722,6 +751,7 @@ namespace Ctrls {
                 fs.Top = PointToScreen(Point.Empty).Y + ColumnHeadersHeight * 2;
                 fs.Left = PointToScreen(Point.Empty).X + RowHeadersWidth * 2;
                 fs.ShowDialog(this.FindForm());
+                ForceLoadChilds();
             }
         }
 
@@ -745,8 +775,10 @@ namespace Ctrls {
             if (MoveCell(fwd, incol, false, fn)) {
                 RowsHighlight();
                 return true;
-            } else
+            } else {
+                Loger.SendMess($"Значение \"{search.Str}\" не найдено");
                 return false;
+            }
         }
 
         // перемещение в определенную ячейку из отобранных делегатом

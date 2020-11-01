@@ -25,7 +25,7 @@ namespace Ctrls {
 
     /* Форма - базовая для форм редактирования данных - наследник FormBase
     Особенности:
-    Стандартный способ запуска - через FBase.ExecFormEdit.
+    Стандартный способ запуска - через FormBase.ExecFormEdit.
     При вызове получает параметры для запроса (как правило это DataRow под текущей строкой грида, который указываем при вызове через ExecFormEdit).
     При инициализации:
         - в случае новой записи: скрывает контролы для детальных данных (по умолчанию только гриды DataList), вызывается событие NewRecInit
@@ -43,7 +43,7 @@ namespace Ctrls {
     Возможна реализация логики взаимодействия элементов формы через событие ControlTrigger - общее событие для определенных событий контролов формы: 
         - по умолчанию обрабатывются изменение состояния (Cheked, Selected, ...), входа (Enter), выхода (Leave)
         - подписку можно переопределить через SubscribeControlTrigger
-    Проверка и сохранение данных - при нажатии на кнопку "Сохранить" (Ctrl+S) - вызывается метод SaveData - порядок действий:
+    Проверка и сохранение данных - при нажатии на кнопку "Сохранить" (Ctrl+Enter) или Ctrl+S - вызывается метод SaveData - порядок действий:
         1. Уточнение параметров для команды сохранения данных - через обработку событие SaveParamsCheck. Здесь же можно сделать проверку данных и заполнить словарь ошибок в ParamsCheckEventArgs.CheckResult
             (Параметры для команды сохранения - это поля источника данных формы)
         2. Проверка данных через специально для этого нарисованный CheckSql или команду CheckCmdCode, возвращающие таблицу с полями "код" и "значение" для заполнения словаря ошибок
@@ -52,27 +52,16 @@ namespace Ctrls {
         5. Полученный в ProcessDataEventArgs.Result объект заносится в Context.TransferObject. Предполагается, что это должен быть словарь с ключевыми полями обработанной записи.
             - если объект задан и вызов формы осуществлялся через ExecFormEdit с указанием грида - будет попытка найти обработанную запись по ключу и установить на ней фокус.
             - если объект не задан - будет сообщение об ошибке и возврат к работе с формой
-        6. При отсутствии ошибок форма будет закрыта с DialogResult.OK
-    Отмена изменений - при нажатии на кнопку "Отменить" (Alt+F4) форма будет закрыта с DialogResult.Cancel
+        6. При отсутствии ошибок форма будет закрыта с DialogResult.OK (кроме варианта вызова сохранения по Ctrl+S)
+    Отмена изменений 
+        - при нажатии на кнопку "Отменить" (Alt+F4) форма будет закрыта с DialogResult.Cancel
+        - возможен вариант контроля случайного закрытия формы, для чего необходимо установить CheckChanges = true
     */
 
+    /// <summary>Форма для редактора записи и размещения связанных списков</summary>
     public partial class FormEdit : FormBase {
 
-        ErrorProvider error;
-        bool changed;
-        protected string tmpText;
-
-        // устанвливается в true после сохранения - для обновления списков при выходе
-        [Browsable(false)]
-        public bool WasSaved { get; set; } = false; 
-
-        // устанавливается в false после сохранения, в true - при необходимости в наследниках, при выходе проверяется на true
-        [Browsable(false)]
-        public bool Changed {
-            get { return changed; }
-            set { changed = value; Text = value ? tmpText + "*" : tmpText; }
-        } 
-
+        /// <summary>Данные для биндинга - задает соответствие поля контрола и поля источника</summary>
         protected class DataMapItem {
             public string field;
             public Control control;
@@ -93,7 +82,32 @@ namespace Ctrls {
             }
         }
 
-        protected List<DataList> DataLists { get; private set; } = new List<DataList>();
+        ErrorProvider error;
+        bool changed;
+        string tmpText;
+
+        // устанвливается в true после сохранения - для обновления списков при выходе
+        [Browsable(false)]
+        public bool WasSaved { get; set; } = false;
+
+        // устанавливается в false после сохранения 
+        // может быть установлен в true при необходимости - см.пример формы редактированя команды в Master
+        // перед закрытием формы проверяется на true
+        [Browsable(false)]
+        public bool Changed {
+            get { return changed; }
+            set {
+                changed = value;
+                if (string.IsNullOrEmpty(tmpText))
+                    tmpText = Text;
+                if (value) {
+                    Text = tmpText + "*";
+                } else 
+                    Text = tmpText;
+            }
+        } 
+        
+        protected List<DataList> DataLists { get; set; } = new List<DataList>();
         protected BindingSource Source { get; private set; } = new BindingSource();
 
         public object SourceObject {
@@ -162,6 +176,12 @@ namespace Ctrls {
         [Category("Robin options"), DefaultValue(""), Description("код команды для проверки")]
         public string CheckCmdCode { get; set; }
 
+        [Category("Robin options"), DefaultValue(false), Description("проверять при закрытии на наличие изменений")]
+        public bool CheckChanges { get; set; }
+
+        [Category("Robin options"), DefaultValue(false), Description("оставить открытым после сохранения в режиме изменения")]
+        public bool KeepOpenAfterSave { get; set; }
+
         #endregion
 
         public FormEdit() {
@@ -179,7 +199,7 @@ namespace Ctrls {
             error.BlinkStyle = ErrorBlinkStyle.NeverBlink;
             IsNewRec = formModes.HasFlag(FormModes.NewRecEdit);
             IsViewOnly = formModes.HasFlag(FormModes.ViewOnlyEdit);
-            tmpText = Text;
+            KeepOpenAfterSave = KeepOpenAfterSave && !IsNewRec && !IsViewOnly;
         }
 
         protected override void OnLoad(EventArgs e) {
@@ -189,16 +209,21 @@ namespace Ctrls {
         }
 
         void FormEdit_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.S && e.Modifiers == Keys.Control)
-                SaveData();
+            if (!IsViewOnly && e.KeyCode == Keys.S && e.Modifiers == Keys.Control)
+                PerformSave(false);
             if (e.KeyCode == Keys.Enter && e.Modifiers == Keys.Control)
-                bSaveClose.PerformClick();
+                PerformSave(true);
             if (e.KeyCode == Keys.F4 && e.Modifiers == Keys.Alt)
                 bUndo.PerformClick();
         }
 
         void bSaveClose_Click(object sender, EventArgs e) {
-            if (SaveData()) {
+            PerformSave(!KeepOpenAfterSave);
+        }
+
+        void PerformSave(bool close) {
+            var res = SaveData();
+            if (res && close) {
                 if (Modal)
                     DialogResult = DialogResult.OK;
                 else
@@ -210,8 +235,9 @@ namespace Ctrls {
             base.OnFormClosing(e);
             if (e.Cancel)
                 return;
-            if (Changed && MessageBox.Show("Сохранить изменения?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) {
-                if (!SaveData()) {
+            if (!IsViewOnly && Changed) {
+                var quest = MessageBox.Show("Сохранить изменения?", "", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if ((quest == DialogResult.Yes && !SaveData()) || quest == DialogResult.Cancel) {
                     e.Cancel = true;
                     return;
                 }
@@ -228,8 +254,13 @@ namespace Ctrls {
 
         // Инициализация формы редактора
         void InitFormEdit() {
-            if (IsNewRec)
+
+            bSaveClose.Text = KeepOpenAfterSave ? "Сохранить (Ctrl+S)" : "Сохранить и закрыть (Ctrl+Enter)";
+            bSaveClose.ToolTipText = bSaveClose.Text;
+
+            if (IsNewRec) {
                 Text += " - Добавить";
+            }
 
             if (IsNewRec) {
                 foreach (var g in this.GetControls<DataList>())
@@ -312,6 +343,7 @@ namespace Ctrls {
                 // биндинг
                 SetBindings();
                 AfterBinding?.Invoke(this, new EventArgs());
+                //Source.ResetBindings(false);
 
                 // детальные данные
                 if (!IsNewRec) {
@@ -343,6 +375,14 @@ namespace Ctrls {
         void SetBindings() {
             foreach (var map in DataMap) {
                 map.control.DataBindings.Add(map.propName, Source, map.field, true, DataSourceUpdateMode.OnPropertyChanged);
+                if (!IsViewOnly && CheckChanges) {
+                    //if (map.control is TextBox || map.control is FastColoredTextBoxNS.FastColoredTextBox)
+                    map.control.TextChanged += (o, ea) => Changed = true;
+                    if (map.control is CheckBox) ((CheckBox)map.control).CheckedChanged += (o, ea) => Changed = true;
+                    if (map.control is RadioButton) ((RadioButton)map.control).CheckedChanged += (o, ea) => Changed = true;
+                    if (map.control is ComboBox) ((ComboBox)map.control).SelectedIndexChanged += (o, ea) => Changed = true;
+                    if (map.control is SelectBox) ((SelectBox)map.control).AfterSetResult += (o, ea) => Changed = true;
+                }
             }
         }
 
@@ -353,6 +393,11 @@ namespace Ctrls {
         /// <summary>Процесс сохранения данных из редактора</summary>
         protected bool SaveData() {
             error.Clear();
+
+            // принудительно заносим из контролов в объект-источник
+            foreach (var b in Source.CurrencyManager.Bindings)
+                (b as Binding).WriteValue();
+
             var eaSaveParams = new ParamsCheckEventArgs { Pars = CtrlsProc.PrepareParams(SourceObject) };
 
             SaveParamsCheck?.Invoke(this, eaSaveParams);
@@ -391,6 +436,7 @@ namespace Ctrls {
             if (ok) {
                 Changed = false;
                 WasSaved = true;
+                Ctx.SaveLog("SAVE_FORM", $"Form {Name} ({Text}) was saved");
             }
             return ok;
         }

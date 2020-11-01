@@ -89,7 +89,11 @@
             <param name="addNulls">Если true и нет исходного ключа - будет сформирован ключ со значением null</param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Ctrls.CtrlsProc.SetValues(System.Object,System.Collections.Generic.Dictionary{System.String,System.Object})" -->
+        <member name="M:Ctrls.CtrlsProc.SetValues(System.Object,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>Установка значений словаря в поля объекта (строки, словаря)</summary>
+            <param name="targetObject">целевой объект (строка, словарь, контейнер контролов)</param>
+            <param name="pars">словарь значений (ключи соответствуют именам полей объекта)</param>
+        </member>
         <member name="M:Ctrls.CtrlsProc.GetControlValue(System.Windows.Forms.Control)">
             <summary>Значение контрола для дальнейшего использования (например в параметрах)</summary>
         </member>
@@ -101,6 +105,9 @@
         </member>
         <member name="P:Ctrls.DataList.QueryParamsSet">
             <summary>подготовка параметров запроса</summary>
+        </member>
+        <member name="M:Ctrls.DataList.AddCheckColumn(System.Int32,System.String)">
+            <summary>Добавить столбик с галками</summary>
         </member>
         <member name="M:Ctrls.DataList.RowsHighlight(System.Int32)">
             <summary>Подсветить строку (по умолчанию - текущую) и другие с выделенными ячейками </summary>
@@ -121,7 +128,7 @@
             <summary>Реакция на изменение содержимого, позиции, порядка и т.д.</summary>
         </member>
         <member name="M:Ctrls.DataList.Clear(System.Boolean)">
-            <summary>Сбросить источники и событие получения данных</summary>
+            <summary>Сбросить источники</summary>
         </member>
         <member name="M:Ctrls.DataList.GetKey(System.Int32,System.String)">
             <summary>Получить ключ из строки</summary>
@@ -135,7 +142,7 @@
         <member name="M:Ctrls.DataList.GetCheckedRowsKeys">
             <summary>Ключи отмеченных строк</summary>
         </member>
-        <member name="M:Ctrls.DataList.SetCheckedRows(System.Collections.Generic.List{System.Object})">
+        <member name="M:Ctrls.DataList.SetCheckedRows(System.Collections.Generic.List{System.Object},System.Boolean)">
             <summary>Отметить строки, соответствующие ключам</summary>
         </member>
         <member name="M:Ctrls.DataList.Search">
@@ -277,10 +284,7 @@
             <returns>true если проходит через фильтр</returns>
         </member>
         <member name="T:Ctrls.FormBase">
-            <summary>
-            Базовая форма для списка и редактора.
-            Реализует IDataForm, который позволяет взаимодействовать с классом контекста приложения (Manager.Context) и сохранять текущие значения полей-параметров запросов.
-            </summary>
+            <summary>Базовая форма для списка и редактора</summary>
         </member>
         <member name="T:Ctrls.FormBase.CtrlEventType">
             <summary>тип события контрола - выход, вход, изменение состояния</summary>
@@ -316,7 +320,7 @@
             <param name="ctrl">Подписываемый контрол</param>
         </member>
         <member name="M:Ctrls.FormBase.ExecFormEdit(System.Windows.Forms.Form,System.String,Manager.FormModes,Ctrls.DataList,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.String,Manager.FormModes)">
-            <summary>Запуск формы редактора</summary>
+            <summary>Запуск формы редактора и обработка возврата</summary>  
             <param name="form">Форма</param>
             <param name="formCode">Код формы из настроек</param> 
             <param name="viewMode">Режим формы для обработки данных: NewRec для новой записи, ReadOnly только для просмотра, Default для редактирования записи</param>
@@ -327,27 +331,38 @@
             <param name="formModes">Другие необходимые режимы в дополнение к viewMode, по умолчанию - Modal</param>
             <returns>True только в случае положительного результата (OK) для модальной формы</returns>
         </member>
-        <member name="M:Ctrls.FormBase.ExecFormSelect(System.Windows.Forms.Form,System.String,System.Object,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Action{System.Object})">
-            <summary>Запуск формы выбора из списка</summary>
+        <member name="M:Ctrls.FormBase.ExecFormSelect(System.Windows.Forms.Form,System.String,System.Object,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Action{System.Object},System.Boolean)">
+            <summary>Запуск формы выбора из списка и обработка возврата</summary>
             <param name="form">Форма</param>
             <param name="formCode">Код формы из настроек</param>
             <param name="sourceObject">Объект-источник параметров вызова формы (ключей и фильтра)</param>
-            <param name="keyMap">Строка соответствия имен полей входящих в передаваемый ключ: "формируемый1=полученный1;...". Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>
-            <param name="filterMap">Строка соответствия имен полей входящих в передаваемый фильтр: "формируемый1=полученный1;...". Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>        
+            <param name="keyMap">Строка соответствия имен полей входящих в передаваемый ключ: "формируемый1=полученный1;..."</param>
+            <param name="filterMap">Строка соответствия имен полей входящих в передаваемый фильтр: "формируемый1=полученный1;..."</param>        
             <param name="customParams">Параметры ключ-значение. Если заданы - считаются приоритетнее, чем одноименные поля из объекта-источника</param>
-            <param name="resultAction">Метод разбора результата</param>        
-            <returns>True только в случае положительного результата (OK) для модальной формы</returns>
+            <param name="resultAction">Метод разбора результата. Результат в качестве параметра</param>    
+            <param name="getMulti">Результат - (true) как список объектов из отмеченных строк грида или (false) как словарь выбранной строки грида</param>    
+            <returns>True только в случае положительного результата (OK) для модальной формы. Результат будет в TransferObject контекста</returns>
         </member>
-        <member name="M:Ctrls.FormBase.ExecCommand(System.String,System.String,Ctrls.DataList,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.String,System.Boolean)">
-            <summary>Выполнение команды sql</summary>
+        <member name="M:Ctrls.FormBase.ExecCommand(System.String,System.String,Ctrls.DataList,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.String,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>Выполнение команды sql из интерфейса</summary>
             <param name="sql">Текст команды</param>
-            <param name="cmdCode">Код команды из настроек, содержащий текст команды. Используется, если не задан текст команды (sql)</param>
-            <param name="grid">Грид, из которого запускаем. Если задан - поля источника обрабатываемой строки берутся в качестве параметров</param>
+            <param name="cmdCode">Код настройки команды. Используется, если не задан текст команды (sql)</param>
+            <param name="grid">Грид, из которого запускаем. Если задан - поля источника обрабатываемой строки берутся в качестве параметров. Будет обновлен по окончании, если не указан </param>
             <param name="mapForParams">Строка соответствий ключей: "формируемый1=полученный1;...", где формируемый - параметр для команды, полученный - параметр из грида и customParams. Если нет полученного, параметр будет сформирован со значением null. Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>
             <param name="customParams">Параметры ключ-значение. Если заданы - считаются приоритетнее, чем одноименные поля из грида</param>
             <param name="warning">Строка предупреждения перед выполнением команды. В этом случае будет окно сообщения с возможностью отказаться</param>
             <param name="forSelectedRows">True если хотим выполнить для каждой выделенной строки грида, False - только для текущей</param>
+            <param name="refreshGrid">False если не нужно обновлять указанный grid по окончании</param>
             <returns>Таблица (пустая, если команда не возвращает resultset) или null</returns>
+        </member>
+        <member name="M:Ctrls.FormBase.GetDataToCombo(System.Windows.Forms.ComboBox,System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Nullable{System.Int32})">
+            <summary>Заполнить комбо результатами выполнения команды</summary>
+            <param name="cb">комбо</param>
+            <param name="field">поле запроса для показа</param>
+            <param name="sql">запрос как sql</param>
+            <param name="cmdCode">запрос как код настроек</param>
+            <param name="pars">параметры запроса</param>
+            <param name="maxWidth">null (по умолчанию) - не выравнивать ширину выпадающей части, 0 - выравнивать на максимальную ширину текста, или указать максимальную ширину</param>
         </member>
         <member name="F:Ctrls.FormBase.components">
             <summary>
@@ -365,6 +380,12 @@
             Required method for Designer support - do not modify
             the contents of this method with the code editor.
             </summary>
+        </member>
+        <member name="T:Ctrls.FormEdit">
+            <summary>Форма для редактора записи и размещения связанных списков</summary>
+        </member>
+        <member name="T:Ctrls.FormEdit.DataMapItem">
+            <summary>Данные для биндинга - задает соответствие поля контрола и поля источника</summary>
         </member>
         <member name="M:Ctrls.FormEdit.Init(Manager.Context,Manager.FormModes,System.Collections.Generic.Dictionary{System.String,System.Object},System.Object)">
             <summary>Инициализация формы</summary>
@@ -424,6 +445,9 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="T:Ctrls.FormList">
+            <summary>Форма для размещения списков</summary>
+        </member>
         <member name="T:Ctrls.FormList.UiParamsEventArgs">
             <summary>Аргументы событий для полей параметров</summary>
         </member>
@@ -465,7 +489,7 @@
             <summary>Загрузка данных в грид</summary>
         </member>
         <member name="M:Ctrls.FormList.OnSelectFromList(System.EventArgs)">
-            <summary>Выбор строки</summary>
+            <summary>Выбор строки или строк</summary>
         </member>
         <member name="M:Ctrls.FormList.GridQueryParamsSet(Ctrls.DataList,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>делегат для грида на установку параметров - вызывается в grid.LoadData() -> OnGetData()</summary>
@@ -704,6 +728,9 @@
         </member>
         <member name="E:Ctrls.SelectBox.SetResult">
             <summary>Обработка выбранного объекта</summary>
+        </member>
+        <member name="E:Ctrls.SelectBox.AfterSetResult">
+            <summary>После обработки выбранного объекта и установки значений</summary>
         </member>
         <member name="F:Ctrls.SelectBox.components">
             <summary>

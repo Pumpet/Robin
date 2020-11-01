@@ -18,13 +18,23 @@ using Manager;
 using Common;
 using System.Linq;
 using System.ComponentModel;
+using System.Data;
 
 namespace Ctrls {
 
-    /// <summary>
-    /// Базовая форма для списка и редактора.
-    /// Реализует IDataForm, который позволяет взаимодействовать с классом контекста приложения (Manager.Context) и сохранять текущие значения полей-параметров запросов.
-    /// </summary>
+    /*  Базовая форма для списка и редактора
+        Реализует IDataForm, который позволяет взаимодействовать с классом контекста приложения (Manager.Context) и сохранять текущие значения полей-параметров запросов.
+        Основное:
+        ControlTrigger - общее событие, подписанное на определенные события контролов формы: изменение состояния (Cheked, Selected, ...), входа (Enter), выхода (Leave)
+                        подписку можно переопределить через SubscribeControlTrigger
+        DataList_GetData - обработчик по умолчанию получения данных на грид
+        ExecFormEdit - метод для запуска формы редактора и обработки возврата
+        ExecFormSelect - метод для запуска выбора из формы списка и обработки возврата
+        ExecCommand - метод для интерфейсного выполнения команды
+        GetDataToCombo - метод для заполнения комбо из команды
+    */
+
+    /// <summary>Базовая форма для списка и редактора</summary>
     public partial class FormBase : Form, IDataForm {
 
         /// <summary>тип события контрола - выход, вход, изменение состояния</summary>
@@ -83,14 +93,14 @@ namespace Ctrls {
                 return;
             // почистить от предыдущих
             list.Clear();
-            Ctx.GcCollect();
+            Context.GcCollect();
             // получить данные
             e.Result = Ctx?.GetTable(list.QuerySql, list.QueryCmdCode, e.Pars);
         }
 
         ///<summary>Проверка, подходит ли контрол в качестве поля параметра</summary>
         /// <param name="type">Тип контрола</param>
-        protected bool ValidParamControlType(Type type) {
+        protected virtual bool ValidParamControlType(Type type) {
             return (type == typeof(NumberBox)
                 || type == typeof(NumericUpDown)
                 || type == typeof(DateTimeBox)
@@ -103,6 +113,7 @@ namespace Ctrls {
                 || type == typeof(CheckedComboBox)
                 || type == typeof(SelectBox)
                 || type == typeof(FastColoredTextBoxNS.FastColoredTextBox)
+                || type == typeof(RichTextBox)
             );
         }
 
@@ -119,7 +130,7 @@ namespace Ctrls {
             // почистимся
             foreach (var g in this.GetControls<DataList>())
                 g.Clear(true);
-            Ctx.GcCollect();
+            Context.GcCollect();
         }
 
         void FormBase_Activated(object sender, EventArgs e) {
@@ -158,9 +169,10 @@ namespace Ctrls {
             if (ctrl is CheckBox) ((CheckBox)ctrl).CheckedChanged += (s, ev) => { OnConrolTrigger(s, CtrlEventType.StateChange); };
             if (ctrl is RadioButton) ((RadioButton)ctrl).CheckedChanged += (s, ev) => { OnConrolTrigger(s, CtrlEventType.StateChange); };
             if (ctrl is ComboBox) ((ComboBox)ctrl).SelectedIndexChanged += (s, ev) => { OnConrolTrigger(s, CtrlEventType.StateChange); };
+            if (ctrl is SelectBox) ((SelectBox)ctrl).AfterSetResult += (s, ev) => { OnConrolTrigger(s, CtrlEventType.StateChange); };
         }
 
-        /// <summary>Запуск формы редактора</summary>
+        /// <summary>Запуск формы редактора и обработка возврата</summary>  
         /// <param name="form">Форма</param>
         /// <param name="formCode">Код формы из настроек</param> 
         /// <param name="viewMode">Режим формы для обработки данных: NewRec для новой записи, ReadOnly только для просмотра, Default для редактирования записи</param>
@@ -170,7 +182,7 @@ namespace Ctrls {
         /// <param name="mapForResult">Строка соответствия имен: "формируемый1=полученный1;...", где полученный - поле результата выполнения скрипта вставки/обновления, формируемый - параметр поиска текущей записи после обновления данных в гриде</param>
         /// <param name="formModes">Другие необходимые режимы в дополнение к viewMode, по умолчанию - Modal</param>
         /// <returns>True только в случае положительного результата (OK) для модальной формы</returns>
-        protected bool ExecFormEdit(Form form, string formCode, FormModes viewMode, DataList grid = null, string mapForParams = null, Dictionary<string, object> customParams = null, string mapForResult = null, FormModes formModes = FormModes.Modal) {
+        public bool ExecFormEdit(Form form, string formCode, FormModes viewMode, DataList grid = null, string mapForParams = null, Dictionary<string, object> customParams = null, string mapForResult = null, FormModes formModes = FormModes.Modal) {
             if (Ctx == null) return false;
             if (viewMode != FormModes.Default && viewMode != FormModes.NewRecEdit && viewMode != FormModes.ViewOnlyEdit)
                 viewMode = FormModes.Default;
@@ -190,18 +202,21 @@ namespace Ctrls {
             return ok;
         }
 
-        /// <summary>Запуск формы выбора из списка</summary>
+        /// <summary>Запуск формы выбора из списка и обработка возврата</summary>
         /// <param name="form">Форма</param>
         /// <param name="formCode">Код формы из настроек</param>
         /// <param name="sourceObject">Объект-источник параметров вызова формы (ключей и фильтра)</param>
-        /// <param name="keyMap">Строка соответствия имен полей входящих в передаваемый ключ: "формируемый1=полученный1;...". Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>
-        /// <param name="filterMap">Строка соответствия имен полей входящих в передаваемый фильтр: "формируемый1=полученный1;...". Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>        
+        /// <param name="keyMap">Строка соответствия имен полей входящих в передаваемый ключ: "формируемый1=полученный1;..."</param>
+        /// <param name="filterMap">Строка соответствия имен полей входящих в передаваемый фильтр: "формируемый1=полученный1;..."</param>        
         /// <param name="customParams">Параметры ключ-значение. Если заданы - считаются приоритетнее, чем одноименные поля из объекта-источника</param>
-        /// <param name="resultAction">Метод разбора результата</param>        
-        /// <returns>True только в случае положительного результата (OK) для модальной формы</returns>
-        public bool ExecFormSelect(Form form, string formCode, object sourceObject, string keyMap = null, string filterMap = null, Dictionary<string, object> customParams = null, Action<object> resultAction = null) {
+        /// <param name="resultAction">Метод разбора результата. Результат в качестве параметра</param>    
+        /// <param name="getMulti">Результат - (true) как список объектов из отмеченных строк грида или (false) как словарь выбранной строки грида</param>    
+        /// <returns>True только в случае положительного результата (OK) для модальной формы. Результат будет в TransferObject контекста</returns>
+        public bool ExecFormSelect(Form form, string formCode, object sourceObject, string keyMap = null, string filterMap = null, Dictionary<string, object> customParams = null, Action<object> resultAction = null, bool getMulti = false) {
             if (Ctx == null) return false;
             var viewMode = FormModes.Modal | FormModes.GetResult;
+            if (getMulti)
+                viewMode |= FormModes.GetMultiResult;
             var pars = CtrlsProc.PrepareParams(sourceObject, customParams);
             var filters = string.IsNullOrWhiteSpace(filterMap) ? null : CtrlsProc.GetParamsForMap(pars, filterMap);
             var keys = string.IsNullOrWhiteSpace(keyMap) ? null : CtrlsProc.GetParamsForMap(pars, keyMap);
@@ -215,22 +230,26 @@ namespace Ctrls {
             return ok;
         }
 
-        /// <summary>Выполнение команды sql</summary>
+        /// <summary>Выполнение команды sql из интерфейса</summary>
         /// <param name="sql">Текст команды</param>
-        /// <param name="cmdCode">Код команды из настроек, содержащий текст команды. Используется, если не задан текст команды (sql)</param>
-        /// <param name="grid">Грид, из которого запускаем. Если задан - поля источника обрабатываемой строки берутся в качестве параметров</param>
+        /// <param name="cmdCode">Код настройки команды. Используется, если не задан текст команды (sql)</param>
+        /// <param name="grid">Грид, из которого запускаем. Если задан - поля источника обрабатываемой строки берутся в качестве параметров. Будет обновлен по окончании, если не указан </param>
         /// <param name="mapForParams">Строка соответствий ключей: "формируемый1=полученный1;...", где формируемый - параметр для команды, полученный - параметр из грида и customParams. Если нет полученного, параметр будет сформирован со значением null. Если соответствий не задано (по умолчанию) - берем все полученные параметры</param>
         /// <param name="customParams">Параметры ключ-значение. Если заданы - считаются приоритетнее, чем одноименные поля из грида</param>
         /// <param name="warning">Строка предупреждения перед выполнением команды. В этом случае будет окно сообщения с возможностью отказаться</param>
         /// <param name="forSelectedRows">True если хотим выполнить для каждой выделенной строки грида, False - только для текущей</param>
+        /// <param name="refreshGrid">False если не нужно обновлять указанный grid по окончании</param>
         /// <returns>Таблица (пустая, если команда не возвращает resultset) или null</returns>
-        protected object ExecCommand(string sql, string cmdCode, DataList grid = null, string mapForParams = null, Dictionary<string, object> customParams = null, string warning = null, bool forSelectedRows = false) {
+        protected object ExecCommand(string sql, string cmdCode, DataList grid = null, string mapForParams = null, Dictionary<string, object> customParams = null, string warning = null, bool forSelectedRows = false, bool refreshGrid = true, bool saveLog = true) {
+
             if (!string.IsNullOrEmpty(warning) && MessageBox.Show(warning, "Внимание!", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
                 return null;
 
+            if (saveLog && Ctx != null)
+                Ctx.SaveLog("EXEC_COMMAND", cmdCode ?? sql);
+
             List<Dictionary<string, object>> rowParamsList = new List<Dictionary<string, object>>();
             if (grid != null && forSelectedRows)
-                //foreach (int r in grid.SelectedCells.OfType<DataGridViewCell>().Select(x => x.RowIndex).Distinct().OrderBy(i => i))
                 foreach (int r in grid.GetCheckedRowsIdx())
                     rowParamsList.Add(CtrlsProc.GetParamsForMap(CtrlsProc.PrepareParams(grid.GetRowObject(r), customParams), mapForParams));
             else
@@ -240,7 +259,7 @@ namespace Ctrls {
             foreach (var rowParams in rowParamsList)
                 res = Ctx?.GetTable(sql, cmdCode, rowParams);
 
-            if (grid != null) {
+            if (grid != null && refreshGrid) {
                 if (this is FormList)
                     (this as FormList).LoadGrid(grid);
                 else
@@ -250,11 +269,27 @@ namespace Ctrls {
             return res;
         }
 
-        public void GetDataToCombo(ComboBox cb, string sql, string field) {
+        /// <summary>Заполнить комбо результатами выполнения команды</summary>
+        /// <param name="cb">комбо</param>
+        /// <param name="field">поле запроса для показа</param>
+        /// <param name="sql">запрос как sql</param>
+        /// <param name="cmdCode">запрос как код настроек</param>
+        /// <param name="pars">параметры запроса</param>
+        /// <param name="maxWidth">null (по умолчанию) - не выравнивать ширину выпадающей части, 0 - выравнивать на максимальную ширину текста, или указать максимальную ширину</param>
+        public void GetDataToCombo(ComboBox cb, string field, string sql, string cmdCode, Dictionary<string, object> pars = null, int? maxWidth = null) {
             var tmp = cb.Text;
-            cb.DataSource = Ctx.GetTable(sql, null);
+            cb.DataSource = Ctx.GetTable(sql, cmdCode, pars);
             cb.DisplayMember = field;
             cb.Text = tmp;
+            // расширить комбо по длине максимального текста
+            if (maxWidth != null && cb.Items.Count > 0) {
+                int scrollWidth = (cb.Items.Count > cb.MaxDropDownItems) ? SystemInformation.VerticalScrollBarWidth : 0;
+                int newWidth = cb.Items.OfType<DataRowView>().Select(x => TextRenderer.MeasureText(x[field].ToString(), cb.Font).Width).Max() + scrollWidth;
+                if (maxWidth > 0 && newWidth > maxWidth)
+                    newWidth = (int)maxWidth;
+                if (newWidth > cb.DropDownWidth)
+                    cb.DropDownWidth = newWidth;
+            }
         }
     }
 }

@@ -29,7 +29,8 @@ namespace Master {
         Action setCaption;
         public FMain() {
             InitializeComponent();
-            setCaption = () => { Text = $"{AppConfig.Prop("AppName") ?? Text} ({ctx.Conn.DataSource}.{ctx.Conn.Database})"; };
+            //setCaption = () => { Text = $"{AppConfig.Prop("AppName") ?? Text} ({ctx.Conn.DataSource}.{ctx.Conn.Database})"; };
+            setCaption = () => { Text = ctx.GetAppCaption(); };
         }
 
         private void FMain_Shown(object sender, EventArgs e) {
@@ -37,9 +38,8 @@ namespace Master {
             setCaption();
         }
 
-
         private void toolStripButton1_Click(object sender, EventArgs e) {
-            var cons = AppConfig.config.Props.Where(x => Regex.IsMatch(x.Name, "ConnectionString", RegexOptions.IgnoreCase)).Select(y => new { connStr = y.Value });
+            var cons = AppConfig.GetGroupValues("ConnStrings").Select(x => new { connStr = x }); ;
             var fc = new FConnect();
             fc.dataList1.GetData += (o, ea) => ea.Result = cons;
             if (ctx.ExecForm(fc, null, FormModes.Single | FormModes.Modal | FormModes.GetResult, null, new Dictionary<string, object>() { ["connStr"] = ctx.Conn.ConnectionString })) {
@@ -49,21 +49,44 @@ namespace Master {
             }
         }
 
-        private void toolStripButton2_Click(object sender, EventArgs e) {
+        private void toolStripButton4_Click(object sender, EventArgs e) {
+            ctx.ExecForm(new FFormOptions(), this, FormModes.Single);
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ctx.ExecForm(new FAppList(), this, FormModes.Single);
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
             ctx.ExecForm(new FCommandList(), this, FormModes.Single);
         }
 
-        private void toolStripButton3_Click(object sender, EventArgs e) {
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
             var f = new FSaveScript();
-            if (f.ShowDialog() == DialogResult.OK && File.Exists(f.ResPath)) {
+            if (f.ShowDialog() == DialogResult.OK && File.Exists(f.ResPath))
+            {
                 if (MessageBox.Show($"Сформирован скрипт:\r\n{f.ResPath}\r\nОткрыть?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     Process.Start(f.ResPath);
             }
         }
 
-        private void toolStripButton4_Click(object sender, EventArgs e) {
-            ctx.ExecForm(new FFormOptions(), this, FormModes.Single);
+        private void toolStripMenuItem4_Click(object sender, EventArgs e) {
+            ctx.ExecForm(new FUserList(), this, FormModes.Single);
         }
 
+        private void toolStripMenuItem5_Click(object sender, EventArgs e) {
+            ctx.ExecForm(new FRoleList(), this, FormModes.Single);
+        }
+
+        private void менюToolStripMenuItem_Click(object sender, EventArgs e) {
+            ctx.ExecForm(new FMenuList(), this, FormModes.Single);
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e) {
+            ctx.ExecForm(new FLog(), this, FormModes.Single);
+        }
     }
 }

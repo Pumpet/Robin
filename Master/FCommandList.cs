@@ -26,7 +26,7 @@ namespace Master {
         }
 
         void FillCombo() {
-            GetDataToCombo(app, "select distinct appcode from dm.tCommand union select appcode = '' order by 1", "appcode");
+            GetDataToCombo(app, "appcode", "select appcode = code from dm.tApp union select appcode = '' order by 1", null);
         }
 
         void SetCommands() {
@@ -66,6 +66,7 @@ namespace Master {
                 , c.cmdType
                 , c.comment
                 , c.cmdTestHead
+                , c.marker
                   from dm.tCommand c
                     join @types t on t.id = c.cmdType
                   where (@app = '' or c.appcode = @app)

@@ -26,16 +26,17 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataList1 = new Ctrls.DataList();
-            this.appcode = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.typeName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.comment = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cmd = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cmdTestHead = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.app = new System.Windows.Forms.ComboBox();
             this.type = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.appcode = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.typeName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.comment = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.marker = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmd = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmdTestHead = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pnlParams.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataList1)).BeginInit();
             this.SuspendLayout();
@@ -72,6 +73,7 @@
             this.typeName,
             this.code,
             this.comment,
+            this.marker,
             this.cmd,
             this.cmdTestHead});
             this.dataList1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -104,53 +106,6 @@
             this.dataList1.Size = new System.Drawing.Size(756, 295);
             this.dataList1.TabIndex = 0;
             this.dataList1.WhatsUp += new System.EventHandler<Ctrls.WhatsUpEventArgs>(this.dataList1_WhatsUp);
-            // 
-            // appcode
-            // 
-            this.appcode.DataPropertyName = "appcode";
-            this.appcode.HeaderText = "Приложение";
-            this.appcode.Name = "appcode";
-            this.appcode.ReadOnly = true;
-            // 
-            // typeName
-            // 
-            this.typeName.DataPropertyName = "typeName";
-            this.typeName.HeaderText = "Тип";
-            this.typeName.Name = "typeName";
-            this.typeName.ReadOnly = true;
-            this.typeName.Width = 70;
-            // 
-            // code
-            // 
-            this.code.DataPropertyName = "code";
-            this.code.HeaderText = "Код";
-            this.code.Name = "code";
-            this.code.ReadOnly = true;
-            this.code.Width = 150;
-            // 
-            // comment
-            // 
-            this.comment.DataPropertyName = "comment";
-            this.comment.HeaderText = "Описание";
-            this.comment.Name = "comment";
-            this.comment.ReadOnly = true;
-            this.comment.Width = 150;
-            // 
-            // cmd
-            // 
-            this.cmd.DataPropertyName = "cmd";
-            this.cmd.HeaderText = "Данные";
-            this.cmd.Name = "cmd";
-            this.cmd.ReadOnly = true;
-            // 
-            // cmdTestHead
-            // 
-            this.cmdTestHead.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-            this.cmdTestHead.DataPropertyName = "cmdTestHead";
-            this.cmdTestHead.HeaderText = "Параметры для теста";
-            this.cmdTestHead.Name = "cmdTestHead";
-            this.cmdTestHead.ReadOnly = true;
-            this.cmdTestHead.Width = 110;
             // 
             // app
             // 
@@ -189,9 +144,63 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(221, 6);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(28, 15);
+            this.label2.Size = new System.Drawing.Size(27, 15);
             this.label2.TabIndex = 3;
             this.label2.Text = "Тип";
+            // 
+            // appcode
+            // 
+            this.appcode.DataPropertyName = "appcode";
+            this.appcode.HeaderText = "Приложение";
+            this.appcode.Name = "appcode";
+            this.appcode.ReadOnly = true;
+            // 
+            // typeName
+            // 
+            this.typeName.DataPropertyName = "typeName";
+            this.typeName.HeaderText = "Тип";
+            this.typeName.Name = "typeName";
+            this.typeName.ReadOnly = true;
+            this.typeName.Width = 70;
+            // 
+            // code
+            // 
+            this.code.DataPropertyName = "code";
+            this.code.HeaderText = "Код";
+            this.code.Name = "code";
+            this.code.ReadOnly = true;
+            this.code.Width = 150;
+            // 
+            // comment
+            // 
+            this.comment.DataPropertyName = "comment";
+            this.comment.HeaderText = "Описание";
+            this.comment.Name = "comment";
+            this.comment.ReadOnly = true;
+            this.comment.Width = 150;
+            // 
+            // marker
+            // 
+            this.marker.DataPropertyName = "marker";
+            this.marker.HeaderText = "Маркер";
+            this.marker.Name = "marker";
+            this.marker.ReadOnly = true;
+            // 
+            // cmd
+            // 
+            this.cmd.DataPropertyName = "cmd";
+            this.cmd.HeaderText = "Данные";
+            this.cmd.Name = "cmd";
+            this.cmd.ReadOnly = true;
+            // 
+            // cmdTestHead
+            // 
+            this.cmdTestHead.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+            this.cmdTestHead.DataPropertyName = "cmdTestHead";
+            this.cmdTestHead.HeaderText = "Параметры для теста";
+            this.cmdTestHead.Name = "cmdTestHead";
+            this.cmdTestHead.ReadOnly = true;
+            this.cmdTestHead.Width = 110;
             // 
             // FCommandList
             // 
@@ -202,7 +211,7 @@
             this.LoadDataWithForm = true;
             this.Name = "FCommandList";
             this.ShowIcon = false;
-            this.Text = "Настройки";
+            this.Text = "Настройки команд";
             this.RefreshList += new System.EventHandler<Ctrls.FormList.RefreshListEventArgs>(this.FCommandList_RefreshList);
             this.Load += new System.EventHandler(this.FCommandList_Load);
             this.Controls.SetChildIndex(this.pnlParams, 0);
@@ -226,6 +235,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn typeName;
         private System.Windows.Forms.DataGridViewTextBoxColumn code;
         private System.Windows.Forms.DataGridViewTextBoxColumn comment;
+        private System.Windows.Forms.DataGridViewTextBoxColumn marker;
         private System.Windows.Forms.DataGridViewTextBoxColumn cmd;
         private System.Windows.Forms.DataGridViewTextBoxColumn cmdTestHead;
     }

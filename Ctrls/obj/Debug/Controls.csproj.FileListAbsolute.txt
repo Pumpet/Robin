@@ -1,0 +1,8 @@
+C:\__Work\cs\prj15\Robin\Controls\bin\Debug\Controls.dll
+C:\__Work\cs\prj15\Robin\Controls\bin\Debug\Controls.pdb
+C:\__Work\cs\prj15\Robin\Controls\obj\Debug\Controls.FormBase.resources
+C:\__Work\cs\prj15\Robin\Controls\obj\Debug\Controls.FormList.resources
+C:\__Work\cs\prj15\Robin\Controls\obj\Debug\Controls.Properties.Resources.resources
+C:\__Work\cs\prj15\Robin\Controls\obj\Debug\Controls.csproj.GenerateResource.Cache
+C:\__Work\cs\prj15\Robin\Controls\obj\Debug\Controls.dll
+C:\__Work\cs\prj15\Robin\Controls\obj\Debug\Controls.pdb

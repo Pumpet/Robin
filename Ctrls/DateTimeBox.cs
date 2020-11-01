@@ -143,10 +143,13 @@ namespace Ctrls {
                 DataBindings.CollectionChanged += DataBindings_CollectionChanged;
         }
 
-        // формат биндинга устанавливаем принудительно в соответствии в зависимости от формата отображения
+        // формат биндинга и умолчательную пустоту устанавливаем принудительно 
         void DataBindings_CollectionChanged(object sender, CollectionChangeEventArgs e) {
-            if (e.Action == CollectionChangeAction.Add && e.Element is Binding)
-                ((Binding)e.Element).FormatString = DateFormat;
+            var bind = e.Element as Binding;
+            if (e.Action == CollectionChangeAction.Add && bind != null) {
+                bind.FormatString = DateFormat; // в соответствии с форматом отображения
+                bind.NullValue = bind.NullValue ?? ""; // чтобы задавить null-ы - иначе не уйти после очистки, если был биндинг и допустимы null
+            }
         }
 
         protected override void OnKeyDown(KeyEventArgs e) {

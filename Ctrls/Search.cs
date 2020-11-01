@@ -23,9 +23,9 @@ namespace Ctrls {
     /// <summary>Поиск DataGridView 
     /// </summary>
     public class Search {
-        string str { get; set; }
         bool cs { get; set; }
         bool eq { get; set; }
+        public string Str { get; private set; }
 
         /// <summary>Создать объект поиска
         /// </summary>
@@ -33,7 +33,7 @@ namespace Ctrls {
         /// <param name="cs">чувствителен к регистру</param>
         /// <param name="eq">точное соответствие</param>
         public Search(string str, bool cs, bool eq) {
-            this.str = (str ?? "").Trim();
+            this.Str = (str ?? "").Trim();
             this.cs = cs;
             this.eq = eq;
         }
@@ -44,7 +44,7 @@ namespace Ctrls {
         /// <returns>true если значение удовлетворяет условиям</returns>
         public bool Check(object val) {
             string valStr = (val ?? "").ToString().Trim();
-            bool res = str == valStr;
+            bool res = Str == valStr;
             if (res) return res;
 
             if (!eq) {
@@ -52,19 +52,19 @@ namespace Ctrls {
                     DateTime valDT = (DateTime)val;
                     valStr = valDT.ToString(valDT.Date == valDT ? "dd.MM.yyyy" : "dd.MM.yyyy HH:mm:ss");
                 }
-                res = valStr.IndexOf(str, cs ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
+                res = valStr.IndexOf(Str, cs ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase) >= 0;
             } else if (val != null) {
                 Type t = val.GetType();
                 if (t == typeof(DateTime)) {
                     DateTime dt;
-                    if (DateTime.TryParseExact(str, new[] { "dd.MM.yyyy", "dd.MM.yyyy hh:mm:ss" }, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out dt))
+                    if (DateTime.TryParseExact(Str, new[] { "dd.MM.yyyy", "dd.MM.yyyy hh:mm:ss" }, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out dt))
                         res = dt.CompareTo((DateTime)val) == 0;
                 } else if (t == typeof(sbyte) || t == typeof(short) || t == typeof(int) || t == typeof(long) || t == typeof(byte) || t == typeof(ushort) || t == typeof(uint) || t == typeof(ulong) || t == typeof(float) || t == typeof(double) || t == typeof(decimal)) {
                     decimal dec, valDec;
-                    if (decimal.TryParse(str, NumberStyles.Number, CultureInfo.InvariantCulture, out dec) && decimal.TryParse(valStr, NumberStyles.Number, CultureInfo.InvariantCulture, out valDec))
+                    if (decimal.TryParse(Str, NumberStyles.Number, CultureInfo.InvariantCulture, out dec) && decimal.TryParse(valStr, NumberStyles.Number, CultureInfo.InvariantCulture, out valDec))
                         res = dec.CompareTo(valDec) == 0;
                 } else
-                    res = String.Compare(valStr, str, !cs, CultureInfo.InvariantCulture) == 0;
+                    res = String.Compare(valStr, Str, !cs, CultureInfo.InvariantCulture) == 0;
             }
 
             return res;

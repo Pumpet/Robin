@@ -44,6 +44,8 @@
             this.cmdTestHead = new FastColoredTextBoxNS.FastColoredTextBox();
             this.cmd = new FastColoredTextBoxNS.FastColoredTextBox();
             this.dataList1 = new Ctrls.DataList();
+            this.marker = new Ctrls.SelectBox(this.components);
+            this.label7 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.info.SuspendLayout();
@@ -66,7 +68,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 25);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(599, 64);
+            this.panel1.Size = new System.Drawing.Size(599, 91);
             this.panel1.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -77,6 +79,8 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 41F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 255F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 166F));
+            this.tableLayoutPanel1.Controls.Add(this.marker, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.comment, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label8, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.code, 3, 0);
@@ -86,11 +90,12 @@
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(599, 64);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(599, 91);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // comment
@@ -100,7 +105,7 @@
             this.comment.Location = new System.Drawing.Point(93, 30);
             this.comment.Name = "comment";
             this.comment.Size = new System.Drawing.Size(492, 23);
-            this.comment.TabIndex = 2;
+            this.comment.TabIndex = 5;
             // 
             // label8
             // 
@@ -109,7 +114,7 @@
             this.label8.Location = new System.Drawing.Point(3, 27);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(84, 27);
-            this.label8.TabIndex = 16;
+            this.label8.TabIndex = 4;
             this.label8.Text = "Описание";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -119,7 +124,7 @@
             this.code.Location = new System.Drawing.Point(336, 3);
             this.code.Name = "code";
             this.code.Size = new System.Drawing.Size(249, 23);
-            this.code.TabIndex = 1;
+            this.code.TabIndex = 3;
             // 
             // label3
             // 
@@ -128,18 +133,19 @@
             this.label3.Location = new System.Drawing.Point(295, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(35, 27);
-            this.label3.TabIndex = 14;
+            this.label3.TabIndex = 2;
             this.label3.Text = "Код";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // appcode
             // 
             this.appcode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.appcode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.appcode.FormattingEnabled = true;
             this.appcode.Location = new System.Drawing.Point(93, 3);
             this.appcode.Name = "appcode";
             this.appcode.Size = new System.Drawing.Size(196, 23);
-            this.appcode.TabIndex = 0;
+            this.appcode.TabIndex = 1;
             // 
             // label1
             // 
@@ -148,7 +154,7 @@
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(84, 27);
-            this.label1.TabIndex = 9;
+            this.label1.TabIndex = 0;
             this.label1.Text = "Приложение";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -158,10 +164,10 @@
             this.info2,
             this.info1,
             this.info3});
-            this.info.Location = new System.Drawing.Point(0, 355);
+            this.info.Location = new System.Drawing.Point(0, 438);
             this.info.Name = "info";
             this.info.Size = new System.Drawing.Size(599, 24);
-            this.info.TabIndex = 3;
+            this.info.TabIndex = 0;
             this.info.Text = "statusStrip1";
             // 
             // info2
@@ -190,7 +196,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 89);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 116);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -203,8 +209,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dataList1);
             this.splitContainer1.Panel2MinSize = 100;
-            this.splitContainer1.Size = new System.Drawing.Size(599, 266);
-            this.splitContainer1.SplitterDistance = 179;
+            this.splitContainer1.Size = new System.Drawing.Size(599, 322);
+            this.splitContainer1.SplitterDistance = 235;
             this.splitContainer1.SplitterWidth = 8;
             this.splitContainer1.TabIndex = 4;
             // 
@@ -227,7 +233,7 @@
             this.splitContainer2.Panel2.Controls.Add(this.cmd);
             this.splitContainer2.Panel2.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
             this.splitContainer2.Panel2MinSize = 100;
-            this.splitContainer2.Size = new System.Drawing.Size(599, 179);
+            this.splitContainer2.Size = new System.Drawing.Size(599, 235);
             this.splitContainer2.SplitterWidth = 8;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -266,7 +272,9 @@
             this.cmdTestHead.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("cmdTestHead.ServiceColors")));
             this.cmdTestHead.Size = new System.Drawing.Size(583, 50);
             this.cmdTestHead.TabIndex = 0;
+            this.cmdTestHead.TabLength = 2;
             this.cmdTestHead.Zoom = 100;
+            this.cmdTestHead.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cmdTestHead_KeyDown);
             // 
             // cmd
             // 
@@ -282,6 +290,7 @@
         '\'',
         '\''};
             this.cmd.AutoIndentCharsPatterns = "";
+            this.cmd.AutoIndentExistingLines = false;
             this.cmd.AutoScrollMinSize = new System.Drawing.Size(25, 15);
             this.cmd.BackBrush = null;
             this.cmd.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -301,9 +310,11 @@
             this.cmd.RightBracket = ')';
             this.cmd.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.cmd.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("cmd.ServiceColors")));
-            this.cmd.Size = new System.Drawing.Size(583, 121);
+            this.cmd.Size = new System.Drawing.Size(583, 177);
             this.cmd.TabIndex = 0;
+            this.cmd.TabLength = 2;
             this.cmd.Zoom = 100;
+            this.cmd.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cmd_KeyDown);
             // 
             // dataList1
             // 
@@ -351,21 +362,57 @@
             this.dataList1.SelectedCellNotFocusedBackColor = System.Drawing.SystemColors.InactiveCaption;
             this.dataList1.SelectedRowBackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.dataList1.Size = new System.Drawing.Size(599, 100);
-            this.dataList1.TabIndex = 1;
+            this.dataList1.TabIndex = 0;
+            // 
+            // marker
+            // 
+            this.marker.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.marker.DropDownHeight = 1;
+            this.marker.DropDownWidth = 1;
+            this.marker.FormattingEnabled = true;
+            this.marker.IntegralHeight = false;
+            this.marker.KeyMap = "code=marker";
+            this.marker.Location = new System.Drawing.Point(93, 57);
+            this.marker.Name = "marker";
+            this.marker.Nullable = true;
+            this.marker.ResultMap = "marker=code";
+            this.marker.SelectedObject = null;
+            this.marker.SelectedValues = null;
+            this.marker.SelectionForm = null;
+            this.marker.Size = new System.Drawing.Size(196, 23);
+            this.marker.SourceObject = null;
+            this.marker.TabIndex = 16;
+            this.marker.TargetObject = null;
+            this.marker.ExecSelectionForm += new System.EventHandler<Ctrls.ExecSelectionFormEventArgs>(this.marker_ExecSelectionForm);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label7.Location = new System.Drawing.Point(3, 54);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(84, 27);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Маркер";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // FCommandSql
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(599, 379);
+            this.CheckChanges = true;
+            this.ClientSize = new System.Drawing.Size(599, 462);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.info);
             this.Controls.Add(this.panel1);
             this.FocusedControlName = "code";
-            this.MinimumSize = new System.Drawing.Size(615, 417);
+            this.KeepOpenAfterSave = true;
+            this.MinimumSize = new System.Drawing.Size(615, 500);
             this.Name = "FCommandSql";
             this.Text = "Настройка SQL";
             this.AfterBinding += new System.EventHandler<System.EventArgs>(this.FCommandSql_AfterBinding);
+            this.NewRecInit += new System.EventHandler<System.EventArgs>(this.FCommandSql_NewRecInit);
             this.SaveParamsCheck += new System.EventHandler<Ctrls.ParamsCheckEventArgs>(this.FCommandSql_SaveParamsCheck);
             this.SetData += new System.EventHandler<Ctrls.ProcessDataEventArgs>(this.FCommandSql_SetData);
             this.ControlTrigger += new System.EventHandler<Ctrls.FormBase.ControlTriggerEventArgs>(this.FCommandSql_ControlTrigger);
@@ -414,5 +461,7 @@
         private Ctrls.DataList dataList1;
         private System.Windows.Forms.ToolStripStatusLabel info2;
         private System.Windows.Forms.ToolStripStatusLabel info3;
+        private Ctrls.SelectBox marker;
+        private System.Windows.Forms.Label label7;
     }
 }

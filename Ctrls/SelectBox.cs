@@ -110,6 +110,10 @@ namespace Ctrls {
         /// <summary>Обработка выбранного объекта</summary>
         [Category("Robin options"), Description("Обработка выбранного объекта")]
         public event EventHandler<SetResultEventArgs> SetResult;
+            
+        /// <summary>После обработки выбранного объекта и установки значений</summary>
+        [Category("Robin options"), Description("После обработки выбранного объекта и установки значений")]
+        public event EventHandler<EventArgs> AfterSetResult;
 
         #endregion
 
@@ -145,8 +149,8 @@ namespace Ctrls {
                 e.Handled = true;
                 OnDropDown(new EventArgs());
             }
-            // сброс для случая Nullable по Delete
-            if (!Editable && Nullable && !Disabled && e.KeyCode == Keys.Delete) {
+            // сброс для случая Nullable по Ctrl+Delete
+            if (Nullable && !Disabled && e.KeyCode == Keys.Delete && e.Modifiers == Keys.Control) {
                 e.Handled = true;
                 OnSetResult(null);
             }
@@ -173,7 +177,7 @@ namespace Ctrls {
             SendKeys.Send("{ESC}");
         }
 
-        void OnSetResult(object resObject) {
+        protected virtual void OnSetResult(object resObject) {
             SelectedObject = resObject;
             var ea = new SetResultEventArgs {
                 ResultPars = CtrlsProc.PrepareParams(resObject, null, ResultMap),
@@ -188,6 +192,7 @@ namespace Ctrls {
                 if (TargetObject is BindingSource)
                     (TargetObject as BindingSource).EndEdit();
             }
+            AfterSetResult?.Invoke(this, new EventArgs());
         }
 
         protected override void OnDropDownClosed(EventArgs e) {

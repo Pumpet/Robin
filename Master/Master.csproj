@@ -22,6 +22,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\Master.doc.XML</DocumentationFile>
+    <NoWarn>1591, 1573</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,6 +55,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
+    <Compile Include="FAppEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FAppEdit.Designer.cs">
+      <DependentUpon>FAppEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FAppList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FAppList.Designer.cs">
+      <DependentUpon>FAppList.cs</DependentUpon>
+    </Compile>
     <Compile Include="FCommand.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,11 +97,47 @@
     <Compile Include="FFormOptions.Designer.cs">
       <DependentUpon>FFormOptions.cs</DependentUpon>
     </Compile>
+    <Compile Include="FLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FLog.Designer.cs">
+      <DependentUpon>FLog.cs</DependentUpon>
+    </Compile>
     <Compile Include="FMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FMain.Designer.cs">
       <DependentUpon>FMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMarkerList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMarkerList.Designer.cs">
+      <DependentUpon>FMarkerList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMenuEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMenuEdit.Designer.cs">
+      <DependentUpon>FMenuEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMenuList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMenuList.Designer.cs">
+      <DependentUpon>FMenuList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FRoleEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FRoleEdit.Designer.cs">
+      <DependentUpon>FRoleEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FRoleList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FRoleList.Designer.cs">
+      <DependentUpon>FRoleList.cs</DependentUpon>
     </Compile>
     <Compile Include="FSaveScript.cs">
       <SubType>Form</SubType>
@@ -95,8 +145,26 @@
     <Compile Include="FSaveScript.Designer.cs">
       <DependentUpon>FSaveScript.cs</DependentUpon>
     </Compile>
+    <Compile Include="FUserEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FUserEdit.Designer.cs">
+      <DependentUpon>FUserEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FUserList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FUserList.Designer.cs">
+      <DependentUpon>FUserList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="FAppEdit.resx">
+      <DependentUpon>FAppEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FAppList.resx">
+      <DependentUpon>FAppList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FCommand.resx">
       <DependentUpon>FCommand.cs</DependentUpon>
     </EmbeddedResource>
@@ -112,11 +180,36 @@
     <EmbeddedResource Include="FFormOptions.resx">
       <DependentUpon>FFormOptions.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FLog.resx">
+      <DependentUpon>FLog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FMain.resx">
       <DependentUpon>FMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMarkerList.resx">
+      <DependentUpon>FMarkerList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMenuEdit.resx">
+      <DependentUpon>FMenuEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMenuList.resx">
+      <DependentUpon>FMenuList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FRoleEdit.resx">
+      <DependentUpon>FRoleEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FRoleList.resx">
+      <DependentUpon>FRoleList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FSaveScript.resx">
       <DependentUpon>FSaveScript.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FUserEdit.resx">
+      <DependentUpon>FUserEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FUserList.resx">
+      <DependentUpon>FUserList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -188,6 +281,13 @@
   <ItemGroup>
     <Content Include="MasterRobin.ico" />
     <Content Include="process.ico" />
+    <None Include="Resources\log.png" />
+    <None Include="Resources\right.png" />
+    <None Include="Resources\users.png" />
+    <None Include="Resources\role.png" />
+    <None Include="Resources\galka.png" />
+    <None Include="Resources\clasp.png" />
+    <None Include="Resources\home.png" />
     <None Include="Resources\forms.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

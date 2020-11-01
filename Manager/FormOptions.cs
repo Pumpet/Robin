@@ -82,15 +82,15 @@ namespace Manager {
             if (opt == null) return;
 
             if (setType == FormOptionsSetType.All || setType == FormOptionsSetType.Size) {
-                if (opt.Width > form.MinimumSize.Width)
+                if (opt.Width >= form.MinimumSize.Width)
                     form.Width = opt.Width;
                 //else
                 //    form.Width = form.MinimumSize.Width > 0 ? form.MinimumSize.Width : 100;
-                if (opt.Height > form.MinimumSize.Height)
+                if (opt.Height >= form.MinimumSize.Height)
                     form.Height = opt.Height;
                 //else
                 //    form.Height = form.MinimumSize.Height > 0 ? form.MinimumSize.Height : 100;
-                if (AppConfig.Has("RestoreFormPos")) {
+                if (AppConfig.HasProp("RestoreFormPos")) {
                     form.Top = opt.Top;
                     form.Left = opt.Left;
                 }
@@ -111,20 +111,24 @@ namespace Manager {
 
             if (setType == FormOptionsSetType.All || setType == FormOptionsSetType.Grid)
                 foreach (var item in opt.Grids) {
-                Control c = form.GetControl(item.Name);
-                if (c is DataGridView) {
-                    DataGridView g = ((DataGridView)c);
-                    foreach (DataGridViewColumn col in g.Columns) {
-                        ColumnOptions copt = item.Columns.FirstOrDefault(x => x.Name == col.Name);
-                        if (copt != null) {
-                            col.Width = copt.Width;
-                            if (copt.Pos >= 0 && copt.Pos < g.Columns.Count)
-                                col.DisplayIndex = copt.Pos;
-                            col.Visible = copt.Visible; 
+                    Control c = form.GetControl(item.Name);
+                    if (c is DataGridView) {
+                        DataGridView g = ((DataGridView)c);
+                        foreach (DataGridViewColumn col in g.Columns) {
+                            ColumnOptions copt = item.Columns.FirstOrDefault(x => x.Name == col.Name);
+                            if (copt != null) {
+                                col.Width = copt.Width;
+                                if (copt.Pos >= 0 && copt.Pos < g.Columns.Count)
+                                    col.DisplayIndex = copt.Pos;
+                                else
+                                    col.DisplayIndex = g.Columns.Count - 1;
+                                col.Visible = copt.Visible; 
+                            }
                         }
+                        var colCheck = g.Columns[GridOptions.checkColumnName];
+                        if (colCheck != null) colCheck.DisplayIndex = 0;
                     }
                 }
-            }
 
             if (setType == FormOptionsSetType.All && form is IDataForm) {
                 ((IDataForm)form).SetUiParamsProperties(opt.ControlValues);
@@ -231,6 +235,7 @@ namespace Manager {
     /// <summary>Параметры отображения грида
     /// </summary>
     public class GridOptions {
+        public readonly static string checkColumnName = "#check"; // имя контрольного столбца с checkBox
         [XmlAttribute]
         public string Name { get; set; }
         [XmlArrayItem("Column")]
@@ -244,7 +249,8 @@ namespace Manager {
         public GridOptions(DataGridView grid) {
             Name = grid.Name;
             foreach (DataGridViewColumn c in grid.Columns)
-                Columns.Add(new ColumnOptions() { Name = c.Name, Width = c.Width, Pos = c.DisplayIndex, Visible = c.Visible });
+                if (!c.Name.Equals(checkColumnName))
+                    Columns.Add(new ColumnOptions() { Name = c.Name, Width = c.Width, Pos = c.DisplayIndex, Visible = c.Visible });
         }
     }
     

@@ -40,24 +40,24 @@
             this.mess = new System.Windows.Forms.Label();
             this.bExec = new System.Windows.Forms.Button();
             this.pDate = new System.Windows.Forms.Panel();
-            this.tbDateToS = new Ctrls.DateTimeBox(this.components);
-            this.tbDateS = new Ctrls.DateTimeBox(this.components);
             this.chTill = new System.Windows.Forms.CheckBox();
             this.pNum = new System.Windows.Forms.Panel();
-            this.tbNumTill = new Ctrls.NumberBox(this.components);
             this.cbSignTill = new System.Windows.Forms.ComboBox();
             this.chTillNum = new System.Windows.Forms.CheckBox();
-            this.tbNumber = new Ctrls.NumberBox(this.components);
             this.cbSign = new System.Windows.Forms.ComboBox();
             this.ttip = new System.Windows.Forms.ToolTip(this.components);
+            this.tbNumTill = new Ctrls.NumberBox(this.components);
+            this.tbNumber = new Ctrls.NumberBox(this.components);
+            this.tbDateToS = new Ctrls.DateTimeBox(this.components);
+            this.tbDateS = new Ctrls.DateTimeBox(this.components);
             this.pStr.SuspendLayout();
             this.pCommon.SuspendLayout();
             this.pDate.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbDateToS)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbDateS)).BeginInit();
             this.pNum.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbNumTill)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbNumber)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDateToS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDateS)).BeginInit();
             this.SuspendLayout();
             // 
             // pStr
@@ -70,7 +70,7 @@
             this.pStr.Margin = new System.Windows.Forms.Padding(0);
             this.pStr.Name = "pStr";
             this.pStr.Size = new System.Drawing.Size(274, 49);
-            this.pStr.TabIndex = 0;
+            this.pStr.TabIndex = 1;
             // 
             // chInList
             // 
@@ -78,7 +78,7 @@
             this.chInList.Location = new System.Drawing.Point(160, 2);
             this.chInList.Name = "chInList";
             this.chInList.Size = new System.Drawing.Size(62, 17);
-            this.chInList.TabIndex = 3;
+            this.chInList.TabIndex = 2;
             this.chInList.Text = "список";
             this.chInList.UseVisualStyleBackColor = true;
             this.chInList.CheckedChanged += new System.EventHandler(this.chInList_CheckedChanged);
@@ -89,7 +89,7 @@
             this.chCs.Location = new System.Drawing.Point(62, 2);
             this.chCs.Name = "chCs";
             this.chCs.Size = new System.Drawing.Size(96, 17);
-            this.chCs.TabIndex = 2;
+            this.chCs.TabIndex = 1;
             this.chCs.Text = "учет регистра";
             this.chCs.UseVisualStyleBackColor = true;
             // 
@@ -99,7 +99,7 @@
             this.chEq.Location = new System.Drawing.Point(6, 2);
             this.chEq.Name = "chEq";
             this.chEq.Size = new System.Drawing.Size(54, 17);
-            this.chEq.TabIndex = 1;
+            this.chEq.TabIndex = 0;
             this.chEq.Text = "точно";
             this.chEq.UseVisualStyleBackColor = true;
             // 
@@ -108,7 +108,7 @@
             this.tbStr.Location = new System.Drawing.Point(6, 22);
             this.tbStr.Name = "tbStr";
             this.tbStr.Size = new System.Drawing.Size(261, 20);
-            this.tbStr.TabIndex = 0;
+            this.tbStr.TabIndex = 3;
             this.tbStr.WordWrap = false;
             // 
             // chEmpty
@@ -131,7 +131,7 @@
             this.pCommon.Margin = new System.Windows.Forms.Padding(0);
             this.pCommon.Name = "pCommon";
             this.pCommon.Size = new System.Drawing.Size(274, 27);
-            this.pCommon.TabIndex = 3;
+            this.pCommon.TabIndex = 0;
             // 
             // mess
             // 
@@ -140,7 +140,7 @@
             this.mess.Location = new System.Drawing.Point(92, 0);
             this.mess.Name = "mess";
             this.mess.Size = new System.Drawing.Size(158, 27);
-            this.mess.TabIndex = 5;
+            this.mess.TabIndex = 1;
             this.mess.Text = "  ";
             this.mess.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -156,7 +156,7 @@
             this.bExec.Location = new System.Drawing.Point(250, 0);
             this.bExec.Name = "bExec";
             this.bExec.Size = new System.Drawing.Size(24, 27);
-            this.bExec.TabIndex = 4;
+            this.bExec.TabIndex = 0;
             this.bExec.UseVisualStyleBackColor = true;
             this.bExec.Click += new System.EventHandler(this.b_Click);
             // 
@@ -169,30 +169,7 @@
             this.pDate.Margin = new System.Windows.Forms.Padding(0);
             this.pDate.Name = "pDate";
             this.pDate.Size = new System.Drawing.Size(238, 31);
-            this.pDate.TabIndex = 1;
-            // 
-            // tbDateToS
-            // 
-            this.tbDateToS.Enabled = false;
-            this.tbDateToS.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.tbDateToS.Location = new System.Drawing.Point(141, 3);
-            this.tbDateToS.Name = "tbDateToS";
-            this.tbDateToS.Size = new System.Drawing.Size(92, 20);
-            this.tbDateToS.SqlType = Ctrls.DateTimeSqlType.None;
-            this.tbDateToS.TabIndex = 5;
-            this.tbDateToS.Text = "01.01.0001";
-            this.tbDateToS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // tbDateS
-            // 
-            this.tbDateS.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.tbDateS.Location = new System.Drawing.Point(3, 3);
-            this.tbDateS.Name = "tbDateS";
-            this.tbDateS.Size = new System.Drawing.Size(92, 20);
-            this.tbDateS.SqlType = Ctrls.DateTimeSqlType.None;
-            this.tbDateS.TabIndex = 4;
-            this.tbDateS.Text = "01.01.0001";
-            this.tbDateS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.pDate.TabIndex = 2;
             // 
             // chTill
             // 
@@ -216,16 +193,7 @@
             this.pNum.Margin = new System.Windows.Forms.Padding(0);
             this.pNum.Name = "pNum";
             this.pNum.Size = new System.Drawing.Size(241, 53);
-            this.pNum.TabIndex = 2;
-            // 
-            // tbNumTill
-            // 
-            this.tbNumTill.Location = new System.Drawing.Point(50, 26);
-            this.tbNumTill.Name = "tbNumTill";
-            this.tbNumTill.Size = new System.Drawing.Size(141, 20);
-            this.tbNumTill.TabIndex = 3;
-            this.tbNumTill.Text = "0";
-            this.tbNumTill.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.pNum.TabIndex = 3;
             // 
             // cbSignTill
             // 
@@ -250,15 +218,6 @@
             this.chTillNum.UseVisualStyleBackColor = true;
             this.chTillNum.CheckedChanged += new System.EventHandler(this.chTillNum_CheckedChanged);
             // 
-            // tbNumber
-            // 
-            this.tbNumber.Location = new System.Drawing.Point(50, 2);
-            this.tbNumber.Name = "tbNumber";
-            this.tbNumber.Size = new System.Drawing.Size(141, 20);
-            this.tbNumber.TabIndex = 1;
-            this.tbNumber.Text = "0";
-            this.tbNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
             // cbSign
             // 
             this.cbSign.FormattingEnabled = true;
@@ -276,6 +235,47 @@
             this.cbSign.SelectionChangeCommitted += new System.EventHandler(this.cbSign_SelectionChangeCommitted);
             this.cbSign.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbSign_KeyDown);
             // 
+            // tbNumTill
+            // 
+            this.tbNumTill.Location = new System.Drawing.Point(50, 26);
+            this.tbNumTill.Name = "tbNumTill";
+            this.tbNumTill.Size = new System.Drawing.Size(141, 20);
+            this.tbNumTill.TabIndex = 3;
+            this.tbNumTill.Text = "0";
+            this.tbNumTill.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // tbNumber
+            // 
+            this.tbNumber.Location = new System.Drawing.Point(50, 2);
+            this.tbNumber.Name = "tbNumber";
+            this.tbNumber.Size = new System.Drawing.Size(141, 20);
+            this.tbNumber.TabIndex = 1;
+            this.tbNumber.Text = "0";
+            this.tbNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // tbDateToS
+            // 
+            this.tbDateToS.Enabled = false;
+            this.tbDateToS.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.tbDateToS.Location = new System.Drawing.Point(141, 3);
+            this.tbDateToS.Name = "tbDateToS";
+            this.tbDateToS.Size = new System.Drawing.Size(92, 20);
+            this.tbDateToS.SqlType = Ctrls.DateTimeSqlType.None;
+            this.tbDateToS.TabIndex = 2;
+            this.tbDateToS.Text = "01.01.0001";
+            this.tbDateToS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // tbDateS
+            // 
+            this.tbDateS.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.tbDateS.Location = new System.Drawing.Point(3, 3);
+            this.tbDateS.Name = "tbDateS";
+            this.tbDateS.Size = new System.Drawing.Size(92, 20);
+            this.tbDateS.SqlType = Ctrls.DateTimeSqlType.None;
+            this.tbDateS.TabIndex = 0;
+            this.tbDateS.Text = "01.01.0001";
+            this.tbDateS.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // FormFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -285,12 +285,12 @@
             this.Controls.Add(this.pDate);
             this.Controls.Add(this.pCommon);
             this.Controls.Add(this.pStr);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormFilter";
+            this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Фильтр:";
@@ -302,12 +302,12 @@
             this.pCommon.PerformLayout();
             this.pDate.ResumeLayout(false);
             this.pDate.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tbDateToS)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbDateS)).EndInit();
             this.pNum.ResumeLayout(false);
             this.pNum.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbNumTill)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbNumber)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDateToS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbDateS)).EndInit();
             this.ResumeLayout(false);
 
     }

@@ -82,6 +82,31 @@ namespace Common {
             };
         }
 
+        /// <summary>
+        /// Выравнивание дат с - по
+        /// </summary>
+        /// <param name="dcheck">текущий контрол</param>
+        /// <param name="dmin">контрол с мин.датой</param>
+        /// <param name="dmax">контрол с макс.датой</param>
+        /// <param name="setToNow">установить текущую дату</param>
+        public static void CheckDates(this DateTimePicker dcheck, DateTimePicker dmin, DateTimePicker dmax, bool setToNow = true) {
+            if (setToNow) {
+                if (dmin.Value.Date.Equals(dmin.MinDate.Date))
+                    dmin.Value = DateTime.Now.Date;
+                if (dmax.Value.Date.Equals(dmax.MinDate.Date))
+                    dmax.Value = DateTime.Now.Date;
+            }
+            if (dmin.Value.Date > dmax.Value.Date)
+                if (dcheck == dmin)
+                    dmax.Value = dmin.Value.Date;
+                else
+                    dmin.Value = dmax.Value.Date;
+        }
+
+        public static object GetSelectedRowValue(this ComboBox combo, string column, object defaultValue = null) {
+            return (combo.SelectedItem as DataRowView)?.Row[column] ?? defaultValue;
+        }
+
         #region Расширения для SqlConnection (выполнение sql и др.)
 
         /// <summary>Выполнить sql, вернуть список строк</summary>
@@ -145,7 +170,7 @@ namespace Common {
                 sync = SynchronizationContext.Current;
             if (cmdTimeout == null) {
                 int t;
-                if (int.TryParse(AppConfig.Prop("CommandTimeout"), out t))
+                if (int.TryParse(AppConfig.GetPropValue("CommandTimeout"), out t))
                     cmdTimeout = t;
             }
 
@@ -210,6 +235,8 @@ namespace Common {
             return res;
         }
 
+        #endregion
+
         /// <summary>
         /// Вернуть sql-определение параметра: [префикс]имя тип = значение
         /// </summary>
@@ -243,7 +270,16 @@ namespace Common {
             return $"{pfx}{p.ParameterName} {type} = {value}";
         }
 
-        #endregion
+        /// <summary>Вернуть значение объекта для использования при формировании скрипта</summary>
+        public static string ToSqlValue(this object o) {
+            string value = o == null || o.Equals(DBNull.Value) ? "null"
+                : o is string || o is char ? $"'{o}'"
+                : o is bool ? ((bool)o ? "1" : "0")
+                : o is DateTime ? $"'{((DateTime)o).ToString("yyyyMMdd hh:mm:ss")}'"
+                : o.ToString();
+
+            return value;
+        }
 
         #region Расширения для Control
 
@@ -307,6 +343,9 @@ namespace Common {
             dgv.SetNonPublicProperty("DoubleBuffered", value);
         }
 
+        /// <summary>Выполнить метод на ячейке грида (например для использования в обработке DoubleClick)</summary>
+        /// <param name="grid"></param>
+        /// <param name="doIt">Метод с параметром для этого грида</param>
         public static void DoubleClickCell(this DataGridView grid, Action<DataGridView> doIt) {
             var p = grid.PointToClient(Control.MousePosition);
             if (grid.HitTest(p.X, p.Y).Type == DataGridViewHitTestType.Cell)
@@ -400,7 +439,7 @@ namespace Common {
         /// </summary>
         /// <param name="collections">массив коллекций объектов - по количеству листов</param>
         /// <param name="patternFile">путь к файлу-шаблону</param>
-        public static void CollectionsToExcel(this IEnumerable<object>[] collections, string patternFile = null, string[] headers = null) {
+        public static void CollectionsToExcel(this IEnumerable<object>[] collections, string patternFile = null, string[] headers = null, string[] footers = null) {
             Excel.Application xls = null;
             Excel.Workbook wb = null, wbPatt = null;
             Excel.Worksheet ws = null, wsPatt = null;
@@ -435,7 +474,7 @@ namespace Common {
                         ws = (Excel.Worksheet)wb.Worksheets.Add();
                     else
                         ws = wb.Worksheets[i + 1];
-                    CollectionToExcelSheet(collections[i], ws, headers?[i]);
+                    CollectionToExcelSheet(collections[i], ws, headers?[i], footers?[i]);
                 }
                 if (wb.Worksheets.Count > 0)
                     wb.Worksheets[1].Activate();
@@ -459,7 +498,7 @@ namespace Common {
         }
 
         // Выдача коллекции объектов на лист Excel
-        static void CollectionToExcelSheet(this IEnumerable<object> objects, Excel.Worksheet ws, string header) {
+        static void CollectionToExcelSheet(this IEnumerable<object> objects, Excel.Worksheet ws, string header = null, string footer = null) {
             List<object> list = objects.Where(x => x != null).ToList();
             if (list.Count == 0) return;
 
@@ -515,6 +554,14 @@ namespace Common {
                 if (emptyWs) {
                     ws.UsedRange.Columns.WrapText = true;
                     ws.UsedRange.Columns.AutoFit();
+                }
+
+                //footer
+                if (!string.IsNullOrEmpty(footer)) {
+                    cell = cell.get_Offset(data.GetLength(0) + 1, 0);
+                    cell.HorizontalAlignment = Excel.Constants.xlLeft;
+                    cell.WrapText = false;
+                    cell.Value2 = footer;
                 }
             }
             finally {

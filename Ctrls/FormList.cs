@@ -31,41 +31,44 @@ namespace Ctrls {
     если форма ожидает обновления данных - после запуска или после изменения полей-параметров - свойство NeedRefresh = true
     определяет ряд событий, позволяющих вмешаться в логику определения и обработки полей-параметров и параметров запросов
     
-    Методы:
-    IDataForm.Init - принимает параметры при запуске (может быть вызван явно или через ExecForm контекста):
-        ссылка на контекст, режим запуска, параметры запроса, ключ текущей записи
+    Важные Методы:
+    IDataForm.Init - принимает параметры при запуске: ссылку на контекст, режим запуска, внешние параметры для запроса, ключ текущей записи
         определяет главный грид
+        может быть вызван явно или через ExecForm контекста
     IDataForm.PrepareUiParamsProperties - подготовка значений полей-параметров запроса для сохранения (сериализации)
         вызывает событие PrepareUiParamsForSave
     IDataForm.SetUiParamsProperties - установка загруженных значений полей-параметров запроса
         вызывает событие SetLoadedUiParams
+    LoadGrid - загрузка данных в грид - запускает RefreshList, после чего вызывает метод грида LoadData() (для MainGrid передает внешние параметры запроса)
 
     Перегружает:
     OnLoad - до базового - вызывает события CreateUiParamsList, SetUiParamsDefaultValues
             после базового - событие SetUiParamsValuesAfterLoad и инициирует загрузку в главный грид
     
     События:
-    ControlTrigger - общее событие, подписанное наопределенные события контролов формы: изменение состояния (Cheked, Selected, ...), входа (Enter), выхода (Leave)
-                    подписку можно переопределить через SubscribeControlTrigger
     CreateUiParamsList - возможность коррекции списка полей-параметров после его создания
     SetUiParamsDefaultValues - момент до загрузки сохраненных зачений полей-параметров или момент после очистки полей-параметров конкретного грида (по Ctrl+F5)
         используем для установки параметров по умолчанию
     SetUiParamsValuesAfterLoad - момент после загрузки сохраненных значений полей-параметров используем для принудительной установки параметров после старта формы
     PrepareUiParamsForSave - возможность коррекции сформированного списка значений полей-параметров запроса перед сохранением
     SetLoadedUiParams - возможность доп.обработки полученного списка значений полей-параметров запроса
+    SelectFromList - момент выбора из списка, до возвращения объекта из формы - возможность коррекции выбранного объекта
+    RefreshList - момент до фактического обновления данных списка
 
     Подписывается на: 
-    DataList -> delegate QueryParamsSet - установка параметров
-    DataList -> event GetData - если у грида задан QuerySql или QueryID - выполняет запрос
-    DataList -> event SendInfo - выдает инфу на StatusBar
+    DataList -> delegate QueryParamsSet - установка параметров => выполнит метод GridQueryParamsSet, который добавляет параметры из uiParams в словарь параметров запроса грида
+    DataList -> event GetData - если у грида задан QuerySql или QueryID - выполняет запрос => выполнит метод DataList_GetData - чистит грид, собрает мусор и получает данные в соответствии с запросом/командой
+    DataList -> event SendInfo - выдает инфу на StatusBar => выполнит метод DataList_SendInfo, который выведет показатели грида на статус-бар
 
     Горячие клавиши:
-    F5 или Enter - для полей-параметров - обновляет грид, к которому относится параметр
+    F5 - обновляет грид (если с Shift - сбросит фильтры столбцов грида)
+    Enter - на параметре - обновит грид, к которому относится параметр
     Ctrl+F5 - сброс полей-параметров, относящихся к определенному гриду
     Alt+F5  - переход к первому полю-параметру, относящемуся к определенному гриду
 
     */
 
+    /// <summary>Форма для размещения списков</summary>
     public partial class FormList : FormBase {
 
         /// <summary>Аргументы событий для полей параметров</summary>
@@ -270,7 +273,7 @@ namespace Ctrls {
             NeedRefresh = false;
         }
 
-        /// <summary>Выбор строки</summary>
+        /// <summary>Выбор строки или строк</summary>
         public void OnSelectFromList(EventArgs e = null) {
             if (!(formModes.HasFlag(FormModes.GetResult)
                 && (ActiveGrid.Name.Equals(SelectionGridName) || string.IsNullOrWhiteSpace(SelectionGridName))
@@ -278,21 +281,32 @@ namespace Ctrls {
                 ))
                 return;
 
-            var ea = new SelectFromListEventArgs() { SelectedObject = CtrlsProc.PrepareParams(ActiveGrid.GetRowObject()), Handled = false };
+            object selectedObject = null;
+            var checkedIdx = ActiveGrid.GetCheckedRowsIdx();
+            if (formModes.HasFlag(FormModes.GetMultiResult)) {
+                if (checkedIdx.Count > 0)
+                    selectedObject = checkedIdx.Select(r => ActiveGrid.GetRowObject(r)).ToList();
+                else
+                    selectedObject = new List<object> { ActiveGrid.GetRowObject() };
+            } else
+                selectedObject = CtrlsProc.PrepareParams(ActiveGrid.GetRowObject());
+
+            // сбросить дальнейшую обработку нажатий
+            var keyEvt = (e as KeyEventArgs);
+            if (keyEvt != null)
+                keyEvt.Handled = true;
+
+            var ea = new SelectFromListEventArgs() { SelectedObject = selectedObject, Handled = false };
             SelectFromList?.Invoke(this, ea);
 
+            // стандартный возврат результата и выход, если это не отменили в обработчике события
             if (!ea.Handled) {
                 Ctx.TransferObject = ea.SelectedObject;
                 if (Ctx.TransferObject == null)
                     Loger.SendMess("Не получен выбранный объект!", true);
                 DialogResult = Ctx.TransferObject != null && Modal ? DialogResult.OK : DialogResult.Cancel;
+                Close();
             }
-
-            var keyEvt = (e as KeyEventArgs);
-            if (keyEvt != null)
-                keyEvt.Handled = true;
-
-            Close();
         }
 
         /// <summary>делегат для грида на установку параметров - вызывается в grid.LoadData() -> OnGetData()</summary>
@@ -302,7 +316,7 @@ namespace Ctrls {
         }
 
         // обработка статистики из грида
-        void DataList_SendInfo(object sender, SendInfoEventArgs e) {
+        protected void DataList_SendInfo(object sender, SendInfoEventArgs e) {
             if (e.handled) return;
             if (e.info != null) lbInfo.Text = e.info;
             if (e.rows != null) lbRows.Text = $"Строк {e.rows} выделено {e.selected}{(!string.IsNullOrWhiteSpace(e.checks) ? $" отмечено {e.checks}" : "")}";

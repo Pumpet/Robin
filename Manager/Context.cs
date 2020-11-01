@@ -33,9 +33,10 @@ namespace Manager {
     /// Modal = 4 - модальная форма; 
     /// Single = 8 - форма может быть запущена 1 раз (для всех форм из меню, заполненного по настройкам); 
     /// ViewOnlyEdit = 16 - форма-редактор только для просмотра данных; 
+    /// GetMultiResult = 32 - уточнение для GetResult - это форма-список для выбора нескольких записей.
     /// </summary>
     [Flags]
-    public enum FormModes { Default = 0, GetResult = 1, NewRecEdit = 2, Modal = 4, Single = 8, ViewOnlyEdit = 16 }
+    public enum FormModes { Default = 0, GetResult = 1, NewRecEdit = 2, Modal = 4, Single = 8, ViewOnlyEdit = 16, GetMultiResult = 32 }
 
     /// <summary>Контекст приложения.
     /// Объект контекста (свойство Self) создается при старте приложения.
@@ -44,27 +45,30 @@ namespace Manager {
     /// </summary>
     public class Context {
 
-        // объекты и коллекции настроек:
+        // настройки и параметры приложения и пользователя:
         string username; // текущий пользователь
-        string appcode; // код приложения (из конфига - по нему определяются настройки из таблиц)
+        string appcode; // код приложения (из конфига - AppCode, проверяется на существование в базе)
         string userFormOptions; // текущие настройки форм пользователя/хоста
+        DataRow appAttrs; // настройки приложения из tApp
         List<DataRow> menus; // настройки меню (tMenu)
         List<DataRow> cmds;  // настройки команд (tCommand)
-
-        bool trassa = false;
-        public Dictionary<string, Form> LivingForms = new Dictionary<string, Form>();
         
+        bool trassa = false; // признак включенной трассировки
+        bool stopLogSQL = false;
+
         /// <summary>Объект контекста приложения</summary>
         public static Context Self { get; private set; }
         /// <summary>Объект подключения приложения</summary>
         public SqlConnection Conn { get; set; }
+        /// <summary>Формы запущенные в данный момент</summary>
+        public Dictionary<string, Form> LivingForms { get; set; } = new Dictionary<string, Form>();
         /// <summary>Последняя активная форма приложения</summary>
         public Form LastActiveForm { get; set; } = null;
         /// <summary>Главная форма приложения</summary>
         public Form MainForm { get; private set; }
         /// <summary>Объект для передачи данных, например возврат результата из формы</summary>
         public object TransferObject { get; set; }
-        /// <summary>Сборка с иконками в ресурсах</summary>
+        /// <summary>Сборка с картинками в ресурсах</summary>
         public string ImgAsmName { get; private set; }
         /// <summary>Набор общих данных</summary>
         public Dictionary<string, object> CommonObjects { get; private set; } = new Dictionary<string, object>();
@@ -76,9 +80,10 @@ namespace Manager {
             try {
                 AppConfig.Load(configPath);
                 Self = new Context(mainForm);
+                Loger.Writer = Self.SaveLog;
             }
             catch (Exception e) {
-                Loger.SendMess(e, "Ошибка формирования контекста приложения");
+                Loger.SendMess(e, "Ошибка формирования контекста приложения", false);
                 return;
             }
 
@@ -86,36 +91,48 @@ namespace Manager {
                 Application.Run(Self.MainForm);
             }
             catch (Exception e) {
-                Loger.SendMess(e, "Необработанная ошибка приложения! Приложение будет закрыто.");
+                Loger.SendMess(e, "Необработанная ошибка приложения! Приложение будет закрыто.", false);
             }
         }
-
+        
         Context(Form mainForm) {
-            var connStr = AppConfig.Prop("ConnectionString");
+            var connStr = AppConfig.GetPropValue("ConnectionString");
             Conn = new SqlConnection(connStr);
             if (!CheckConnection(Conn))
                 throw new Exception($"Ошибка подключения!\n{connStr}");
             username = Conn?.GetValue("select suser_name()").ToString();
-            appcode = AppConfig.Prop("AppCode") ?? Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName.Replace("vshost.", ""));
+            appcode = AppConfig.GetPropValue("AppCode") ?? Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName.Replace("vshost.", ""));
             GetKernelData();
+            ImgAsmName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppConfig.GetPropValue("ImgAsm") ?? AppDomain.CurrentDomain.FriendlyName.Replace("vshost.", ""));
 
             MainForm = mainForm;
+            if (MainForm is IDataForm) {
+                MainForm.Load += AnyForm_Load;
+                MainForm.FormClosed += AnyForm_Closed;
+            }
+
             MainForm.KeyPreview = true;
             MainForm.KeyDown += MainForm_KeyDown;
             MainForm.KeyDown += AnyForm_KeyDown;
 
-            ImgAsmName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppConfig.Prop("ImgAsm") ?? AppDomain.CurrentDomain.FriendlyName.Replace("vshost.", ""));
-
+            if (MainForm is IDataForm) 
+                ((IDataForm)MainForm).Init(this);
         }
 
         #region Работа с формами
 
+        /// <summary>Текст для заголовка приложения</summary>
+        public string GetAppCaption(bool withConnection = true)
+        {
+            return $"{AppConfig.GetPropValue("AppName") ?? appAttrs["caption"]}{(withConnection ? $" ({Conn.DataSource}.{Conn.Database})" : "")}";
+        }
+
         /// <summary>Заполнить указанный ToolStrip по настройкам меню</summary>
         public void FillMenu(ToolStrip tools) {
-            Action<ToolStripItemCollection, object> fn = null;
+            Action<ToolStripItemCollection, object, ToolStripDropDownButton> fn = null;
 
-            fn = (tsc, p) => {
-                foreach (var item in menus.Where(x => x["parent"].Equals(p)).OrderBy(x => x["ord"])) {
+            fn = (tsc, p, parent) => {
+                foreach (var item in menus.Where(x => x["parentId"].Equals(p)).OrderBy(x => x["ord"])) {
                     ToolStripItem tsi;
                     if (item["execType"].Equals(1))
                         tsi = new ToolStripDropDownButton(item["caption"].ToString());
@@ -129,15 +146,17 @@ namespace Manager {
                     if (!string.IsNullOrWhiteSpace(imgName))
                         tsi.Image = GetImage(ImgAsmName, imgName);
 
-                    tsi.Width += 20;
+                    tsi.Width = TextRenderer.MeasureText(tsi.Text, tsi.Font).Width + 20; //tsi.Text.Length * 5;
+                    if (parent != null && parent.Width > tsi.Width)
+                        tsi.Width = parent.Width;
                     tsc.Add(tsi);
                     if (tsi is ToolStripDropDownButton)
-                        fn(((ToolStripDropDownButton)tsi).DropDownItems, item["code"]); // дочернее меню
+                        fn(((ToolStripDropDownButton)tsi).DropDownItems, item["id"], (ToolStripDropDownButton)tsi); // дочернее меню
                     if (tsi is ToolStripButton)
                         tsi.Click += MenuClick;
                 }
             };
-            fn(tools.Items, DBNull.Value);
+            fn(tools.Items, DBNull.Value, null);
         }
 
         /// <summary>Получить картинку из ресурсов</summary>
@@ -150,7 +169,7 @@ namespace Manager {
                     Loger.SendMess($"Не найдена картинка \"{imgName}\" в ресурсах {imgAsmName}", true);
             }
             catch (Exception e) {
-                Loger.SendMess(e, $"Ошибка получения картинки \"{imgName}\" из ресурсов {imgAsmName}");
+                Loger.SendMess(e, $"Ошибка получения картинки \"{imgName}\" из ресурсов {imgAsmName}", false);
             }
             return img;
         }
@@ -162,11 +181,9 @@ namespace Manager {
                 var execType = menuOpt["execType"];
                 var command = menuOpt["command"]?.ToString();
                 if (execType.Equals(0) && !string.IsNullOrWhiteSpace(command)) {
-                    var cmdOpt = cmds.FirstOrDefault(x => x["code"].Equals(command));
-                    if (cmdOpt == null) {
-                        Loger.SendMess($"Не найдена команда по коду '{command}'", true);
+                    var cmdOpt = GetCommandOptions(command);
+                    if (cmdOpt == null) 
                         return;
-                    }
                     if ((int)cmdOpt["cmdType"] == 0)
                         Loger.SendMess("В меню не поддерживается команда с типом 0 (sql)", true);
                     if ((int)cmdOpt["cmdType"] == 1)
@@ -182,7 +199,7 @@ namespace Manager {
         /// <param name="className">namespace.class</param>
         /// <param name="methodName">метод</param>
         /// <returns></returns>
-        public MethodInfo GetMethod(string assemblyPath, string className, string methodName) {
+        public static MethodInfo GetMethod(string assemblyPath, string className, string methodName) {
             MethodInfo method = null;
             try {
                 assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyPath);
@@ -211,8 +228,10 @@ namespace Manager {
         /// <summary>Создать форму по коду из настроек</summary>
         /// <param name="formCode">Код, для которого в настройках определена команда: [path]assembly;namespace.form</param>
         public Form GetForm(string formCode) {
-            var formOpt = cmds.FirstOrDefault(x => x["code"].Equals(formCode) && (int)x["cmdType"] == 1);
-            if (formOpt == null) {
+            var formOpt = GetCommandOptions(formCode);
+            if (formOpt == null)
+                return null;
+            if ((int)formOpt["cmdType"] != 1) {
                 Loger.SendMess($"Не найдена настройка для формы по коду '{formCode}'", true);
                 return null;
             }
@@ -228,7 +247,7 @@ namespace Manager {
         /// <summary>Создать форму из сборки</summary>
         /// <param name="assemblyPath">[путь]файл сборки</param>
         /// <param name="className">namespace.form</param>
-        public Form GetForm(string assemblyPath, string className) {
+        public static Form GetForm(string assemblyPath, string className) {
             Form form = null;
             try {
                 assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyPath);
@@ -277,6 +296,7 @@ namespace Manager {
 
             Cursor.Current = Cursors.WaitCursor;
             try {
+                SaveLog("EXEC_FORM", $"Start form {form.Name} ({form.Text})");
                 form.Load += AnyForm_Load;
                 form.FormClosed += AnyForm_Closed;
                 form.KeyDown += AnyForm_KeyDown;
@@ -320,15 +340,15 @@ namespace Manager {
 
         /// <summary>Загрузить параметры отображения формы</summary>
         public void LoadFormOptions(Form form, FormOptionsSetType setType = FormOptionsSetType.All) {
-            if (AppConfig.Has("UserOptionsInDB"))
+            if (AppConfig.HasProp("UserOptionsInDB"))
                 FormOptions.LoadFromXML(form, userFormOptions, setType);
-            if (AppConfig.Has("UserOptionsInFile"))
+            if (AppConfig.HasProp("UserOptionsInFile"))
                 FormOptions.LoadFromFile(form, null, setType);
         }
 
         /// <summary>Сохранить параметры отображения формы</summary>
         public void SaveFormOptions(Form form) {
-            if (AppConfig.Has("UserOptionsInDB")) {
+            if (AppConfig.HasProp("UserOptionsInDB")) {
                 userFormOptions = FormOptions.GetInXML(form, userFormOptions);
                 Conn?.ExecCommand(@"
                     if exists(select 1 from dm.tFormOptions where code = @user and appcode = @appcode)
@@ -337,7 +357,7 @@ namespace Manager {
                         insert dm.tFormOptions(code, appcode, options) values (@user, @appcode, @opt)",
                     new Dictionary<string, object>() { { "user", username }, { "appcode", appcode }, { "opt", userFormOptions } });
             }
-            if (AppConfig.Has("UserOptionsInFile"))
+            if (AppConfig.HasProp("UserOptionsInFile"))
                 FormOptions.SaveToFile(form);
         }
 
@@ -346,12 +366,14 @@ namespace Manager {
         public void ShowMain(Form form) //  
         {
             if (MainForm != null) {
-                foreach (var f in MainForm.OwnedForms.Where(x => x.WindowState == FormWindowState.Maximized || x.Top < MainForm.Bottom)) {
-                    f.WindowState = FormWindowState.Normal;
-                    if (f.Top < MainForm.Bottom) f.Top = MainForm.Bottom;
+                if (!(MainForm is IDataForm)) { // только если гл.форма - не форма данных
+                    foreach (var f in MainForm.OwnedForms.Where(x => x.WindowState == FormWindowState.Maximized || x.Top < MainForm.Bottom)) {
+                        f.WindowState = FormWindowState.Normal;
+                        if (f.Top < MainForm.Bottom) f.Top = MainForm.Bottom;
+                    }
+                    if (MainForm.WindowState != FormWindowState.Maximized)
+                        MainForm.WindowState = FormWindowState.Maximized;
                 }
-                if (MainForm.WindowState != FormWindowState.Maximized)
-                    MainForm.WindowState = FormWindowState.Maximized;
                 LastActiveForm = form;
                 form.Activate();
                 MainForm.Activate();
@@ -364,6 +386,8 @@ namespace Manager {
         /// <param name="max">Развернуть на весь экран под главной формой</param>
         public void FormDefaultPos(Form form, bool max) //  
         {
+            if (MainForm is IDataForm)
+                return;
             if (MainForm != null && MainForm.WindowState == FormWindowState.Maximized) {
                 if (form.WindowState == FormWindowState.Maximized)
                     form.WindowState = FormWindowState.Normal;
@@ -417,7 +441,7 @@ namespace Manager {
 
         // обработка клавиатуры обслуживаемой формы
         void AnyForm_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.F9 && (Form)sender != MainForm) {
+            if (e.KeyCode == Keys.F9) { 
                 e.Handled = true;
                 ManageForm((Form)sender, e.Modifiers);
             }
@@ -425,6 +449,10 @@ namespace Manager {
                 e.Handled = true;
                 GetKernelData();
                 Loger.SendMess("Системные настройки перезагружены!");
+            }
+            if (e.KeyCode == Keys.W && e.Modifiers == Keys.Alt && MainForm.OwnedForms.Count() > 1 && MainForm.OwnedForms.Contains(sender)) {
+                e.Handled = true;
+                MainForm.OwnedForms.SkipWhile(x => x != sender).Skip(1).DefaultIfEmpty(MainForm.OwnedForms[0]).FirstOrDefault()?.Activate();
             }
             SetTrassa(e);
         }
@@ -437,14 +465,14 @@ namespace Manager {
             }
         }
 
-        /// <summary>Обработка событий по управлению формой (в зависимости от сочетания клавиш - вызов главной формы, выбор формы, позиционирование, возврат настроек</summary>
+        /// <summary>Обработка событий по управлению формой (в зависимости от сочетания клавиш - вызов главной формы, выбор формы, позиционирование, возврат настроек)</summary>
         /// <param name="form">Форма</param>
         /// <param name="keys">Сочетание служебных клавиш</param>
         public void ManageForm(Form form, Keys keys) {
             if (form.Modal) return;
-            if (keys == Keys.None)
+            if (keys == Keys.None && form != MainForm)
                 ShowMain(form);
-            if (keys == Keys.Control || keys == Keys.Shift)
+            if (keys == Keys.Control || keys == Keys.Shift && form != MainForm)
                 FormDefaultPos(form, keys == Keys.Control);
             if (keys == (Keys.Control | Keys.Shift) || keys == (Keys.Alt | Keys.Shift))
                 LoadFormOptions(form, keys == (Keys.Control | Keys.Shift) ? FormOptionsSetType.Size : FormOptionsSetType.All);
@@ -471,7 +499,7 @@ namespace Manager {
             }
             catch (Exception e) {
                 f.Close();
-                Loger.SendMess(e, "Ошибка подключения");
+                Loger.SendMess(e, "Ошибка подключения", false);
                 return false;
             }
         }
@@ -487,6 +515,7 @@ namespace Manager {
                     da.Fill(ds);
                     menus = ds.Tables[0].AsEnumerable().ToList();
                     cmds = ds.Tables[1].AsEnumerable().ToList();
+                    appAttrs = ds.Tables[2].AsEnumerable().ToList()[0];
                     userFormOptions = Conn?.GetValue("select options from dm.tFormOptions where code = @user and appcode = @appcode",
                                     new Dictionary<string, object>() { { "user", username }, { "appcode", appcode } }, Trassa)?.ToString();
                 }
@@ -494,6 +523,34 @@ namespace Manager {
             catch (Exception e) {
                 throw new Exception($"Ошибка получения настроек\n{e.Message}", e);
             }
+        }
+
+        /// <summary>Записать в лог (для dm.tApp.lotgAll = 1)</summary>
+        /// <param name="messType">Тип сообщения</param>
+        /// <param name="mess">Сообщение</param>
+        public void SaveLog(string messType, string mess) {
+            if (appAttrs == null || appAttrs["logAll"].Equals(false))
+                return;
+            var pars = new Dictionary<string, object> {
+                ["login"] = username,
+                ["appcode"] = appcode,
+                ["type"] = messType,
+                ["mess"] = mess
+            };
+            stopLogSQL = true;
+            ExecCommand("exec dm.pLog @login, @appcode, @type, @mess", null, pars);
+            stopLogSQL = false;
+        }
+
+        public DataRow GetCommandOptions(string code) {
+            var res = cmds.FirstOrDefault(x => x["code"].Equals(code));
+            if (res == null)
+                Loger.SendMess($"Не найдена настройка команды \"{code}\"", true);
+            else if (!(bool)res["allowed"]) {
+                Loger.SendMess($"Нет допуска к настройке команды \"{code}\" ({res["comment"]})", true);
+                res = null;
+            }
+            return res;
         }
 
         /// <summary>Выполнить запрос, вернуть таблицу</summary>
@@ -536,11 +593,15 @@ namespace Manager {
                 Loger.SendMess($"Не указан код команды", true);
                 return null;
             }
-            var queryOpt = cmds.FirstOrDefault(x => x["code"].Equals(cmdCode) && (int)x["cmdType"] == 0);
-            if (queryOpt == null) {
-                Loger.SendMess($"Не найдена команда по коду '{cmdCode}'", true);
+
+            var queryOpt = GetCommandOptions(cmdCode);
+            if (queryOpt == null)
+                return null;
+            if ((int)queryOpt["cmdType"] != 0) {
+                Loger.SendMess($"Настройка команды '{cmdCode}' не является командой SQL", true);
                 return null;
             }
+
             return queryOpt["cmd"].ToString();
         }
         
@@ -549,7 +610,11 @@ namespace Manager {
         /// <param name="pars">параметры</param>
         /// <param name="header">заголовок окна трассировки</param>
         public void Trassa(string sql, List<SqlParameter> pars, string header = null) {
-            if (!trassa) return;
+            if (stopLogSQL)
+                return;
+            var logSQL = (appAttrs != null && appAttrs["logSQL"].Equals(true));
+            if (!trassa && !logSQL)
+                return;
             var msg = new StringBuilder();
             if (pars != null && pars.Count > 0) {
                 foreach (var p in pars)
@@ -557,18 +622,22 @@ namespace Manager {
                 msg.AppendLine();
             }
             msg.AppendLine(sql);
-            //MessageBox.Show(msg.ToString());
-            var f = new FTrassa();
-            f.KeyDown += (o, e) => SetTrassa(e);
-            f.Text = header ?? Conn.ConnectionString;
-            f.trassa.Text = msg.ToString();
-            f.ShowDialog();
+            if (logSQL) {
+                SaveLog("SQL", msg.ToString());
+            }
+            if (trassa) {
+                var f = new FTrassa();
+                f.KeyDown += (o, e) => SetTrassa(e);
+                f.Text = header ?? Conn.ConnectionString;
+                f.trassa.Text = msg.ToString();
+                f.ShowDialog();
+            }
         }
 
         #endregion
 
         /// <summary>Принудительная прочистка мозгов</summary>
-        public void GcCollect() {
+        public static void GcCollect() {
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();

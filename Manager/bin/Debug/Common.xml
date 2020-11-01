@@ -8,6 +8,27 @@
             <summary>Параметры приложения
             </summary>
         </member>
+        <member name="M:Common.AppConfig.GetPropValue(System.String)">
+            <summary>Получить значение параметра</summary>
+        </member>
+        <member name="M:Common.AppConfig.SetPropValue(System.String,System.String)">
+            <summary>Установить значение параметра (если параметра нет - создаст новый)</summary>
+        </member>
+        <member name="M:Common.AppConfig.SetFromDict(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>Установить значения параметров или создать новые параметры по данным словаря (имя-значение)</summary>
+        </member>
+        <member name="M:Common.AppConfig.GetProp(System.String)">
+            <summary>Получить объект параметра</summary>
+        </member>
+        <member name="M:Common.AppConfig.HasProp(System.String)">
+            <summary>Проверить наличие параметра</summary>
+        </member>
+        <member name="M:Common.AppConfig.GetGroupValues(System.String)">
+            <summary>Получить список значений параметров группы</summary>
+        </member>
+        <member name="M:Common.AppConfig.GetProps(System.String)">
+            <summary>Получить список объектов параметров (весь или указанной группы)</summary>
+        </member>
         <member name="M:Common.AppConfig.Load(System.String)">
             <summary>Загружает параметры приложения из файла. Если файла нет - создает новый.
             </summary>
@@ -46,6 +67,15 @@
             </summary>
             <param name="activeBrush">Цвет активного узла (по умолчанию SystemBrushes.ActiveCaption)</param>
             <param name="inactiveBrush">Цвет неактивного узла (по умолчанию SystemBrushes.GradientInactiveCaption)</param>
+        </member>
+        <member name="M:Common.Extens.CheckDates(System.Windows.Forms.DateTimePicker,System.Windows.Forms.DateTimePicker,System.Windows.Forms.DateTimePicker,System.Boolean)">
+            <summary>
+            Выравнивание дат с - по
+            </summary>
+            <param name="dcheck">текущий контрол</param>
+            <param name="dmin">контрол с мин.датой</param>
+            <param name="dmax">контрол с макс.датой</param>
+            <param name="setToNow">установить текущую дату</param>
         </member>
         <member name="M:Common.Extens.GetTableList(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Action{System.String,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String},System.Threading.SynchronizationContext,System.Data.DataRowChangeEventHandler,System.Action{System.Object})">
             <summary>Выполнить sql, вернуть список строк</summary>
@@ -91,6 +121,9 @@
             <param name="pfx">Префикс, по умолчанию @</param>
             <returns>Sql-определение параметра: [префикс]имя тип[(размерность)] = значение (в т.ч. null). Для дат/времени - в виде строки 'yyyyMMdd hh:mm:ss'</returns>
         </member>
+        <member name="M:Common.Extens.ToSqlValue(System.Object)">
+            <summary>Вернуть значение объекта для использования при формировании скрипта</summary>
+        </member>
         <member name="M:Common.Extens.GetControls``1(System.Windows.Forms.Control)">
             <summary>Получить список контролов указанного типа из контейнера (с учетом вложенных контейнеров)</summary>
         </member>
@@ -109,10 +142,15 @@
         <member name="M:Common.Extens.SetDoubleBuffered(System.Windows.Forms.DataGridView,System.Boolean)">
             <summary>Установить/снять DoubleBuffered</summary>
         </member>
+        <member name="M:Common.Extens.DoubleClickCell(System.Windows.Forms.DataGridView,System.Action{System.Windows.Forms.DataGridView})">
+            <summary>Выполнить метод на ячейке грида (например для использования в обработке DoubleClick)</summary>
+            <param name="grid"></param>
+            <param name="doIt">Метод с параметром для этого грида</param>
+        </member>
         <member name="M:Common.Extens.ToExcel(System.Windows.Forms.DataGridView,System.Int32)">
             <summary>Выдать данные в эксель</summary>
         </member>
-        <member name="M:Common.Extens.CollectionsToExcel(System.Collections.Generic.IEnumerable{System.Object}[],System.String,System.String[])">
+        <member name="M:Common.Extens.CollectionsToExcel(System.Collections.Generic.IEnumerable{System.Object}[],System.String,System.String[],System.String[])">
             <summary>Выгрузка коллекций объектов в Excel (по листам)
             </summary>
             <param name="collections">массив коллекций объектов - по количеству листов</param>
@@ -156,13 +194,13 @@
             <summary>обработчик сообщений 
             </summary>
         </member>
-        <member name="M:Common.Loger.SendMess(System.Exception,System.String)">
+        <member name="M:Common.Loger.SendMess(System.Exception,System.String,System.Boolean)">
             <summary>Сформировать сообщение об ошибке
             </summary>
             <param name="e">исключение</param>
             <param name="mess">сообщение, предваряющее сообщение об исключении</param>
         </member>
-        <member name="M:Common.Loger.SendMess(System.String,System.Boolean)">
+        <member name="M:Common.Loger.SendMess(System.String,System.Boolean,System.Boolean)">
             <summary>Сформировать сообщение
             </summary>
             <param name="mess">сообщение</param>

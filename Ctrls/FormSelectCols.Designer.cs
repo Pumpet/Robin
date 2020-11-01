@@ -64,10 +64,13 @@
             this.ClientSize = new System.Drawing.Size(284, 199);
             this.Controls.Add(this.chlbCols);
             this.Controls.Add(this.bOk);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.KeyPreview = true;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(300, 233);
             this.Name = "FormSelectCols";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Выбор столбцов";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FormSelectCols_KeyDown);

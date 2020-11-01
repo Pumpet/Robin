@@ -37,6 +37,13 @@ namespace Ctrls {
         [Category("Mask options"), DefaultValue(false), Description("Допускает пустое значение при редактировании")]
         public bool Nullable { get; set; }
 
+        [Category("Mask options"), DefaultValue(null), Description("Максимальное количество цифр")]
+        public uint? DigitsTotalNumber { get; set; }
+
+        [Category("Mask options"), DefaultValue(null), Description("Количество цифр после запятой")]
+        public uint? DigitsDecimalNumber { get; set; }
+
+
         public NumberBox() {
             InitializeComponent();
             StartValues();
@@ -61,6 +68,16 @@ namespace Ctrls {
             Text = DefaultText;
             old = Text;
             docheck = true;
+            if (DataBindings != null)
+                DataBindings.CollectionChanged += DataBindings_CollectionChanged;
+        }
+
+        // для принудительных параметров биндинга
+        private void DataBindings_CollectionChanged(object sender, CollectionChangeEventArgs e) {
+            var bind = e.Element as Binding;
+            if (e.Action == CollectionChangeAction.Add && bind != null) {
+                bind.NullValue = bind.NullValue ?? ""; // чтобы задавить null-ы - иначе не уйти после очистки, если был биндинг и допустимы null
+            }
         }
 
         protected override void OnKeyDown(KeyEventArgs e) {
@@ -91,7 +108,9 @@ namespace Ctrls {
             e.SuppressKeyPress = (e.SuppressKeyPress
               || e.KeyCode == Keys.Oemplus
               || e.KeyCode == Keys.OemMinus
-              || e.KeyCode == Keys.Space);
+              || e.KeyCode == Keys.Space
+              || e.KeyCode == Keys.Add
+              || e.KeyCode == Keys.Subtract);
 
             base.OnKeyDown(e);
         }
@@ -149,7 +168,11 @@ namespace Ctrls {
             text = tmp + text;
 
             decimal v;
-            check = decimal.TryParse(text, out v);
+            check = decimal.TryParse(text, out v) && CheckDecimalSize(v, DigitsTotalNumber, DigitsDecimalNumber);
+
+            // для числа без дробной части (Scale == 0) убрать ".0"
+            if (check && DigitsDecimalNumber == 0 && text.Length > 1 && text.Substring(text.Length - 2, 2) == ".0")
+                text = text.Substring(0, text.Length - 2);
 
             outtext = text;
             return check || text == DefaultText || !docheck;
@@ -159,6 +182,35 @@ namespace Ctrls {
         public decimal? GetDecimalOrNull() {
             decimal dec;
             return decimal.TryParse(Text, out dec) ? (decimal?)dec : null;
+        }
+
+        public bool CheckDecimalSize(decimal value, uint? prec = null, uint? scale = null) {
+            if (!(prec > 0))
+                return true; // не контролируем
+            if (scale > prec)
+                scale = prec;
+
+            // поверка целой части
+            int intMax = (int)(scale >= 0 ? prec - scale : prec);
+            var intVal = Math.Truncate(value);
+            var intStr = intVal.ToString().Replace("-", "");
+            if (intMax == 0) {
+                if (!intStr.Equals("0"))
+                    return false;
+            } else if (intStr.Length > intMax)
+                return false;
+
+            // поверка дробной части
+            var decVal = value - intVal;
+            var decStr = decVal.ToString().Replace("-", "").Replace("0.", "").TrimEnd('0');
+            if (scale >= 0 && decStr.Length > (int)scale)
+                return false;
+
+            // всего знаков
+            if ((intStr + decStr).Trim('0').Length > (int)prec)
+                return false;
+
+            return true;
         }
     }
 }

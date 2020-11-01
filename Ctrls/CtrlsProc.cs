@@ -117,7 +117,7 @@ namespace Ctrls {
             return res;
         }
 
-        /// <summary>Установка значений словаря в поля объекта (строки, словаря)
+        /// <summary>Установка значений словаря в поля объекта (строки, словаря)</summary>
         /// <param name="targetObject">целевой объект (строка, словарь, контейнер контролов)</param>
         /// <param name="pars">словарь значений (ключи соответствуют именам полей объекта)</param>
         public static void SetValues(object targetObject, Dictionary<string, object> pars) {
@@ -144,8 +144,6 @@ namespace Ctrls {
                 }
             }
         }
-
-
         /// <summary>Значение контрола для дальнейшего использования (например в параметрах)</summary>
         public static object GetControlValue(this Control c) {
             object res = null;
@@ -155,9 +153,10 @@ namespace Ctrls {
                 res = ((NumericUpDown)c).Value;
             else if (c is DateTimeBox)
                 res = ((DateTimeBox)c).GetDateTime();
-            else if (c is DateTimePicker)
-                res = ((DateTimePicker)c).Value;
-            else if (c is CheckBox)
+            else if (c is DateTimePicker) {
+                var dtp = (DateTimePicker)c;
+                res = dtp.ShowCheckBox && !dtp.Checked ? null : (object)dtp.Value;
+            } else if (c is CheckBox)
                 res = ((CheckBox)c).CheckState == CheckState.Indeterminate ? null : (object)((CheckBox)c).Checked;
             else if (c is RadioButton)
                 res = ((RadioButton)c).Checked;

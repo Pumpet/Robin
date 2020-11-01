@@ -101,10 +101,10 @@
             // 
             this.code.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
             this.code.DataPropertyName = "code";
-            this.code.HeaderText = "Код";
+            this.code.HeaderText = "Пользователь";
             this.code.Name = "code";
             this.code.ReadOnly = true;
-            this.code.Width = 51;
+            this.code.Width = 108;
             // 
             // FFormOptions
             // 
