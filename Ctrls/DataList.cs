@@ -40,10 +40,12 @@ namespace Ctrls {
 
     Свойства:
     ShowCheckBoxes - отображать или нет столбец с check-box-ами с возможностью отметить пробелом текущую или Ctrl+пробел все выделенные
+    Disable... - отключение соответствующих возможностей: фильтр, поиск, сортировка, управление столбцами, выдача в эксель, подсветка строк
     KeyNames - имена ключевых полей через ";" - необходимо для установки фокуса на строку с полями в соответствии с ключом, переданным в LoadData
         а также после обновления, фильтрации и сортировки - на текущую строку
     QuerySql - sql-запрос, который можно затем использовать например в обработчике события GetData
     QueryCmdCode  - идентификатор (код и т.п.), по которому можно отработать логику получения данных - например достать запрос из настроек
+    SelectedRow...Color - расцветка отмеченной строки
     SelectedRowBackColor - цвет выделенных строк
     SelectedCellFocusedBackColor - цвет текущей строки (с фокусом)
     SelectedCellNotFocusedBackColor - цвет текущей строки (без фокуса)
@@ -116,10 +118,10 @@ namespace Ctrls {
     public partial class DataList : DataGridView {
 
         bool enableLoadChilds = true; // возможность обновлять связанные гриды
-        bool disableRowHighlight = true; // запретить перерисовку подсветки строк при загрузке данных
+        bool disableRedrawHighlight = true; // запретить перерисовку подсветки строк при загрузке данных
         bool autoColumns; // для установки AutoGenerateColumns
         int lastRow = -1; // текущая строка
-        int firstRowPressed = -1; // строка, на которой нажали кнопку мыши или клавишу (начали выделение или перемещение) - фиксируется перед enableLoadChilds == false
+        int firstRowPressed = -1; // строка, на которой нажали кнопку мыши или клавишу - устанавливается одновременно с enableLoadChilds == false в начале выделения мышкой или перемещение
         object prevKey = null; // ключ, чтобы на него вернуться
         List<int> prevRowSelected = new List<int>();
         Search search; // текущий поиск
@@ -140,22 +142,50 @@ namespace Ctrls {
         public event EventHandler<ParamsCheckEventArgs> QueryParamsCheck;
         [Category("Robin options"), Description("запрос данных из источника")]
         public event EventHandler<ProcessDataEventArgs> GetData;
+        [Category("Robin options"), Description("активизация грида (получение фокуса)")]
+        public event EventHandler<EventArgs> ActivateList;
         [Category("Robin options"), Description("передача текущей информации - кол-во строк и прочее")]
         public event EventHandler<SendInfoEventArgs> SendInfo;
         [Category("Robin options"), Description("изменилось содержимое, позиция, порядок и т.д.")]
         public event EventHandler<WhatsUpEventArgs> WhatsUp;
 
-        [Category("Robin options"), DefaultValue(false), Description("показывать столбец с checkbox - возможность отмечать строки")]
+        // возможности
+        [Category("Robin options"), DefaultValue(false), Description("возможность отмечать строки (показывать столбец с checkbox)")]
         public bool ShowCheckBoxes { get; set; }
+        [Category("Robin options"), DefaultValue(false), Description("отменить возможность фильтрации")]
+        public bool DisableFilter { get; set; }
+        [Category("Robin options"), DefaultValue(false), Description("отменить возможность поиска")]
+        public bool DisableSearch { get; set; }
+        [Category("Robin options"), DefaultValue(false), Description("отменить возможность выгрузки в эксель")]
+        public bool DisableExcel { get; set; }
+        [Category("Robin options"), DefaultValue(false), Description("отменить возможность управления столбцами")]
+        public bool DisableColsOperate { get; set; }
+        [Category("Robin options"), DefaultValue(false), Description("отменить возможность фильтрации")]
+        public bool DisableSort { get; set; }
+        [Category("Robin options"), DefaultValue(false), Description("отменить подсветку выделенных строк")]
+        public bool DisableHighlightSelected { get; set; }
+        [Category("Robin options"), DefaultValue(false), Description("отменить выделение отмеченных строк")]
+        public bool DisableHighlightChecked { get; set; }
+
+        // параметры
         [Category("Robin options"), DefaultValue(""), Description("имена ключевых полей через ;")]
         public string KeyNames { get; set; }
+        [Category("Robin options"), DefaultValue(""),
+            Description("соответствие имени параметра запроса и имени параметра снаружи:\nимя_параметра_запроса=имя_внешнего_параметра;...\nесли пусто - используются все внешние параметры")]
+        public string ExtParamsMap { get; set; }
         [Category("Robin options"), DefaultValue(""), Description("текст запроса"),
             Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public string QuerySql { get; set; }
         [Category("Robin options"), DefaultValue(""), Description("код команды для запроса")]
         public string QueryCmdCode { get; set; }
+
+        // поведение
         [Category("Robin options"), Description("цвет выделенных строк")]
         public Color SelectedRowBackColor { get; set; } = SystemColors.GradientInactiveCaption;
+        [Category("Robin options"), Description("цвет шрифта отмеченных строк")]
+        public Color CheckedRowFontColor { get; set; } = SystemColors.Info;
+        [Category("Robin options"), Description("цвет отмеченных строк")]
+        public Color CheckedRowBackColor { get; set; } = SystemColors.ActiveCaption;
         [Category("Robin options"), Description("цвет текущей строки (с фокусом)")]
         public Color SelectedCellFocusedBackColor { get; set; } = SystemColors.Info;
         [Category("Robin options"), Description("цвет текущей строки (без фокуса)")]
@@ -164,9 +194,6 @@ namespace Ctrls {
         public DataList ParentGrid { get; set; }
         [Category("Robin options"), Description("панель с параметрами")]
         public Panel ParamPanel { get; set; }
-        [Category("Robin options"), DefaultValue(""), 
-            Description("соответствие имени параметра запроса и имени параметра снаружи:\nимя_параметра_запроса=имя_внешнего_параметра;...\nесли пусто - используются все внешние параметры")]
-        public string ExtParamsMap { get; set; }
         [Category("Robin options"), DefaultValue(false), Description("устанавливает AutoGenerateColumns")]
         public bool AutoColumns { get { AutoGenerateColumns = autoColumns; return autoColumns; } set { autoColumns = value; AutoGenerateColumns = autoColumns; } }
 
@@ -229,7 +256,8 @@ namespace Ctrls {
 
         protected override void OnGotFocus(EventArgs e) {
             base.OnGotFocus(e);
-            disableRowHighlight = false;
+            ActivateList?.Invoke(this, e);
+            disableRedrawHighlight = false;
             RowsHighlight();
         }
 
@@ -288,7 +316,7 @@ namespace Ctrls {
                 Search();
             if (e.KeyCode == Keys.F && e.Modifiers == Keys.Shift)
                 Filter();
-            if (e.KeyCode == Keys.S && e.Modifiers == Keys.Alt)
+            if (e.KeyCode == Keys.S && e.Modifiers == Keys.Alt && !DisableSort)
                 Sort(CurrentCell.OwningColumn, CurrentCell.OwningColumn == SortedColumn && SortOrder == SortOrder.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending);
 
             if (e.KeyCode == Keys.F3 && ModifierKeys == Keys.None)
@@ -340,6 +368,7 @@ namespace Ctrls {
 
         protected override void OnSorted(EventArgs e) {
             base.OnSorted(e);
+            
             if (prevKey != null) {
                 SetRowFocus(prevKey);
                 prevKey = null;
@@ -364,17 +393,36 @@ namespace Ctrls {
             if (enableLoadChilds 
                 && ((CurrentCell != null && CurrentCell.RowIndex != e.RowIndex)
                     || (CurrentCell != null && firstRowPressed >= 0 && CurrentCell.RowIndex != firstRowPressed)
-                    || (CurrentCell == null && e.RowIndex != firstRowPressed))) {
-                var row = (Rows[e.RowIndex]?.DataBoundItem as DataRowView)?.Row;
-                if (row != null) 
-                    LoadChildren(null, CtrlsProc.PrepareParams(row));
-            }
+                    || (CurrentCell == null && e.RowIndex != firstRowPressed)))
+                LoadChildren(e.RowIndex);
         }
 
         protected override void OnCreateControl() {
             base.OnCreateControl();
             if (!DesignMode && ShowCheckBoxes) {
                 AddCheckColumn();
+            }
+            if (!DesignMode && DisableSort)
+                foreach (DataGridViewColumn c in Columns) {
+                    c.SortMode = DataGridViewColumnSortMode.NotSortable;
+                }
+        }
+
+        protected override void OnRowPostPaint(DataGridViewRowPostPaintEventArgs e) {
+            if (!DisableHighlightChecked && ShowCheckBoxes && Columns.Contains(checkColumnName)) {
+                var val = Rows[e.RowIndex].Cells[checkColumnName]?.Value;
+                if (val != null && (bool)(val)) {
+                    if (CheckedRowFontColor != DefaultCellStyle.ForeColor)
+                        Rows[e.RowIndex].DefaultCellStyle.ForeColor = CheckedRowFontColor;
+                    if (CheckedRowBackColor != DefaultCellStyle.BackColor)
+                        Rows[e.RowIndex].DefaultCellStyle.BackColor = CheckedRowBackColor;
+                }
+                if (val != null && !(bool)val) {
+                    Rows[e.RowIndex].DefaultCellStyle.ForeColor = DefaultCellStyle.ForeColor;
+                    Rows[e.RowIndex].DefaultCellStyle.BackColor = DefaultCellStyle.BackColor;
+                    Rows[e.RowIndex].Cells[checkColumnName].Value = null; // чтобы повторно не перерисовывался после подсветкм выделенных строк
+                }
+                
             }
         }
 
@@ -398,24 +446,31 @@ namespace Ctrls {
 
         /// <summary>Подсветить строку (по умолчанию - текущую) и другие с выделенными ячейками </summary>
         public virtual void RowsHighlight(int row = -1) {
+            if (DisableHighlightSelected)
+                return;
+
             if (row == -1 && CurrentRow != null)
                 row = CurrentRow.Index;
-            if (disableRowHighlight || row < 0 || row >= RowCount) return;
+            if (disableRedrawHighlight || row < 0 || row >= RowCount) 
+                return;
 
             if (lastRow >= 0 && lastRow < RowCount) {
-                Rows[lastRow].DefaultCellStyle.BackColor = SystemColors.Window;
+                if (Rows[lastRow].DefaultCellStyle.BackColor != CheckedRowBackColor || CheckedRowBackColor == DefaultCellStyle.BackColor) // здесь и далее - проверка, что строка подсвечена как отмеченная
+                    Rows[lastRow].DefaultCellStyle.BackColor = SystemColors.Window;
                 lastRow = -1;
             }
 
             ClearSelectedRowsHighlight();
 
             foreach (int r in SelectedCells.OfType<DataGridViewCell>().Select(x => x.RowIndex).Distinct()) {
-                Rows[r].DefaultCellStyle.BackColor = SelectedRowBackColor;
+                if (Rows[r].DefaultCellStyle.BackColor != CheckedRowBackColor || CheckedRowBackColor == DefaultCellStyle.BackColor)
+                    Rows[r].DefaultCellStyle.BackColor = SelectedRowBackColor;
                 prevRowSelected.Add(r);
             }
 
             if (SelectedCells.OfType<DataGridViewCell>().Any(x => x.RowIndex == row)) {
-                Rows[row].DefaultCellStyle.BackColor = Focused ? SelectedCellFocusedBackColor : SelectedCellNotFocusedBackColor;
+                if (Rows[row].DefaultCellStyle.BackColor != CheckedRowBackColor || CheckedRowBackColor == DefaultCellStyle.BackColor)
+                    Rows[row].DefaultCellStyle.BackColor = Focused ? SelectedCellFocusedBackColor : SelectedCellNotFocusedBackColor;
                 lastRow = row;
             }
         }
@@ -423,7 +478,9 @@ namespace Ctrls {
         // снять выделение со строк
         void ClearSelectedRowsHighlight(bool all = false) {
             foreach (int r in prevRowSelected) {
-                if (r >= 0 && r < RowCount && (all || !SelectedCells.OfType<DataGridViewCell>().Any(x => x.RowIndex == r))) {
+                if (r >= 0 && r < RowCount 
+                    && (all || !SelectedCells.OfType<DataGridViewCell>().Any(x => x.RowIndex == r))
+                    && (Rows[r].DefaultCellStyle.BackColor != CheckedRowBackColor || CheckedRowBackColor == DefaultCellStyle.BackColor)) {
                     Rows[r].DefaultCellStyle.BackColor = SystemColors.Window;
                 }
             }
@@ -432,6 +489,9 @@ namespace Ctrls {
 
         /// <summary>Вызов формы выбора столбцов</summary>
         public void SelectColumns() {
+            if (DisableColsOperate)
+                return;
+
             if (Columns.Count == 0)
                 return;
 
@@ -450,7 +510,8 @@ namespace Ctrls {
 
         /// <summary>Выдача в эксель</summary>
         public void ExecExcel() {
-            this.ToExcel();
+            if (!DisableExcel)
+                this.ToExcel();
         }
 
         /// <summary>Загрузка данных в грид и установка фокуса на указанной/текущей строке</summary>
@@ -458,11 +519,10 @@ namespace Ctrls {
             if (!ShowCheckBoxes && Columns.Contains(checkColumnName))
                 Columns.Remove(checkColumnName);
 
-            enableLoadChilds = true;
             firstRowPressed = -1;
 
             this.SetDoubleBuffered(true);
-            disableRowHighlight = true;
+            disableRedrawHighlight = true;
             RowsHighlight();
             prevKey = null;
             key = key ?? GetKey();
@@ -481,32 +541,50 @@ namespace Ctrls {
             SetCheckedRows(GetCheckedRowsKeys(), false);
 
             if (ParentGrid == null) // для сброса дочерних перед обновлением главного, чтобы в них не "висели" прошлые записи 
-                LoadChildren(null, new Dictionary<string, object>());
+                ClearChildren(); 
 
+            var saveFlagLoadChilds = enableLoadChilds; // отключить обновление дочерних в OnRowEnter, куда попадает при установке BindingSource в OnGetData и SetRowFocus
+            enableLoadChilds = false; 
             OnGetData();
+            
             FormatColumns();
 
             foreach (var item in filters_copy)
                 SetFilter(item);
 
-            if (sortedColumn != null && Columns.Contains(sortedColumn.Name))
+            if (!DisableSort && sortedColumn != null && Columns.Contains(sortedColumn.Name))
                 Sort(Columns[sortedColumn.Name], sortDirection);
 
             if (Rows.Count > 0) {
                 OnResize(null);
                 SetRowFocus(key);
-                if (ParentGrid == null || Focused) {
+                // обновление дочерних
+                if (CurrentRow != null && CurrentRow.Index >= 0)
+                        LoadChildren(CurrentRow.Index);
+                // чтобы фокус не слетал
+                if (ParentGrid == null || Focused)
                     Select();
-                }
             } else // данных нет => и в дочерних их быть не должно (OnRowEnter не отрабатывает => вызываем загрузку в дочерний грид без параметров)
-                LoadChildren(null, new Dictionary<string, object>());
-
+                ClearChildren(); 
+            
+            enableLoadChilds = saveFlagLoadChilds; // вернуть флаг обновления дочерних для OnRowEnter
             OnWhatsUp("LoadData");
         }
 
-        void LoadChildren(object key, Dictionary<string, object> pars) {
-            foreach (var g in FindForm()?.GetControls<DataList>().Where(x => x.ParentGrid == this)) 
-                g.LoadData(key, pars);
+        void LoadChildren(int rowIdx) {
+            var dataRow = (Rows[rowIdx]?.DataBoundItem as DataRowView)?.Row;
+            if (dataRow == null) 
+                return;
+            var pars = CtrlsProc.PrepareParams(dataRow);
+            foreach (var g in FindForm()?.GetControls<DataList>().Where(x => x.ParentGrid == this))
+                g.LoadData(null, pars);
+        }
+
+        void ClearChildren() {
+            foreach (var g in FindForm()?.GetControls<DataList>().Where(x => x.ParentGrid == this)) {
+                g.ClearChildren();
+                g.Clear();
+            }
         }
 
         /// <summary>Получить данные</summary>
@@ -526,6 +604,7 @@ namespace Ctrls {
                     GetData?.Invoke(this, ea);
                     bs.DataSource = ea.Result;
                 }
+
                 DataSource = bs;
             }
             finally {
@@ -537,10 +616,10 @@ namespace Ctrls {
         protected virtual void OnWhatsUp(string method) {
             SendInfo?.Invoke(this, new SendInfoEventArgs() {
                 rows = Rows.Count.ToString(),
-                selected = prevRowSelected.Count.ToString(),
+                selected = SelectedCells.OfType<DataGridViewCell>().Select(x => x.RowIndex).Distinct().Count().ToString(), 
                 checks = checkedRowsCount > 0 ? checkedRowsCount.ToString() : null,
                 info = null
-            });
+            }); ; ;
 
             WhatsUp?.Invoke(this, new WhatsUpEventArgs() {
                 CheckedKeys = GetCheckedRowsKeys(),
@@ -618,7 +697,7 @@ namespace Ctrls {
                     || CurrentRow.Index < FirstDisplayedScrollingRowIndex))
                 FirstDisplayedScrollingRowIndex = CurrentRow.Index;
 
-            disableRowHighlight = false;
+            disableRedrawHighlight = false;
             RowsHighlight();
         }
 
@@ -746,7 +825,7 @@ namespace Ctrls {
 
         /// <summary>Вызов формы поиска</summary>
         public void Search() {
-            if (CurrentCell != null) {
+            if (!DisableSearch && CurrentCell != null) {
                 FormSearch fs = new FormSearch(DoSearch);
                 fs.Top = PointToScreen(Point.Empty).Y + ColumnHeadersHeight * 2;
                 fs.Left = PointToScreen(Point.Empty).X + RowHeadersWidth * 2;
@@ -836,7 +915,7 @@ namespace Ctrls {
 
         /// <summary>Вызов формы фильтра</summary>
         public void Filter() {
-            if (CurrentCell != null) {
+            if (!DisableFilter && CurrentCell != null) {
                 FormFilter ff = new FormFilter(CurrentCell.OwningColumn, CurrentCell.Value, SetFilter);
                 ff.Top = PointToScreen(Point.Empty).Y + ColumnHeadersHeight * 2;
                 ff.Left = PointToScreen(Point.Empty).X + RowHeadersWidth * 2;
@@ -863,7 +942,7 @@ namespace Ctrls {
             if (Rows.Count > 0)
                 SetRowFocus(prevKey);
             else // данных нет => и в дочерних их быть не должно (OnRowEnter не отрабатывает => вызываем загрузку в дочерний грид без параметров)
-                LoadChildren(null, new Dictionary<string, object>());
+                ClearChildren(); 
 
             OnWhatsUp("SetFilter");
 

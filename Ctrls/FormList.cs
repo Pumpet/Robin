@@ -206,11 +206,6 @@ namespace Ctrls {
             }
         }
 
-        protected override void DataList_GetData(object sender, ProcessDataEventArgs e) {
-            base.DataList_GetData(sender, e);
-            NeedRefresh = false;
-        }
-
         // инициализация формы списка
         void InitFormList() {
             if (LicenseManager.UsageMode != LicenseUsageMode.Runtime)
@@ -235,10 +230,11 @@ namespace Ctrls {
 
             // обработчики для гридов
             foreach (var g in grids) {
-                g.QueryParamsSet += GridQueryParamsSet;
+                g.QueryParamsSet += DataList_QueryParamsSet;
                 g.GetData += DataList_GetData;
                 g.SendInfo += DataList_SendInfo;
                 g.DoubleClick += (o, ek) => g.DoubleClickCell((gr) => OnSelectFromList());
+                g.ActivateList += (o, e) => SetToolButtonsForGrid(o as DataList);
             } 
         }
 
@@ -310,16 +306,32 @@ namespace Ctrls {
         }
 
         /// <summary>делегат для грида на установку параметров - вызывается в grid.LoadData() -> OnGetData()</summary>
-        protected Dictionary<string, object> GridQueryParamsSet(DataList list, Dictionary<string, object> extParams) {
+        protected Dictionary<string, object> DataList_QueryParamsSet(DataList list, Dictionary<string, object> extParams) {
             var res = CtrlsProc.PrepareParams(uiParams.Where(x => x.Key == list).SelectMany(x => x.Value), extParams, rewrite: true);
             return res;
         }
 
-        // обработка статистики из грида
+        // из FormBase
+        protected override void DataList_GetData(object sender, ProcessDataEventArgs e) {
+            base.DataList_GetData(sender, e);
+            NeedRefresh = false;
+        }
+
+        /// <summary>обработка статистики из грида</summary>
         protected void DataList_SendInfo(object sender, SendInfoEventArgs e) {
             if (e.handled) return;
             if (e.info != null) lbInfo.Text = e.info;
             if (e.rows != null) lbRows.Text = $"Строк {e.rows} выделено {e.selected}{(!string.IsNullOrWhiteSpace(e.checks) ? $" отмечено {e.checks}" : "")}";
+        }
+
+        /// <summary>установка кнопок управления гридом</summary>
+        protected void SetToolButtonsForGrid(DataList g = null) {
+            if (g == null)
+                g = ActiveGrid;
+            bFilter.Enabled = !g.DisableFilter;
+            bFind.Enabled = !g.DisableSearch;
+            bToExcel.Enabled = !g.DisableExcel;
+            bSelectCols.Enabled = !g.DisableColsOperate;
         }
 
         #region handlers
@@ -423,13 +435,13 @@ namespace Ctrls {
             }
         }
 
-
-
         // обработчики полей параметров
         void SetUiParamsHandlers() {
-            // установка признака необходимости обновления
-            EventHandler eh = (o, e) => { NeedRefresh = true; };
+            EventHandler eh = (o, e) => { NeedRefresh = true; }; // установка признака необходимости обновления
             foreach (var c in uiParams.SelectMany(x => x.Value)) {
+                c.Enter += (o, e) => {
+                    SetToolButtonsForGrid(uiParams.Where(x => x.Value.Any(y => y == o)).Select(x => x.Key).FirstOrDefault()); // установка кнопок управления гридом
+                };
                 if (c is CheckBox)
                     ((CheckBox)c).CheckStateChanged += eh;
                 else if (c is RadioButton)
@@ -440,7 +452,7 @@ namespace Ctrls {
                     c.TextChanged += eh;
             }
         }
-
+    
         // сбросить значения полей параметров
         void ClearUiParams (DataList g) {
             foreach (var c in uiParams.Where(x => x.Key == g).SelectMany(x => x.Value))
@@ -460,7 +472,5 @@ namespace Ctrls {
 
 
         #endregion
-
-
     }
 }

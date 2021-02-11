@@ -491,8 +491,14 @@
         <member name="M:Ctrls.FormList.OnSelectFromList(System.EventArgs)">
             <summary>Выбор строки или строк</summary>
         </member>
-        <member name="M:Ctrls.FormList.GridQueryParamsSet(Ctrls.DataList,System.Collections.Generic.Dictionary{System.String,System.Object})">
+        <member name="M:Ctrls.FormList.DataList_QueryParamsSet(Ctrls.DataList,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>делегат для грида на установку параметров - вызывается в grid.LoadData() -> OnGetData()</summary>
+        </member>
+        <member name="M:Ctrls.FormList.DataList_SendInfo(System.Object,Ctrls.SendInfoEventArgs)">
+            <summary>обработка статистики из грида</summary>
+        </member>
+        <member name="M:Ctrls.FormList.SetToolButtonsForGrid(Ctrls.DataList)">
+            <summary>установка кнопок управления гридом</summary>
         </member>
         <member name="M:Ctrls.FormList.PrepareUiParamsProperties(System.Collections.Generic.List{Manager.ControlValue})">
             <summary>Подготовка значений полей параметров для сохранения</summary>

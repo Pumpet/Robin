@@ -39,3 +39,4 @@ C:\__Work\cs\Projects\Robin\Common\obj\Debug\Common.csproj.GenerateResource.cach
 C:\__Work\cs\Projects\Robin\Common\obj\Debug\Common.csproj.CoreCompileInputs.cache
 C:\__Work\cs\Projects\Robin\Common\obj\Debug\Common.dll
 C:\__Work\cs\Projects\Robin\Common\obj\Debug\Common.pdb
+C:\__Work\cs\Projects\Robin\Common\obj\Debug\Common.csprojAssemblyReference.cache

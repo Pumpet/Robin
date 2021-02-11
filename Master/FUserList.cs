@@ -25,7 +25,8 @@ namespace Master {
                 listUsers.AddCheckColumn();
             }
 
-            listUsers.QuerySql = @"
+            listUsers.QuerySql = @" -- ВЕРХНИЙ грид
+                --waitfor delay '00:00:03'
                 select @app = isnull(@app,'')
                 select distinct u.* 
                     from dm.tUser u 
@@ -36,7 +37,7 @@ namespace Master {
                             or (@app = '(нет)' and not exists(select 1 from dm.tUserRole ur1 where ur1.userId = u.id)))
                     order by u.login
                 ";
-            listRoles.QuerySql = @"
+            listRoles.QuerySql = @" -- НИЖНИЙ грид
                 select r.appcode, ur.roleId, ur.userId, r.code, r.note
                     from dm.tUserRole ur
                         join dm.tRole r on ur.roleId = r.id

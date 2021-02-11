@@ -392,12 +392,18 @@ namespace Common {
                 cell = cell.get_Offset(1, 0);
 
                 //----- data
+                object cellValue;
+                decimal tmpDec;
                 for (int r = 0; r < data.GetLength(0); r++)
                     for (int c = 0; c < colCnt; c++) {
-                        if (dg.Rows[r].Cells[cols[c].Index].Value is Guid)
-                            data[r, c] = dg.Rows[r].Cells[cols[c].Index].Value.ToString();
+                        cellValue = dg.Rows[r].Cells[cols[c].Index].Value;
+                        if (cellValue is Guid)
+                            data[r, c] = cellValue.ToString();
+                        // не дать строке, содержащей число длиной > 11, преобразоваться к экспотенциальному виду
+                        else if (cellValue is string && (cellValue as string).Length > 11 && decimal.TryParse((cellValue as string), out tmpDec))
+                            data[r, c] = $"'{cellValue}";
                         else
-                            data[r, c] = dg.Rows[r].Cells[cols[c].Index].Value;
+                            data[r, c] = cellValue;
                     }
 
                 rg = ws.get_Range(cell, cell.get_Offset(maxRows - 1, colCnt - 1));
