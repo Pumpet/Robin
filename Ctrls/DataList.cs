@@ -117,6 +117,11 @@ namespace Ctrls {
 
     public partial class DataList : DataGridView {
 
+        //todo1 = режим редактирования
+
+        enum EditModes { None, Edit, AddNew, AddCopy }; //todo1
+        EditModes editMode = EditModes.None; // в режиме редактирования //todo1 идея чтобы проверять и не давать выйти из редактируемой строки (только по Esc или Ctrl+S)
+        object editRowKey; // ключ редактируемой строки до редактирования (для возврата) //todo1 может лучше старые данные сохранять для возврата, чтобы не перечитывать весь резалтсет
         bool enableLoadChilds = true; // возможность обновлять связанные гриды
         bool disableRedrawHighlight = true; // запретить перерисовку подсветки строк при загрузке данных
         bool autoColumns; // для установки AutoGenerateColumns
@@ -150,6 +155,9 @@ namespace Ctrls {
         public event EventHandler<WhatsUpEventArgs> WhatsUp;
 
         // возможности
+        [Category("Robin options"), DefaultValue(false), Description("возможность редактировать записи")]
+        public bool Editable { get; set; }
+
         [Category("Robin options"), DefaultValue(false), Description("возможность отмечать строки (показывать столбец с checkbox)")]
         public bool ShowCheckBoxes { get; set; }
         [Category("Robin options"), DefaultValue(false), Description("отменить возможность фильтрации")]
@@ -178,6 +186,23 @@ namespace Ctrls {
         public string QuerySql { get; set; }
         [Category("Robin options"), DefaultValue(""), Description("код команды для запроса")]
         public string QueryCmdCode { get; set; }
+        [Category("Robin options"), DefaultValue(""), Description("текст sql добавления новой записи"),
+            Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public string InsertSql { get; set; }
+        [Category("Robin options"), DefaultValue(""), Description("код команды добавления новой записи")]
+        public string InsertCmdCode { get; set; }
+
+        [Category("Robin options"), DefaultValue(""), Description("текст sql обновления записи"),
+            Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public string UpdateSql { get; set; }
+        [Category("Robin options"), DefaultValue(""), Description("код команды обновления записи")]
+        public string UpdateCmdCode { get; set; }
+
+        [Category("Robin options"), DefaultValue(""), Description("текст sql для проверки"),
+            Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
+        public string CheckSql { get; set; }
+        [Category("Robin options"), DefaultValue(""), Description("код команды для проверки")]
+        public string CheckCmdCode { get; set; }
 
         // поведение
         [Category("Robin options"), Description("цвет выделенных строк")]
@@ -312,6 +337,19 @@ namespace Ctrls {
         }
 
         protected override void OnKeyDown(KeyEventArgs e) {
+            if (e.KeyCode == Keys.F2 && ModifierKeys == Keys.None)
+                Edit();
+            if (e.KeyCode == Keys.Insert && ModifierKeys == Keys.None)
+                AddNew();
+            if (e.KeyCode == Keys.Insert && ModifierKeys == Keys.Control)
+                AddCopy();
+
+            // это - в ProcessCmdKey, т.к. тут не обрабатывается при нажатии в процессе редактирования ячейки
+            //if (e.KeyCode == Keys.Enter && ModifierKeys == Keys.Control)
+            //    Save();
+            //if (e.KeyCode == Keys.Escape && ModifierKeys == Keys.None)
+            //    UndoSave();
+
             if (e.KeyCode == Keys.F && e.Modifiers == Keys.Control)
                 Search();
             if (e.KeyCode == Keys.F && e.Modifiers == Keys.Shift)
@@ -358,6 +396,17 @@ namespace Ctrls {
                 firstRowPressed = (CurrentCell == null ? -1 : CurrentCell.RowIndex);
                 enableLoadChilds = false;
             }
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+
+            // для обработки нажатия в процессе редактирования ячейки //todo1
+            if (keyData == (Keys.S | Keys.Control))
+                Save();
+            if (keyData == (Keys.Escape))
+                UndoSave();
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         protected override void OnKeyUp(KeyEventArgs e) {
@@ -1013,5 +1062,54 @@ namespace Ctrls {
 
         #endregion
 
+        //____________ Edit _________________________________________________________________________________________________________________________________________________________
+
+        #region Edit //todo1
+
+        /// <summary>Добавить строку</summary>
+        public void AddNew() => StartEdit(EditModes.AddNew);
+
+        /// <summary>Добавить строку на основе текущей</summary>
+        public void AddCopy() => StartEdit(EditModes.AddCopy);
+
+        /// <summary>Редактировать строку</summary>
+        public void Edit() => StartEdit(EditModes.Edit);
+
+        void StartEdit(EditModes mode) {
+            if (!Editable || editMode != EditModes.None) return;
+            editMode = mode;
+            ReadOnly = false;
+            editRowKey = GetKey();
+            try {
+
+            }
+            catch (Exception e) {
+                Loger.SendMess(e, "Ошибка перехода в режим редактирования");
+                editMode = EditModes.None;
+                ReadOnly = true;
+            }
+            finally {
+                //
+            }
+        }
+
+        /// <summary>Сохранить данные редактируемой строки</summary>
+        public void Save() {
+            if (editMode == EditModes.None) return;
+            //
+            editMode = EditModes.None;
+            ReadOnly = true;
+        }
+
+        /// <summary>Отменить редактирование строки</summary>
+        public void UndoSave() {
+            if (editMode == EditModes.None) return;
+            //
+            editMode = EditModes.None;
+            ReadOnly = true;
+            LoadData(editRowKey); //todo1 может не перечитывать, а только вернуть данные старой строки
+        }
+
+        #endregion
     }
 }

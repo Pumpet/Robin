@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <AppConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Prop Group="ConnStrings" Name="ConnectionString" Value="Data Source=PUMPET\SQLEXPRESS;Initial Catalog=testdb;Integrated Security=True" /> 
+  <Prop Group="ConnStrings" Name="ConnectionString" Value="Data Source=PUMPETDELL\SQLEXPRESS;Initial Catalog=testdb;Integrated Security=True" /> 
   <Prop Group="ConnStrings" Value="Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=RobinTest;Integrated Security=True" />
   <Prop Name="AppName" Value="Master" />
   <Prop Name="AppCode" Value="Master" />

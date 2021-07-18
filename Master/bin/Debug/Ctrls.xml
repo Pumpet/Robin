@@ -151,6 +151,21 @@
         <member name="M:Ctrls.DataList.Filter">
             <summary>Вызов формы фильтра</summary>
         </member>
+        <member name="M:Ctrls.DataList.AddNew">
+            <summary>Добавить строку</summary>
+        </member>
+        <member name="M:Ctrls.DataList.AddCopy">
+            <summary>Добавить строку на основе текущей</summary>
+        </member>
+        <member name="M:Ctrls.DataList.Edit">
+            <summary>Редактировать строку</summary>
+        </member>
+        <member name="M:Ctrls.DataList.Save">
+            <summary>Сохранить данные редактируемой строки</summary>
+        </member>
+        <member name="M:Ctrls.DataList.UndoSave">
+            <summary>Отменить редактирование строки</summary>
+        </member>
         <member name="F:Ctrls.DataList.components">
             <summary> 
             Required designer variable.

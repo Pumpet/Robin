@@ -40,3 +40,15 @@ C:\__Work\cs\Projects\Robin\Common\obj\Debug\Common.csproj.CoreCompileInputs.cac
 C:\__Work\cs\Projects\Robin\Common\obj\Debug\Common.dll
 C:\__Work\cs\Projects\Robin\Common\obj\Debug\Common.pdb
 C:\__Work\cs\Projects\Robin\Common\obj\Debug\Common.csprojAssemblyReference.cache
+C:\Work\cs\Projects\Robin\Common\bin\Debug\Common.XML
+C:\Work\cs\Projects\Robin\Common\bin\Debug\Common.dll
+C:\Work\cs\Projects\Robin\Common\bin\Debug\Common.pdb
+C:\Work\cs\Projects\Robin\Common\obj\Debug\Common.csprojAssemblyReference.cache
+C:\Work\cs\Projects\Robin\Common\obj\Debug\Common.csproj.ResolveComReference.cache
+C:\Work\cs\Projects\Robin\Common\obj\Debug\Common.FError.resources
+C:\Work\cs\Projects\Robin\Common\obj\Debug\Common.FTrassa.resources
+C:\Work\cs\Projects\Robin\Common\obj\Debug\Common.Properties.Resources.resources
+C:\Work\cs\Projects\Robin\Common\obj\Debug\Common.csproj.GenerateResource.cache
+C:\Work\cs\Projects\Robin\Common\obj\Debug\Common.csproj.CoreCompileInputs.cache
+C:\Work\cs\Projects\Robin\Common\obj\Debug\Common.dll
+C:\Work\cs\Projects\Robin\Common\obj\Debug\Common.pdb

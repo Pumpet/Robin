@@ -151,27 +151,32 @@ namespace Ctrls {
             Description("соответствие имени параметра запроса и имени параметра снаружи:\nимя_параметра_запроса=имя_внешнего_параметра;...\nесли пусто - используются все внешние параметры")]
         public string ExtParamsMap { get; set; }
 
-        [Category("Robin options"), DefaultValue(""), Description("текст sql запроса существующей записи")]
+        [Category("Robin options"), DefaultValue(""), Description("текст sql запроса существующей записи"),
+            Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public string SelectSql { get; set; }
         [Category("Robin options"), DefaultValue(""), Description("код команды запроса существующей записи")]
         public string SelectCmdCode { get; set; }
 
-        [Category("Robin options"), DefaultValue(""), Description("текст sql запроса новой записи")]
+        [Category("Robin options"), DefaultValue(""), Description("текст sql запроса новой записи"),
+            Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public string SelectNewSql { get; set; }
         [Category("Robin options"), DefaultValue(""), Description("код команды запроса новой записи")]
         public string SelectNewCmdCode { get; set; }
 
-        [Category("Robin options"), DefaultValue(""), Description("текст sql добавления новой записи")]
+        [Category("Robin options"), DefaultValue(""), Description("текст sql добавления новой записи"),
+            Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public string InsertSql { get; set; }
         [Category("Robin options"), DefaultValue(""), Description("код команды добавления новой записи")]
         public string InsertCmdCode { get; set; }
 
-        [Category("Robin options"), DefaultValue(""), Description("текст sql обновления записи")]
+        [Category("Robin options"), DefaultValue(""), Description("текст sql обновления записи"),
+            Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public string UpdateSql { get; set; }
         [Category("Robin options"), DefaultValue(""), Description("код команды обновления записи")]
         public string UpdateCmdCode { get; set; }
 
-        [Category("Robin options"), DefaultValue(""), Description("текст sql для проверки")]
+        [Category("Robin options"), DefaultValue(""), Description("текст sql для проверки"),
+            Editor(typeof(System.ComponentModel.Design.MultilineStringEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public string CheckSql { get; set; }
         [Category("Robin options"), DefaultValue(""), Description("код команды для проверки")]
         public string CheckCmdCode { get; set; }
