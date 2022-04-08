@@ -17,15 +17,15 @@ namespace Master {
 
         private void FAppEdit_Load(object sender, EventArgs e) {
             SelectNewSql = @"select code = '', caption = '', note = '', checkUserRights = 0, logAll = 0, logSQL = 0";
-            SelectSql = @"select code as oldCode, * from dm.tApp where code = @code";
+            SelectSql = @"select code as oldCode, * from robin.tApp where code = @code";
             InsertSql = @"
                 if @logAll = 0 select @logSQL = 0                
-                insert dm.tApp(code, caption, note, checkUserRights, logAll, logSQL) values (@code, @caption, @note, @checkUserRights, @logAll, @logSQL)
+                insert robin.tApp(code, caption, note, checkUserRights, logAll, logSQL) values (@code, @caption, @note, @checkUserRights, @logAll, @logSQL)
                 select code = @code
                 ";
             UpdateSql = @"
                 if @logAll = 0 select @logSQL = 0
-                update dm.tApp set code = @code, caption = @caption, note = @note, checkUserRights = @checkUserRights, logAll = @logAll, logSQL = @logSQL where code = @oldCode
+                update robin.tApp set code = @code, caption = @caption, note = @note, checkUserRights = @checkUserRights, logAll = @logAll, logSQL = @logSQL where code = @oldCode
                 select code = @code
                 ";
         }

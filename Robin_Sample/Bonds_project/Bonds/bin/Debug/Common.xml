@@ -1,0 +1,268 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Common</name>
+    </assembly>
+    <members>
+        <member name="T:Common.AppConfig">
+            <summary>Параметры приложения
+            </summary>
+        </member>
+        <member name="M:Common.AppConfig.GetPropValue(System.String)">
+            <summary>Получить значение параметра</summary>
+        </member>
+        <member name="M:Common.AppConfig.SetPropValue(System.String,System.String)">
+            <summary>Установить значение параметра (если параметра нет - создаст новый)</summary>
+        </member>
+        <member name="M:Common.AppConfig.SetFromDict(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>Установить значения параметров или создать новые параметры по данным словаря (имя-значение)</summary>
+        </member>
+        <member name="M:Common.AppConfig.GetProp(System.String)">
+            <summary>Получить объект параметра</summary>
+        </member>
+        <member name="M:Common.AppConfig.HasProp(System.String)">
+            <summary>Проверить наличие параметра</summary>
+        </member>
+        <member name="M:Common.AppConfig.GetGroupValues(System.String)">
+            <summary>Получить список значений параметров группы</summary>
+        </member>
+        <member name="M:Common.AppConfig.GetProps(System.String)">
+            <summary>Получить список объектов параметров (весь или указанной группы)</summary>
+        </member>
+        <member name="M:Common.AppConfig.Load(System.String)">
+            <summary>Загружает параметры приложения из файла. Если файла нет - создает новый.
+            </summary>
+            <param name="fileName">Имя файла, по умолчанию: имя приложения.xml</param>
+        </member>
+        <member name="M:Common.AppConfig.Save">
+            <summary>Записывает параметры приложения в файл.
+            </summary>
+        </member>
+        <member name="T:Common.Prop">
+            <summary>Параметр приложения
+            </summary>
+        </member>
+        <member name="T:Common.Extens">
+            <summary>
+            Методы расширения
+            </summary>
+        </member>
+        <member name="M:Common.Extens.AddFromDictionary``2(System.Collections.Generic.Dictionary{``0,``1},System.Collections.Generic.Dictionary{``0,``1},System.Boolean)">
+            <summary>
+            Добавить в словарь из словаря
+            </summary>
+            <param name="source">Словарь, из которого добавляем</param>
+            <param name="addOnly">Только добавить (true) или обновить, если ключ уже есть (false)</param>
+        </member>
+        <member name="M:Common.Extens.SetNonPublicProperty(System.Object,System.String,System.Object)">
+            <summary>
+            Установить-снять закрытое свойство объекта
+            </summary>
+            <param name="name">Имя свойства</param>
+            <param name="value">Значение свойства</param>
+        </member>
+        <member name="M:Common.Extens.SetNodeBackColor(System.Windows.Forms.TreeView,System.Drawing.Brush,System.Drawing.Brush)">
+            <summary>
+            Установка цветов узла у дерева 
+            </summary>
+            <param name="activeBrush">Цвет активного узла (по умолчанию SystemBrushes.ActiveCaption)</param>
+            <param name="inactiveBrush">Цвет неактивного узла (по умолчанию SystemBrushes.GradientInactiveCaption)</param>
+        </member>
+        <member name="M:Common.Extens.CheckDates(System.Windows.Forms.DateTimePicker,System.Windows.Forms.DateTimePicker,System.Windows.Forms.DateTimePicker,System.Boolean)">
+            <summary>
+            Выравнивание дат с - по
+            </summary>
+            <param name="dcheck">текущий контрол</param>
+            <param name="dmin">контрол с мин.датой</param>
+            <param name="dmax">контрол с макс.датой</param>
+            <param name="setToNow">установить текущую дату</param>
+        </member>
+        <member name="M:Common.Extens.GetTableList(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Action{System.String,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String},System.Threading.SynchronizationContext,System.Data.DataRowChangeEventHandler,System.Action{System.Object})">
+            <summary>Выполнить sql, вернуть список строк</summary>
+            <param name="sql">SQL</param>
+            <param name="pars">Словарь параметров</param>
+            <param name="trassa">Метод для трассировки</param>
+            <returns>Строки полученной таблицы в виде списка</returns>
+        </member>
+        <member name="M:Common.Extens.GetTable(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Action{System.String,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String},System.Threading.SynchronizationContext,System.Data.DataRowChangeEventHandler,System.Action{System.Object})">
+            <summary>Выполнить sql, вернуть таблицу</summary>
+            <param name="sql">SQL</param>
+            <param name="pars">Словарь параметров</param>
+            <param name="trassa">Метод для трассировки</param>
+            <returns>Таблица (пустая если нет resultset) или null, если ошибка</returns>
+        </member>
+        <member name="M:Common.Extens.GetValue(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Action{System.String,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String},System.Threading.SynchronizationContext,System.Data.DataRowChangeEventHandler,System.Action{System.Object})">
+            <summary>Выполнить sql, вернуть скалярный результат</summary>
+            <param name="sql">SQL</param>
+            <param name="pars">Словарь параметров</param>
+            <param name="trassa">Метод для трассировки</param>
+            <returns>Скалярный результат (object) или null, если ошибка или нет результата</returns>
+        </member>
+        <member name="M:Common.Extens.ExecCommand(System.Data.SqlClient.SqlConnection,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Action{System.String,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String},System.Threading.SynchronizationContext,System.Data.DataRowChangeEventHandler,System.Action{System.Object})">
+            <summary>Выполнить sql, вернуть кол-во обработанных строк</summary>
+            <param name="sql">SQL</param>
+            <param name="pars">Словарь параметров ключ-значение</param>
+            <param name="trassa">Метод для трассировки</param>
+            <returns>Количество обработанных строк, -1 если ошибка</returns>
+        </member>
+        <member name="M:Common.Extens.ExecSql(System.Data.SqlClient.SqlConnection,Common.ExecSqlType,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Action{System.String,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String},System.Threading.SynchronizationContext,System.Data.DataRowChangeEventHandler,System.Action{System.Object},System.Nullable{System.Int32})">
+            <summary>Выполнить sql</summary>
+            <param name="execType">Определяет тип выполнения и результат (Table - через DataAdapter вернет DataTable, Scalar - через ExecuteScalar вернет object, NonQuery - через ExecuteNonQuery вернет int)</param>
+            <param name="sql">SQL</param>
+            <param name="pars">Словарь параметров</param>
+            <param name="trassa">Метод для трассировки</param>
+            <returns>В зависимости от execType. В случае ошибки вернет null или -1 для NonQuery</returns>
+        </member>
+        <member name="M:Common.Extens.GetSqlDeclare(System.Data.SqlClient.SqlParameter,System.String)">
+            <summary>
+            Вернуть sql-определение параметра: [префикс]имя тип = значение
+            </summary>
+            <param name="p"></param>
+            <param name="pfx">Префикс, по умолчанию @</param>
+            <returns>Sql-определение параметра: [префикс]имя тип[(размерность)] = значение (в т.ч. null). Для дат/времени - в виде строки 'yyyyMMdd hh:mm:ss'</returns>
+        </member>
+        <member name="M:Common.Extens.ToSqlValue(System.Object)">
+            <summary>Вернуть значение объекта для использования при формировании скрипта</summary>
+        </member>
+        <member name="M:Common.Extens.GetControls``1(System.Windows.Forms.Control)">
+            <summary>Получить список контролов указанного типа из контейнера (с учетом вложенных контейнеров)</summary>
+        </member>
+        <member name="M:Common.Extens.GetControl(System.Windows.Forms.Control,System.String,System.Boolean,System.Object,System.Type)">
+            <summary>Находит контрол в контейнере (с учетом вложенных контейнеров) по имени контрола или связанного поля (из указанного или любого объекта)</summary>
+            <param name="name">Имя контрола или имя поля, связанного с контролом</param>
+            <param name="onBinding">Искать по имени связанного поля</param>
+            <param name="dataSource">Объект-источник привязки (по умолчанию любой)</param>
+            <param name="type">Тип контрола (по умолчанию любой)</param>
+        </member>
+        <member name="M:Common.Extens.ForControls(System.Windows.Forms.Control,System.Action{System.Windows.Forms.Control},System.Type)">
+            <summary>Выполнение метода для каждого контрола контейнера (с учетом вложенных контейнеров)</summary>
+            <param name="doIt">Метод</param>
+            <param name="type">Тип контрола (по умолчанию любой)</param>
+        </member>
+        <member name="M:Common.Extens.SetDoubleBuffered(System.Windows.Forms.DataGridView,System.Boolean)">
+            <summary>Установить/снять DoubleBuffered</summary>
+        </member>
+        <member name="M:Common.Extens.DoubleClickCell(System.Windows.Forms.DataGridView,System.Action{System.Windows.Forms.DataGridView})">
+            <summary>Выполнить метод на ячейке грида (например для использования в обработке DoubleClick)</summary>
+            <param name="grid"></param>
+            <param name="doIt">Метод с параметром для этого грида</param>
+        </member>
+        <member name="M:Common.Extens.ToExcel(System.Windows.Forms.DataGridView,System.Int32)">
+            <summary>Выдать данные в эксель</summary>
+        </member>
+        <member name="M:Common.Extens.CollectionsToExcel(System.Collections.Generic.IEnumerable{System.Object}[],System.String,System.String[],System.String[])">
+            <summary>Выгрузка коллекций объектов в Excel (по листам)
+            </summary>
+            <param name="collections">массив коллекций объектов - по количеству листов</param>
+            <param name="patternFile">путь к файлу-шаблону</param>
+        </member>
+        <member name="F:Common.FError.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Common.FError.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Common.FError.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:Common.FTrassa.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Common.FTrassa.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Common.FTrassa.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Common.Loger">
+            <summary>обработчик сообщений 
+            </summary>
+        </member>
+        <member name="M:Common.Loger.SendMess(System.Exception,System.String,System.Boolean)">
+            <summary>Сформировать сообщение об ошибке
+            </summary>
+            <param name="e">исключение</param>
+            <param name="mess">сообщение, предваряющее сообщение об исключении</param>
+        </member>
+        <member name="M:Common.Loger.SendMess(System.String,System.Boolean,System.Boolean)">
+            <summary>Сформировать сообщение
+            </summary>
+            <param name="mess">сообщение</param>
+            <param name="err">признак ошибки</param>
+        </member>
+        <member name="M:Common.Loger.ExceptionMessage(System.Exception)">
+            <summary>Особое описание для некоторых исключений
+            </summary>
+            <param name="e">Объект исключения</param>
+            <returns>Описание исключения. По умолчанию - e.Message</returns>
+        </member>
+        <member name="T:Common.OptionsSerializer">
+            <summary>Сериализация в xml
+            </summary>
+        </member>
+        <member name="M:Common.OptionsSerializer.Load``1(System.String)">
+            <summary>Загрузить объект указанного типа из файла
+            </summary>
+            <param name="file">имя файла</param>
+        </member>
+        <member name="M:Common.OptionsSerializer.Save``1(System.String,``0)">
+            <summary>
+            Сохранить объект указанного типа в файл
+            </summary>
+            <param name="file">имя файла</param>
+            <param name="obj">объект указанного типа</param>
+        </member>
+        <member name="T:Common.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Common.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Common.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Common.Properties.Resources.down">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Common.Properties.Resources.err">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Common.Properties.Resources.tmp">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Common.Properties.Resources.up">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+    </members>
+</doc>

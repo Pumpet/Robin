@@ -17,13 +17,13 @@ namespace Master {
 
         private void FUserEdit_Load(object sender, EventArgs e) {
             SelectNewSql = @"select login = '', name = ''";
-            SelectSql = @"select * from dm.tUser where id = @id";
+            SelectSql = @"select * from robin.tUser where id = @id";
             InsertSql = @"
-                insert dm.tUser(login, name) values (@login, @name)
+                insert robin.tUser(login, name) values (@login, @name)
                 select id = convert(int,SCOPE_IDENTITY())
                 ";
             UpdateSql = @"
-                update dm.tUser set login = @login, name = @name where id = @id
+                update robin.tUser set login = @login, name = @name where id = @id
                 select id = @id
                 ";
         }

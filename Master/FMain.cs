@@ -34,6 +34,8 @@ namespace Master {
         }
 
         private void FMain_Shown(object sender, EventArgs e) {
+           // toolStripButtonConnect.Visible = false; //TODO - отключил выбор источника, т.к. пока не понял как лучше проверять проверять права на вход при переключении базы (проверка - в pKernel)
+                                                    // да и нужен ли вариант с переключением баз? не проще ли будет запускать для каждой базы со своим xml?
             ctx = Context.Self;
             setCaption();
         }

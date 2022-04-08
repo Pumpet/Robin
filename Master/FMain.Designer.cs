@@ -25,7 +25,7 @@
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FMain));
             this.tools = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonConnect = new System.Windows.Forms.ToolStripButton();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripMenuItem33 = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,7 +44,7 @@
             this.tools.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tools.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.tools.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
+            this.toolStripButtonConnect,
             this.toolStripDropDownButton1,
             this.toolStripButton4,
             this.toolStripDropDownButton2,
@@ -55,15 +55,15 @@
             this.tools.TabIndex = 0;
             this.tools.Text = "toolStrip1";
             // 
-            // toolStripButton1
+            // toolStripButtonConnect
             // 
-            this.toolStripButton1.Image = global::Master.Properties.Resources.dbconn;
-            this.toolStripButton1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(121, 41);
-            this.toolStripButton1.Text = "Подключение";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.toolStripButtonConnect.Image = global::Master.Properties.Resources.dbconn;
+            this.toolStripButtonConnect.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolStripButtonConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonConnect.Name = "toolStripButtonConnect";
+            this.toolStripButtonConnect.Size = new System.Drawing.Size(121, 41);
+            this.toolStripButtonConnect.Text = "Подключение";
+            this.toolStripButtonConnect.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripDropDownButton1
             // 
@@ -82,7 +82,7 @@
             // 
             this.toolStripMenuItem1.Image = global::Master.Properties.Resources.home;
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(199, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(215, 38);
             this.toolStripMenuItem1.Text = "Приложения";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
@@ -90,7 +90,7 @@
             // 
             this.ToolStripMenuItem33.Image = global::Master.Properties.Resources.right;
             this.ToolStripMenuItem33.Name = "ToolStripMenuItem33";
-            this.ToolStripMenuItem33.Size = new System.Drawing.Size(199, 22);
+            this.ToolStripMenuItem33.Size = new System.Drawing.Size(215, 38);
             this.ToolStripMenuItem33.Text = "Меню";
             this.ToolStripMenuItem33.Click += new System.EventHandler(this.менюToolStripMenuItem_Click);
             // 
@@ -98,7 +98,7 @@
             // 
             this.toolStripMenuItem2.Image = global::Master.Properties.Resources.clasp;
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(199, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(215, 38);
             this.toolStripMenuItem2.Text = "Команды";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItem2_Click);
             // 
@@ -106,7 +106,7 @@
             // 
             this.toolStripMenuItem3.Image = global::Master.Properties.Resources.sql;
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(199, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(215, 38);
             this.toolStripMenuItem3.Text = "Сформировать скрипт";
             this.toolStripMenuItem3.Click += new System.EventHandler(this.toolStripMenuItem3_Click);
             // 
@@ -134,7 +134,7 @@
             // 
             this.toolStripMenuItem4.Image = global::Master.Properties.Resources.users;
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(168, 38);
             this.toolStripMenuItem4.Text = "Пользователи";
             this.toolStripMenuItem4.Click += new System.EventHandler(this.toolStripMenuItem4_Click);
             // 
@@ -142,7 +142,7 @@
             // 
             this.toolStripMenuItem5.Image = global::Master.Properties.Resources.role;
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(168, 38);
             this.toolStripMenuItem5.Text = "Роли";
             this.toolStripMenuItem5.Click += new System.EventHandler(this.toolStripMenuItem5_Click);
             // 
@@ -179,7 +179,7 @@
         #endregion
 
         private System.Windows.Forms.ToolStrip tools;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripButton toolStripButtonConnect;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;

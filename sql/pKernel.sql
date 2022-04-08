@@ -1,18 +1,21 @@
 -- выдача необходимых настроек в порядке, необходимом для чтения в Context.GetKernelData()
-drop proc dm.pKernel
+
+if OBJECT_ID('robin.pKernel') is not null
+  drop proc robin.pKernel
 go
-create proc dm.pKernel
+
+create proc robin.pKernel
   @appcode varchar(200)
 as
 begin
 
-if not exists(select 1 from dm.tApp where code = @appcode) begin
+if not exists(select 1 from robin.tApp where code = @appcode) begin
   select @appcode = 'Не настроено приложение ' + @appcode
   raiserror(@appcode, 16, 1)
 end
 
 declare @user varchar(100) = suser_name()
-if dm.fCheckUserRights(@appcode, @user, default, default) = 0
+if robin.fCheckUserRights(@appcode, @user, default, default) = 0
 begin
   select @appcode = 'У пользователя ' + @user + ' нет допуска к приложению ' + @appcode
   raiserror(@appcode, 16, 1)
@@ -23,26 +26,26 @@ end
 -- Context.menus
 select 
   m.* 
-  from dm.tMenu m
+  from robin.tMenu m
   where m.appcode = @appcode 
     and m.execType in (0,1)
-    and dm.fCheckUserRights(@appcode, @user, default, m.marker) = 1
+    and robin.fCheckUserRights(@appcode, @user, default, m.marker) = 1
 
 -- Context.cmds
 select 
   c.* 
-, allowed = dm.fCheckUserRights(@appcode, @user, default, c.marker)
-  from dm.tCommand c
+, allowed = robin.fCheckUserRights(@appcode, @user, default, c.marker)
+  from robin.tCommand c
   where c.appcode = @appcode 
     and c.cmdType in (0,1,2)
 
 -- Context.appAttrs
-select * from dm.tApp where code = @appcode
+select * from robin.tApp where code = @appcode
 
 end
 go
-grant exec on dm.pKernel to PUBLIC
+grant exec on robin.pKernel to PUBLIC
 go
 
--- exec dm.pKernel 'CommInfoCheck'
+-- exec robin.pKernel 'CommInfoCheck'
 

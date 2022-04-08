@@ -451,14 +451,17 @@ namespace Ctrls {
             if (string.IsNullOrWhiteSpace(CheckSql) && string.IsNullOrWhiteSpace(CheckCmdCode))
                 return;
             var res = Ctx?.GetTable(CheckSql, CheckCmdCode, pars);
-            var e = new Dictionary<string, string>();
-            var cc = res.Columns.Count;
-            for (int i = 0; i < res.Rows.Count; i++) {
-                var key = cc > 1 ? res.Rows[i][0] : $"err{i}";
-                var value = cc > 1 ? res.Rows[i][1] : res.Rows[i][0];
-                e[key.ToString()] = value.ToString();
-            }
-            errs.AddFromDictionary(e);
+            if (res != null) {
+                var e = new Dictionary<string, string>();
+                var cc = res.Columns.Count;
+                for (int i = 0; i < res.Rows.Count; i++) {
+                    var key = cc > 1 ? res.Rows[i][0] : $"err{i}";
+                    var value = cc > 1 ? res.Rows[i][1] : res.Rows[i][0];
+                    e[key.ToString()] = value.ToString();
+                }
+                errs.AddFromDictionary(e);
+            } else
+                errs.Add("error", "Ошибка скрипта проверки данных!");
         }
 
         // Обработчик сохранения данных по умолчанию

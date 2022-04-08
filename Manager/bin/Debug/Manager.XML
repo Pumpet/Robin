@@ -116,7 +116,7 @@
             <summary>Проверка подключения</summary>
         </member>
         <member name="M:Manager.Context.SaveLog(System.String,System.String)">
-            <summary>Записать в лог (для dm.tApp.lotgAll = 1)</summary>
+            <summary>Записать в лог (для robin.tApp.lotgAll = 1)</summary>
             <param name="messType">Тип сообщения</param>
             <param name="mess">Сообщение</param>
         </member>

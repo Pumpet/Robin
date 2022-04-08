@@ -16,15 +16,15 @@ namespace Master {
         }
 
         private void FRoleEdit_Load(object sender, EventArgs e) {
-            GetDataToCombo(appcode, "appcode", "select appcode = code from dm.tApp order by 1", null);
+            GetDataToCombo(appcode, "appcode", "select appcode = code from robin.tApp order by 1", null);
             SelectNewSql = @"select code = '', appcode = '', note = ''";
-            SelectSql = @"select * from dm.tRole where id = @id";
+            SelectSql = @"select * from robin.tRole where id = @id";
             InsertSql = @"
-                insert dm.tRole(code, appcode, note) values (@code, @appcode, @note)
+                insert robin.tRole(code, appcode, note) values (@code, @appcode, @note)
                 select id = convert(int,SCOPE_IDENTITY())
                 ";
             UpdateSql = @"
-                update dm.tRole set code = @code, appcode = @appcode, note = @note where id = @id
+                update robin.tRole set code = @code, appcode = @appcode, note = @note where id = @id
                 select id = @id
                 ";
         }

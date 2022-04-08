@@ -29,6 +29,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.marker = new Ctrls.SelectBox(this.components);
+            this.label7 = new System.Windows.Forms.Label();
             this.comment = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.code = new System.Windows.Forms.TextBox();
@@ -44,8 +46,6 @@
             this.cmdTestHead = new FastColoredTextBoxNS.FastColoredTextBox();
             this.cmd = new FastColoredTextBoxNS.FastColoredTextBox();
             this.dataList1 = new Ctrls.DataList();
-            this.marker = new Ctrls.SelectBox(this.components);
-            this.label7 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.info.SuspendLayout();
@@ -97,6 +97,40 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(599, 91);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // marker
+            // 
+            this.marker.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.marker.DropDownHeight = 1;
+            this.marker.DropDownWidth = 1;
+            this.marker.FilterMap = null;
+            this.marker.FormattingEnabled = true;
+            this.marker.IntegralHeight = false;
+            this.marker.KeyMap = "code=marker";
+            this.marker.Location = new System.Drawing.Point(93, 57);
+            this.marker.Name = "marker";
+            this.marker.Nullable = true;
+            this.marker.ResultMap = "marker=code";
+            this.marker.SelectedObject = null;
+            this.marker.SelectedValues = null;
+            this.marker.SelectionForm = null;
+            this.marker.Size = new System.Drawing.Size(196, 23);
+            this.marker.SourceObject = null;
+            this.marker.TabIndex = 16;
+            this.marker.TargetObject = null;
+            this.marker.ExecSelectionForm += new System.EventHandler<Ctrls.ExecSelectionFormEventArgs>(this.marker_ExecSelectionForm);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label7.Location = new System.Drawing.Point(3, 54);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(84, 27);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Маркер";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // comment
             // 
@@ -324,6 +358,10 @@
             this.dataList1.AutoColumns = true;
             this.dataList1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dataList1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dataList1.CheckCmdCode = null;
+            this.dataList1.CheckedRowBackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.dataList1.CheckedRowFontColor = System.Drawing.SystemColors.Info;
+            this.dataList1.CheckSql = null;
             this.dataList1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.dataList1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -338,6 +376,8 @@
             this.dataList1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataList1.EnableHeadersVisualStyles = false;
             this.dataList1.ExtParamsMap = null;
+            this.dataList1.InsertCmdCode = null;
+            this.dataList1.InsertSql = null;
             this.dataList1.Location = new System.Drawing.Point(0, 0);
             this.dataList1.Name = "dataList1";
             this.dataList1.ParamPanel = null;
@@ -363,39 +403,8 @@
             this.dataList1.SelectedRowBackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.dataList1.Size = new System.Drawing.Size(599, 100);
             this.dataList1.TabIndex = 0;
-            // 
-            // marker
-            // 
-            this.marker.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.marker.DropDownHeight = 1;
-            this.marker.DropDownWidth = 1;
-            this.marker.FormattingEnabled = true;
-            this.marker.IntegralHeight = false;
-            this.marker.KeyMap = "code=marker";
-            this.marker.Location = new System.Drawing.Point(93, 57);
-            this.marker.Name = "marker";
-            this.marker.Nullable = true;
-            this.marker.ResultMap = "marker=code";
-            this.marker.SelectedObject = null;
-            this.marker.SelectedValues = null;
-            this.marker.SelectionForm = null;
-            this.marker.Size = new System.Drawing.Size(196, 23);
-            this.marker.SourceObject = null;
-            this.marker.TabIndex = 16;
-            this.marker.TargetObject = null;
-            this.marker.ExecSelectionForm += new System.EventHandler<Ctrls.ExecSelectionFormEventArgs>(this.marker_ExecSelectionForm);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label7.Location = new System.Drawing.Point(3, 54);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(84, 27);
-            this.label7.TabIndex = 15;
-            this.label7.Text = "Маркер";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.dataList1.UpdateCmdCode = null;
+            this.dataList1.UpdateSql = null;
             // 
             // FCommandSql
             // 

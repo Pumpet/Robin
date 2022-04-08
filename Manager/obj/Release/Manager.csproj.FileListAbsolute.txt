@@ -40,3 +40,15 @@ C:\__Work\cs\Projects\Robin\Manager\obj\Release\Manager.csproj.CoreCompileInputs
 C:\__Work\cs\Projects\Robin\Manager\obj\Release\Manager.csproj.CopyComplete
 C:\__Work\cs\Projects\Robin\Manager\obj\Release\Manager.dll
 C:\__Work\cs\Projects\Robin\Manager\obj\Release\Manager.pdb
+C:\Work\cs\Projects\Robin\Manager\bin\Release\Manager.dll
+C:\Work\cs\Projects\Robin\Manager\bin\Release\Manager.pdb
+C:\Work\cs\Projects\Robin\Manager\bin\Release\Common.dll
+C:\Work\cs\Projects\Robin\Manager\bin\Release\Common.pdb
+C:\Work\cs\Projects\Robin\Manager\obj\Release\Manager.csproj.AssemblyReference.cache
+C:\Work\cs\Projects\Robin\Manager\obj\Release\Manager.FOpenedForms.resources
+C:\Work\cs\Projects\Robin\Manager\obj\Release\Manager.FWait.resources
+C:\Work\cs\Projects\Robin\Manager\obj\Release\Manager.csproj.GenerateResource.cache
+C:\Work\cs\Projects\Robin\Manager\obj\Release\Manager.csproj.CoreCompileInputs.cache
+C:\Work\cs\Projects\Robin\Manager\obj\Release\Manager.csproj.CopyComplete
+C:\Work\cs\Projects\Robin\Manager\obj\Release\Manager.dll
+C:\Work\cs\Projects\Robin\Manager\obj\Release\Manager.pdb

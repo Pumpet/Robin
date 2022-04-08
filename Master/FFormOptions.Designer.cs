@@ -67,7 +67,7 @@
             this.dataList1.ParentGrid = null;
             this.dataList1.QueryCmdCode = null;
             this.dataList1.QueryParamsSet = null;
-            this.dataList1.QuerySql = "select * from dm.tFormOptions order by appcode, code";
+            this.dataList1.QuerySql = "select * from robin.tFormOptions order by appcode, code";
             this.dataList1.ReadOnly = true;
             this.dataList1.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;

@@ -26,7 +26,7 @@ namespace Master {
         }
 
         void FillCombo() {
-            GetDataToCombo(app, "appcode", "select appcode = code from dm.tApp union select appcode = '' order by 1", null);
+            GetDataToCombo(app, "appcode", "select appcode = code from robin.tApp union select appcode = '' order by 1", null);
         }
 
         void SetCommands() {
@@ -67,7 +67,7 @@ namespace Master {
                 , c.comment
                 , c.cmdTestHead
                 , c.marker
-                  from dm.tCommand c
+                  from robin.tCommand c
                     join @types t on t.id = c.cmdType
                   where (@app = '' or c.appcode = @app)
                     and (@type = '' or t.typeName = @type)
@@ -86,7 +86,7 @@ namespace Master {
             //delete task
             if (cm == "del") {
                 if (dataList1.CurrentRow == null) return;
-                ExecCommand(@"delete dm.tCommand where code = @code and appcode = @appcode", null, dataList1, warning: $"Удалить {(dataList1.GetRowObject() as DataRow)?["code"]} ?");
+                ExecCommand(@"delete robin.tCommand where code = @code and appcode = @appcode", null, dataList1, warning: $"Удалить {(dataList1.GetRowObject() as DataRow)?["code"]} ?");
             }
             //insert|update task
             if (Regex.IsMatch(cm,"(add|addsql|edit)")) {

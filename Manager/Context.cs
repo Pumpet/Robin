@@ -351,10 +351,10 @@ namespace Manager {
             if (AppConfig.HasProp("UserOptionsInDB")) {
                 userFormOptions = FormOptions.GetInXML(form, userFormOptions);
                 Conn?.ExecCommand(@"
-                    if exists(select 1 from dm.tFormOptions where code = @user and appcode = @appcode)
-                        update dm.tFormOptions set options = @opt where code = @user and appcode = @appcode
+                    if exists(select 1 from robin.tFormOptions where code = @user and appcode = @appcode)
+                        update robin.tFormOptions set options = @opt where code = @user and appcode = @appcode
                     else
-                        insert dm.tFormOptions(code, appcode, options) values (@user, @appcode, @opt)",
+                        insert robin.tFormOptions(code, appcode, options) values (@user, @appcode, @opt)",
                     new Dictionary<string, object>() { { "user", username }, { "appcode", appcode }, { "opt", userFormOptions } });
             }
             if (AppConfig.HasProp("UserOptionsInFile"))
@@ -508,7 +508,7 @@ namespace Manager {
         void GetKernelData() {
             DataSet ds = null;
             try {
-                using (SqlDataAdapter da = new SqlDataAdapter("dm.pKernel", Conn)) {
+                using (SqlDataAdapter da = new SqlDataAdapter("robin.pKernel", Conn)) {
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
                     da.SelectCommand.Parameters.AddWithValue("appcode", appcode);
                     ds = new DataSet();
@@ -516,7 +516,7 @@ namespace Manager {
                     menus = ds.Tables[0].AsEnumerable().ToList();
                     cmds = ds.Tables[1].AsEnumerable().ToList();
                     appAttrs = ds.Tables[2].AsEnumerable().ToList()[0];
-                    userFormOptions = Conn?.GetValue("select options from dm.tFormOptions where code = @user and appcode = @appcode",
+                    userFormOptions = Conn?.GetValue("select options from robin.tFormOptions where code = @user and appcode = @appcode",
                                     new Dictionary<string, object>() { { "user", username }, { "appcode", appcode } }, Trassa)?.ToString();
                 }
             }
@@ -525,7 +525,7 @@ namespace Manager {
             }
         }
 
-        /// <summary>Записать в лог (для dm.tApp.lotgAll = 1)</summary>
+        /// <summary>Записать в лог (для robin.tApp.lotgAll = 1)</summary>
         /// <param name="messType">Тип сообщения</param>
         /// <param name="mess">Сообщение</param>
         public void SaveLog(string messType, string mess) {
@@ -538,7 +538,7 @@ namespace Manager {
                 ["mess"] = mess
             };
             stopLogSQL = true;
-            ExecCommand("exec dm.pLog @login, @appcode, @type, @mess", null, pars);
+            ExecCommand("exec robin.pLog @login, @appcode, @type, @mess", null, pars);
             stopLogSQL = false;
         }
 

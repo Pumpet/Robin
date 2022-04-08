@@ -19,7 +19,7 @@ namespace Master {
         }
 
         private void FMenuList_Load(object sender, EventArgs e) {
-            GetDataToCombo(app, "appcode", "select appcode = code from dm.tApp order by 1", null);
+            GetDataToCombo(app, "appcode", "select appcode = code from robin.tApp order by 1", null);
 
             dataList1.QuerySql = @"
             ;with menu as (
@@ -28,7 +28,7 @@ namespace Master {
                 , m.parentId
                 , lvl = 0
                 , lvlord = convert(varchar(max), '0' + convert(varchar, m.ord) + convert(varchar,m.id))
-                from dm.tMenu m
+                from robin.tMenu m
                 where m.appcode = @app
                   and m.parentId is null
                 union all
@@ -37,7 +37,7 @@ namespace Master {
                 , m.parentId
                 , lvl = t.lvl + 1
                 , lvlord = convert(varchar(max), t.lvlord + convert(varchar, t.lvl + 1) + convert(varchar, m.ord) + convert(varchar,m.id))
-                from dm.tMenu m
+                from robin.tMenu m
                   join menu t on t.id = m.parentId
             )
             select 
@@ -48,8 +48,8 @@ namespace Master {
             , t.lvlord
             , execTypeName = case m.execType when 0 then 'меню' else 'группа' end
               from menu t
-                  join dm.tMenu m on m.id = t.id
-                  left join dm.tMenu p on p.id = m.parentId
+                  join robin.tMenu m on m.id = t.id
+                  left join robin.tMenu p on p.id = m.parentId
               order by t.lvlord
             ";
                 
@@ -82,11 +82,11 @@ namespace Master {
             if (cm == "del") {
                 if (currRow == null) return;
                 var cmdDel = @"
-                    if exists(select 1 from dm.tMenu where parentId = @id and execType = 1)
+                    if exists(select 1 from robin.tMenu where parentId = @id and execType = 1)
                         raiserror('Существуют вложенные группы, удаление невозможно!', 16, 1)
                     else begin
-                        delete dm.tMenu where parentId = @id
-                        delete dm.tMenu where id = @id
+                        delete robin.tMenu where parentId = @id
+                        delete robin.tMenu where id = @id
                     end
                 ";
                 var warDel = $"Удалить {((bool)currRow?["execType"].Equals(1) ? "группу" : "меню")} \"{currRow?["caption"]}\" ?";

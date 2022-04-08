@@ -16,12 +16,12 @@ namespace Master {
         }
 
         private void FLog_Load(object sender, EventArgs e) {
-            GetDataToCombo(_appcode, "appcode", "select appcode = code from dm.tApp union select appcode = '' order by 1", null);
+            GetDataToCombo(_appcode, "appcode", "select appcode = code from robin.tApp union select appcode = '' order by 1", null);
             dataList1.QuerySql = @"
 select @login = isnull(ltrim(rtrim(@login)), '')
 select @mess = isnull(ltrim(rtrim(@mess)), '')
 select * 
-    from dm.tLog
+    from robin.tLog
     where dt between @dtFrom and @dtTo
         and (@login = '' or (@login <> '' and login like '%' + @login + '%'))
         and (@appcode = '' or (@appcode <> '' and appcode = @appcode))

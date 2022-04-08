@@ -1,6 +1,8 @@
-drop proc dm.pLog
+if OBJECT_ID('robin.pLog') is not null
+  drop proc robin.pLog
 go
-create proc dm.pLog
+
+create proc robin.pLog
   @login varchar(100) 
 , @appcode varchar(30) 
 , @type varchar(30) 
@@ -8,7 +10,7 @@ create proc dm.pLog
 as
 begin
 
-insert dm.tLog (
+insert robin.tLog (
   dt     
 , login  
 , appcode
@@ -24,8 +26,9 @@ select
 
 end
 go
-grant exec on dm.pLog to PUBLIC
+
+grant exec on robin.pLog to PUBLIC
 go
 
--- select * from dm.tLog
+-- select * from robin.tLog
 

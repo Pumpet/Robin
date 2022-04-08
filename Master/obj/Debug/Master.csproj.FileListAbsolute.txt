@@ -139,7 +139,6 @@ C:\Work\cs\Projects\Robin\Master\bin\Debug\Ctrls.xml
 C:\Work\cs\Projects\Robin\Master\bin\Debug\Manager.pdb
 C:\Work\cs\Projects\Robin\Master\bin\Debug\Manager.xml
 C:\Work\cs\Projects\Robin\Master\bin\Debug\FastColoredTextBox.pdb
-C:\Work\cs\Projects\Robin\Master\obj\Debug\Master.csprojAssemblyReference.cache
 C:\Work\cs\Projects\Robin\Master\obj\Debug\Master.FAppEdit.resources
 C:\Work\cs\Projects\Robin\Master\obj\Debug\Master.FAppList.resources
 C:\Work\cs\Projects\Robin\Master\obj\Debug\Master.FCommand.resources
@@ -163,6 +162,7 @@ C:\Work\cs\Projects\Robin\Master\obj\Debug\Master.csproj.CoreCompileInputs.cache
 C:\Work\cs\Projects\Robin\Master\obj\Debug\Master.csproj.CopyComplete
 C:\Work\cs\Projects\Robin\Master\obj\Debug\Master.exe
 C:\Work\cs\Projects\Robin\Master\obj\Debug\Master.pdb
+C:\Work\cs\Projects\Robin\Master\obj\Debug\Master.csproj.AssemblyReference.cache
 C:\Work\git\robin\Robin\Master\bin\Debug\Master.exe.config
 C:\Work\git\robin\Robin\Master\bin\Debug\Master.doc.XML
 C:\Work\git\robin\Robin\Master\bin\Debug\Master.exe
@@ -178,7 +178,7 @@ C:\Work\git\robin\Robin\Master\bin\Debug\Ctrls.xml
 C:\Work\git\robin\Robin\Master\bin\Debug\Manager.pdb
 C:\Work\git\robin\Robin\Master\bin\Debug\Manager.xml
 C:\Work\git\robin\Robin\Master\bin\Debug\FastColoredTextBox.pdb
-C:\Work\git\robin\Robin\Master\obj\Debug\Master.csprojAssemblyReference.cache
+C:\Work\git\robin\Robin\Master\obj\Debug\Master.csproj.AssemblyReference.cache
 C:\Work\git\robin\Robin\Master\obj\Debug\Master.FAppEdit.resources
 C:\Work\git\robin\Robin\Master\obj\Debug\Master.FAppList.resources
 C:\Work\git\robin\Robin\Master\obj\Debug\Master.FCommand.resources

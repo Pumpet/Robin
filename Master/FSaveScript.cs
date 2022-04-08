@@ -32,7 +32,7 @@ namespace Master {
 
         private void FSaveScript_Shown(object sender, EventArgs e) {
             ctx = Context.Self;
-            app.DataSource = ctx.GetTable("select appcode = code from dm.tApp order by 1", null);
+            app.DataSource = ctx.GetTable("select appcode = code from robin.tApp order by 1", null);
             app.DisplayMember = "appcode";
             folder.Text = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppConfig.GetPropValue("Path") ?? "");
             firstPath = folder.Text;
@@ -63,7 +63,7 @@ namespace Master {
                 AppConfig.Save();
             }
 
-            var rows = ctx.GetTableList("select * from dm.tCommand c where c.appcode = @app order by c.cmdType desc, c.code", null, new Dictionary<string, object>() { ["app"] = appcode });
+            var rows = ctx.GetTableList("select * from robin.tCommand c where c.appcode = @app order by c.cmdType desc, c.code", null, new Dictionary<string, object>() { ["app"] = appcode });
             var cmds = rows.Select(x => new Command() {
                 Code = (string)x["code"],
                 Appcode = (string)x["appcode"],
@@ -74,7 +74,7 @@ namespace Master {
                 Marker = !x["marker"].Equals(DBNull.Value) ? (string)x["marker"] : null
             }).AsEnumerable();
 
-            var menus = ctx.GetTableList("select m.*, p.code as parent from dm.tMenu m left join dm.tMenu p on p.id = m.parentId where m.appcode = @app order by m.id", null, new Dictionary<string, object>() { ["app"] = appcode });
+            var menus = ctx.GetTableList("select m.*, p.code as parent from robin.tMenu m left join robin.tMenu p on p.id = m.parentId where m.appcode = @app order by m.id", null, new Dictionary<string, object>() { ["app"] = appcode });
 
             var comment = $"{ctx.Conn.DataSource}.{ctx.Conn.Database} {this.comment.Text}";
             var file = $"{appcode} {DateTime.Now.ToString("yyyyMMdd_HHmmss")} {comment}".Trim();

@@ -28,26 +28,26 @@ namespace Master {
                 listRoles.QuerySql = @"
                 select @app = isnull(@app,'')
                 select r.*
-                    from dm.tRole r
+                    from robin.tRole r
                     where @app = '' or (@app <> '' and r.appcode = @app)
                     order by r.appcode
                 ";
                 listUsers.QuerySql = @"
                 select distinct ur.userId, ur.roleId, u.login, u.name
-                    from dm.tUserRole ur
-                        join dm.tUser u on u.id = ur.userId
+                    from robin.tUserRole ur
+                        join robin.tUser u on u.id = ur.userId
                     where ur.roleId = @roleId
                     order by u.login
                 ";
                 listMarkers.QuerySql = @"
                 select distinct rm.roleId, rm.marker, m.note
-                    from dm.tRoleMarker rm
-                        join dm.tMarker m on m.code = rm.marker
+                    from robin.tRoleMarker rm
+                        join robin.tMarker m on m.code = rm.marker
                     where rm.roleId = @roleId
                     order by rm.marker
                 ";
 
-                GetDataToCombo(app, "appcode", "select appcode = code from dm.tApp union select appcode = '' order by 1", null);
+                GetDataToCombo(app, "appcode", "select appcode = code from robin.tApp union select appcode = '' order by 1", null);
                 SetCommands();
             }
         }
@@ -100,7 +100,7 @@ namespace Master {
 
             if (cm == "del") {
                 if (listRoles.CurrentRow == null) return;
-                ok = (ExecCommand(@"delete dm.tRole where id = @id", null, listRoles, 
+                ok = (ExecCommand(@"delete robin.tRole where id = @id", null, listRoles, 
                     warning: $"Удалить роль {(listRoles.GetRowObject() as DataRow)?["code"]} для {(listRoles.GetRowObject() as DataRow)?["appcode"]} ?") != null);
             }
             if (cm == "add" || cm == "edit") {
@@ -110,7 +110,7 @@ namespace Master {
             }
             if (cm == "delUsers") {
                 if (listUsers.CurrentRow == null) return;
-                ok = (ExecCommand(@"delete dm.tUserRole where userId = @userId and roleId = @roleId", null, listUsers) != null);
+                ok = (ExecCommand(@"delete robin.tUserRole where userId = @userId and roleId = @roleId", null, listUsers) != null);
             }
             if (cm == "addUsers") {
                 if (listRoles.CurrentRow == null) return;
@@ -118,8 +118,8 @@ namespace Master {
                 if (ok = Context.Self.TransferObject != null) {
                     var rolePars = CtrlsProc.PrepareParams(listRoles.GetKey(), null, "roleId=id");
                     var cmd = @"
-                        if not exists(select 1 from dm.tUserRole where userID = @userId and roleId = @roleId)
-                            insert dm.tUserRole (userId, roleId) values (@userId, @roleId)
+                        if not exists(select 1 from robin.tUserRole where userID = @userId and roleId = @roleId)
+                            insert robin.tUserRole (userId, roleId) values (@userId, @roleId)
                     ";
                     foreach (var row in (Context.Self.TransferObject as List<object>).OfType<DataRow>()) {
                         var pars = CtrlsProc.PrepareParams(row, rolePars, "userId=id");
@@ -130,7 +130,7 @@ namespace Master {
             }
             if (cm == "delMarkers") {
                 if (listMarkers.CurrentRow == null) return;
-                ExecCommand(@"delete dm.tRoleMarker where marker = @marker and roleId = @roleId", null, listMarkers);
+                ExecCommand(@"delete robin.tRoleMarker where marker = @marker and roleId = @roleId", null, listMarkers);
             }
             if (cm == "addMarkers") {
                 if (listRoles.CurrentRow == null) return;
@@ -139,8 +139,8 @@ namespace Master {
                 if (sel && Context.Self.TransferObject != null) {
                     var rolePars = CtrlsProc.PrepareParams(listRoles.GetKey(), null, "roleId=id");
                     var cmd = @"
-                        if not exists(select 1 from dm.tRoleMarker where marker = @marker and roleId = @roleId)
-                            insert dm.tRoleMarker (marker, roleId) values (@marker, @roleId)
+                        if not exists(select 1 from robin.tRoleMarker where marker = @marker and roleId = @roleId)
+                            insert robin.tRoleMarker (marker, roleId) values (@marker, @roleId)
                     ";
                     foreach (var row in (Context.Self.TransferObject as List<object>).OfType<DataRow>()) {
                         var pars = CtrlsProc.PrepareParams(row, rolePars, "marker=code");

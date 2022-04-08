@@ -36,3 +36,13 @@ C:\__Work\cs\Projects\Robin\Common\obj\Release\Common.csproj.GenerateResource.ca
 C:\__Work\cs\Projects\Robin\Common\obj\Release\Common.csproj.CoreCompileInputs.cache
 C:\__Work\cs\Projects\Robin\Common\obj\Release\Common.dll
 C:\__Work\cs\Projects\Robin\Common\obj\Release\Common.pdb
+C:\Work\cs\Projects\Robin\Common\bin\Release\Common.dll
+C:\Work\cs\Projects\Robin\Common\bin\Release\Common.pdb
+C:\Work\cs\Projects\Robin\Common\obj\Release\Common.csproj.ResolveComReference.cache
+C:\Work\cs\Projects\Robin\Common\obj\Release\Common.FError.resources
+C:\Work\cs\Projects\Robin\Common\obj\Release\Common.FTrassa.resources
+C:\Work\cs\Projects\Robin\Common\obj\Release\Common.Properties.Resources.resources
+C:\Work\cs\Projects\Robin\Common\obj\Release\Common.csproj.GenerateResource.cache
+C:\Work\cs\Projects\Robin\Common\obj\Release\Common.csproj.CoreCompileInputs.cache
+C:\Work\cs\Projects\Robin\Common\obj\Release\Common.dll
+C:\Work\cs\Projects\Robin\Common\obj\Release\Common.pdb

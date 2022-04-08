@@ -1,6 +1,8 @@
-drop function dm.fStrToTable
+if OBJECT_ID('robin.fStrToTable') is not null
+  drop function robin.fStrToTable
 go
-create function dm.fStrToTable (
+
+create function robin.fStrToTable (
   @str varchar(max)
 , @dlm varchar(100) = ','
 , @trim int = 1
@@ -36,7 +38,7 @@ begin
   return
 end
 go
-grant all on dm.fStrToTable to PUBLIC
+grant REFERENCES, SELECT on robin.fStrToTable to PUBLIC
 go
 
 -- select * from dm.fStrToTable('one,two, ,three', '', 0)

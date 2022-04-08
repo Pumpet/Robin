@@ -46,7 +46,7 @@ namespace Master {
             //delete task
             if (cm == "del") {
                 if (dataList1.CurrentRow == null) return;
-                ExecCommand(@"delete dm.tApp where code = @code", null, dataList1, warning: $"Удалить {(dataList1.GetRowObject() as DataRow)?["code"]} ?");
+                ExecCommand(@"delete robin.tApp where code = @code", null, dataList1, warning: $"Удалить {(dataList1.GetRowObject() as DataRow)?["code"]} ?");
             }
             //insert|update task
             if (Regex.IsMatch(cm, "(add|edit)")) {

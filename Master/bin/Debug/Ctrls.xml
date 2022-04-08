@@ -379,6 +379,14 @@
             <param name="pars">параметры запроса</param>
             <param name="maxWidth">null (по умолчанию) - не выравнивать ширину выпадающей части, 0 - выравнивать на максимальную ширину текста, или указать максимальную ширину</param>
         </member>
+        <member name="M:Ctrls.FormBase.CreateStandardCommands(System.Windows.Forms.ToolStrip,Ctrls.DataList,System.Action{System.String,Ctrls.DataList},Ctrls.FormBase.StandardCommands)">
+            <summary>Создать кнопки и обработчики стандартных команд грида (add, edit, del) на панели
+            </summary>
+            <param name="toolStrip"></param>
+            <param name="grid"></param>
+            <param name="execAction">метод с логикой обработки команд</param>
+            <param name="cmds">набор команд, по умолчанию = all</param>
+        </member>
         <member name="F:Ctrls.FormBase.components">
             <summary>
             Required designer variable.
@@ -624,6 +632,26 @@
             <summary>
               Overrides the current thread's CurrentUICulture property for all
               resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.add">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.addcopy">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.del">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="P:Ctrls.Properties.Resources.edit">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
             </summary>
         </member>
         <member name="P:Ctrls.Properties.Resources.excel">

@@ -27,7 +27,7 @@ namespace Master {
             SelectSql = Command.SelectSql;
             InsertSql = Command.InsertSql;
             UpdateSql = Command.UpdateSql;
-            GetDataToCombo(appcode, "appcode", "select appcode = code from dm.tApp union select appcode = '' order by 1", null);
+            GetDataToCombo(appcode, "appcode", "select appcode = code from robin.tApp union select appcode = '' order by 1", null);
         }
 
         private void FCommand_AfterBinding(object sender, EventArgs e) {

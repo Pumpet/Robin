@@ -112,7 +112,7 @@ C:\Work\cs\Projects\Robin\Ctrls\bin\Debug\Common.xml
 C:\Work\cs\Projects\Robin\Ctrls\bin\Debug\Manager.pdb
 C:\Work\cs\Projects\Robin\Ctrls\bin\Debug\Manager.xml
 C:\Work\cs\Projects\Robin\Ctrls\bin\Debug\FastColoredTextBox.pdb
-C:\Work\cs\Projects\Robin\Ctrls\obj\Debug\Ctrls.csprojAssemblyReference.cache
+C:\Work\cs\Projects\Robin\Ctrls\obj\Debug\Ctrls.csproj.AssemblyReference.cache
 C:\Work\cs\Projects\Robin\Ctrls\obj\Debug\Ctrls.DateTimeBox.resources
 C:\Work\cs\Projects\Robin\Ctrls\obj\Debug\Ctrls.FormBase.resources
 C:\Work\cs\Projects\Robin\Ctrls\obj\Debug\Ctrls.FormEdit.resources
@@ -138,7 +138,7 @@ C:\Work\git\robin\Robin\Ctrls\bin\Debug\Common.xml
 C:\Work\git\robin\Robin\Ctrls\bin\Debug\Manager.pdb
 C:\Work\git\robin\Robin\Ctrls\bin\Debug\Manager.xml
 C:\Work\git\robin\Robin\Ctrls\bin\Debug\FastColoredTextBox.pdb
-C:\Work\git\robin\Robin\Ctrls\obj\Debug\Ctrls.csprojAssemblyReference.cache
+C:\Work\git\robin\Robin\Ctrls\obj\Debug\Ctrls.csproj.AssemblyReference.cache
 C:\Work\git\robin\Robin\Ctrls\obj\Debug\Ctrls.DateTimeBox.resources
 C:\Work\git\robin\Robin\Ctrls\obj\Debug\Ctrls.FormBase.resources
 C:\Work\git\robin\Robin\Ctrls\obj\Debug\Ctrls.FormEdit.resources

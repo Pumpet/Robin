@@ -57,7 +57,7 @@ namespace Master {
             SelectSql = Command.SelectSql;
             InsertSql = Command.InsertSql;
             UpdateSql = Command.UpdateSql;
-            GetDataToCombo(appcode, "appcode", "select appcode = code from dm.tApp union select appcode = '' order by 1", null);
+            GetDataToCombo(appcode, "appcode", "select appcode = code from robin.tApp union select appcode = '' order by 1", null);
 
             pnlTools.Items[
                 pnlTools.Items.Add(new ToolStripButton() { Image = Ctx.GetImage(Ctx.ImgAsmName, "email"), ToolTipText = "Добавить declare @параметр" })

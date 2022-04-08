@@ -437,13 +437,14 @@ namespace Ctrls {
 
         // обработчики полей параметров
         void SetUiParamsHandlers() {
-            EventHandler eh = (o, e) => { NeedRefresh = true; }; // установка признака необходимости обновления
+            EventHandler eh = (o, e) => { 
+                NeedRefresh = true; }; // установка признака необходимости обновления
             foreach (var c in uiParams.SelectMany(x => x.Value)) {
                 c.Enter += (o, e) => {
                     SetToolButtonsForGrid(uiParams.Where(x => x.Value.Any(y => y == o)).Select(x => x.Key).FirstOrDefault()); // установка кнопок управления гридом
                 };
                 if (c is CheckBox)
-                    ((CheckBox)c).CheckStateChanged += eh;
+                    ((CheckBox)c).CheckedChanged += eh;
                 else if (c is RadioButton)
                     ((RadioButton)c).CheckedChanged += eh;
                 else if (c is TreeView)

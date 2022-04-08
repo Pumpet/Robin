@@ -64,10 +64,13 @@ namespace Common {
                         case 515:
                             mess = mess + "Невозможно сохранить пустое значение\n";
                             break;
+                        case 50000:
+                            mess = mess + err.Message + "\n";
+                            break;
                         default:
                             break;
                     }
-                    if (!new[] { 3621 }.Contains(err.Number))
+                    if (!new[] { 3621, 50000 }.Contains(err.Number))
                         mess = mess + string.Format("Ошибка работы с БД ({0}): {1}\n", err.Number, err.Message);
                 }
             } else

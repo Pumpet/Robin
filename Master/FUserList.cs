@@ -29,22 +29,22 @@ namespace Master {
                 --waitfor delay '00:00:03'
                 select @app = isnull(@app,'')
                 select distinct u.* 
-                    from dm.tUser u 
-                        left join (dm.tUserRole ur join dm.tRole r on r.id = ur.roleId)
+                    from robin.tUser u 
+                        left join (robin.tUserRole ur join robin.tRole r on r.id = ur.roleId)
                             on ur.userId = u.id
                     where (@app = ''
                             or (@app not in ('','(нет)') and r.appcode = @app)
-                            or (@app = '(нет)' and not exists(select 1 from dm.tUserRole ur1 where ur1.userId = u.id)))
+                            or (@app = '(нет)' and not exists(select 1 from robin.tUserRole ur1 where ur1.userId = u.id)))
                     order by u.login
                 ";
             listRoles.QuerySql = @" -- НИЖНИЙ грид
                 select r.appcode, ur.roleId, ur.userId, r.code, r.note
-                    from dm.tUserRole ur
-                        join dm.tRole r on ur.roleId = r.id
+                    from robin.tUserRole ur
+                        join robin.tRole r on ur.roleId = r.id
                     where ur.userId = @userId
                     order by r.appcode
                 ";
-            GetDataToCombo(app, "appcode", "select appcode = code from dm.tApp union select appcode = '(нет)' union select appcode = '' order by 1", null);
+            GetDataToCombo(app, "appcode", "select appcode = code from robin.tApp union select appcode = '(нет)' union select appcode = '' order by 1", null);
             SetCommands();
         }
 
@@ -85,7 +85,7 @@ namespace Master {
 
             if (cm == "del") {
                 if (listUsers.CurrentRow == null) return;
-                ok = (ExecCommand(@"delete dm.tUser where id = @id", null, listUsers, warning: $"Удалить {(listUsers.GetRowObject() as DataRow)?["login"]} ?") != null);
+                ok = (ExecCommand(@"delete robin.tUser where id = @id", null, listUsers, warning: $"Удалить {(listUsers.GetRowObject() as DataRow)?["login"]} ?") != null);
             }
             if (cm == "add" || cm == "edit") {
                 var isnew = cm == "add";
@@ -94,7 +94,7 @@ namespace Master {
             }
             if (cm == "delRoles") {
                 if (listRoles.CurrentRow == null) return;
-                ok = (ExecCommand(@"delete dm.tUserRole where userId = @userId and roleId = @roleId", null, listRoles) != null);
+                ok = (ExecCommand(@"delete robin.tUserRole where userId = @userId and roleId = @roleId", null, listRoles) != null);
             }
             if (cm == "addRoles") {
                 if (listUsers.CurrentRow == null) return;
@@ -102,8 +102,8 @@ namespace Master {
                 if (ok && Context.Self.TransferObject != null) {
                     var userPars = CtrlsProc.PrepareParams(listUsers.GetKey(), null, "userId=id");
                     var cmd = @"
-                        if not exists(select 1 from dm.tUserRole where userID = @userId and roleId = @roleId)
-                            insert dm.tUserRole (userId, roleId) values (@userId, @roleId)
+                        if not exists(select 1 from robin.tUserRole where userID = @userId and roleId = @roleId)
+                            insert robin.tUserRole (userId, roleId) values (@userId, @roleId)
                     ";
                     foreach (var row in (Context.Self.TransferObject as List<object>).OfType<DataRow>()) {
                         var pars = CtrlsProc.PrepareParams(row, userPars, "roleId=id");

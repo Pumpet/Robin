@@ -19,6 +19,7 @@ using Common;
 using System.Linq;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
 
 namespace Ctrls {
 
@@ -39,6 +40,7 @@ namespace Ctrls {
 
         /// <summary>тип события контрола - выход, вход, изменение состояния</summary>
         public enum CtrlEventType { Leave, Enter, StateChange }
+        public enum StandardCommands { none = 0, add = 1, addcopy = 2, edit = 4, del = 8, all = add|addcopy|edit|del }
 
         /// <summary>Аргументы общего события для событий контролов формы</summary>
         public class ControlTriggerEventArgs {
@@ -141,8 +143,7 @@ namespace Ctrls {
         protected override void OnShown(EventArgs e) {
             // устанавливает фокус на контроле, указанном в FocusedControlName
             Control c = this.GetControls<Control>().FirstOrDefault(x => x.Name == FocusedControlName);
-            if (c != null)
-            {
+            if (c != null) {
                 if (c is TextBox)
                     ((TextBox)c).Select(0, 0);
                 else
@@ -291,5 +292,75 @@ namespace Ctrls {
                     cb.DropDownWidth = newWidth;
             }
         }
+
+        /// <summary>Создать кнопки и обработчики стандартных команд грида (add, edit, del) на панели
+        /// </summary>
+        /// <param name="toolStrip"></param>
+        /// <param name="grid"></param>
+        /// <param name="execAction">метод с логикой обработки команд</param>
+        /// <param name="cmds">набор команд, по умолчанию = all</param>
+        public void CreateStandardCommands(ToolStrip toolStrip, DataList grid, Action<string, DataList> execAction, StandardCommands cmds = StandardCommands.all) {
+            var asm = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+            if (cmds.HasFlag(StandardCommands.add))
+                toolStrip.Items[
+                    toolStrip.Items.Add(
+                    new ToolStripButton() {
+                        Name = "add",
+                        Image = Ctx.GetImage(asm, "add"),
+                        ToolTipText = "Добавить (Ins)"
+                    })
+                ].Click += (o, ek) => execAction("add", grid);
+
+            if (cmds.HasFlag(StandardCommands.addcopy))
+                toolStrip.Items[
+                    toolStrip.Items.Add(
+                    new ToolStripButton() {
+                        Name = "addcopy",
+                        Image = Ctx.GetImage(asm, "addcopy"),
+                        ToolTipText = "Добавить по образцу (Ctrl+Ins)"
+                    })
+                ].Click += (o, ek) => execAction("addcopy", grid);
+
+            if (cmds.HasFlag(StandardCommands.edit)) {
+                toolStrip.Items[
+                    toolStrip.Items.Add(
+                    new ToolStripButton() {
+                        Name = "edit",
+                        Image = Ctx.GetImage(asm, "edit"),
+                        ToolTipText = "Изменить (Ctrl+Enter)"
+                    })
+                ].Click += (o, ek) => execAction("edit", grid);
+
+                if (!formModes.HasFlag(FormModes.GetResult) && !formModes.HasFlag(FormModes.GetMultiResult))
+                    grid.DoubleClick += (o, ek) => {
+                        grid.DoubleClickCell((g) => execAction("edit", grid));
+                    };
+            }
+
+            if (cmds.HasFlag(StandardCommands.del))
+                toolStrip.Items[
+                    toolStrip.Items.Add(
+                    new ToolStripButton() {
+                        Name = "del",
+                        Image = Ctx.GetImage(asm, "del"),
+                        ToolTipText = "Удалить (Ctrl+Del)"
+                    })
+                ].Click += (o, ek) => execAction("del", grid);
+
+            grid.KeyDown += (o, ek) => {
+                base.OnKeyDown(ek);
+                if (cmds.HasFlag(StandardCommands.add) && ek.KeyCode == Keys.Insert && ek.Modifiers == Keys.None)
+                    execAction("add", grid);
+                if (cmds.HasFlag(StandardCommands.addcopy) && ek.KeyCode == Keys.Insert && ek.Modifiers == Keys.Control)
+                    execAction("addcopy", grid);
+                if (cmds.HasFlag(StandardCommands.edit) && ek.KeyCode == Keys.Enter && ek.Modifiers == Keys.Control)
+                    execAction("edit", grid);
+                if (cmds.HasFlag(StandardCommands.del) && ek.KeyCode == Keys.Delete && ek.Modifiers == Keys.Control)
+                    execAction("del", grid);
+            };
+
+        }
+
     }
 }

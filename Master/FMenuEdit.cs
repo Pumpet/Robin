@@ -32,11 +32,11 @@ namespace Master {
             ";
             SelectSql = @"
                 select m.*, p.code as parent 
-                from dm.tMenu m 
-                    left join dm.tMenu p on p.id = m.parentId
+                from robin.tMenu m 
+                    left join robin.tMenu p on p.id = m.parentId
                 where m.id = @id";
             InsertSql = @"
-                insert dm.tMenu (
+                insert robin.tMenu (
                   code    
                 , appcode 
                 , parentId  
@@ -63,7 +63,7 @@ namespace Master {
                   select id = convert(int,SCOPE_IDENTITY())
                 ";
             UpdateSql = @"
-                update dm.tMenu set 
+                update robin.tMenu set 
                   code     = @code
                 , appcode  = @appcode 
                 , parentId = @parentId
@@ -79,9 +79,9 @@ namespace Master {
                 ";
             CheckSql = @"
                 declare @t table (c varchar(30), t varchar(200))
-                if exists(select 1 from dm.tMenu where code = @code and appcode = @appcode and id <> @id)
+                if exists(select 1 from robin.tMenu where code = @code and appcode = @appcode and id <> @id)
                     insert @t select 'code', 'Код уже используется!'
-                if @execType = 0 and exists(select 1 from dm.tMenu where parentId = @id) 
+                if @execType = 0 and exists(select 1 from robin.tMenu where parentId = @id) 
                     insert @t select 'rbMenu', 'Группу нельзя сделать меню, т.к. есть подменю!'
                 if isnull(ltrim(rtrim(@code)),'') = '' insert @t select 'code', 'обязательное поле!'                  
                 if isnull(ltrim(rtrim(@caption)),'') = '' insert @t select 'caption', 'обязательное поле!'  
@@ -105,7 +105,7 @@ namespace Master {
         }
 
         private void FMenuEdit_AfterBinding(object sender, EventArgs e) {
-            GetDataToCombo(command, "code", "select code from dm.tCommand where appcode = @appcode and cmdType in (1,2) union select code = '' order by 1", null, CtrlsProc.PrepareParams(SourceRow, null, "appcode=appcode"));
+            GetDataToCombo(command, "code", "select code from robin.tCommand where appcode = @appcode and cmdType in (1,2) union select code = '' order by 1", null, CtrlsProc.PrepareParams(SourceRow, null, "appcode=appcode"));
             rbMenu.Checked = (int)SourceRow["execType"] == 0;
             rbGroup.Checked = !rbMenu.Checked;
             lbCommand.Visible = rbMenu.Checked;
